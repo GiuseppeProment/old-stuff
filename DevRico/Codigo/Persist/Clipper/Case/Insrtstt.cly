@@ -1,0 +1,85 @@
+//## begin module.cm preserve=no
+//	  %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IInsertStatement; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\insrtstt.h
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+
+// IModifyStatement
+
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IInsertStatement
+//	INSERT INTO <tabela>  (nomeColuna),...  VALUES (exp,...)
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+REQUEST IStatement
+REQUEST IModifyStatement
+
+CREATE CLASS IInsertStatement INHERIT IModifyStatement  //## Inherits: <unnamed>
+PROTECTED:
+   METHOD init
+EXPORT:
+    //## Other Operations (specified)
+      //## Operation: asSentencaSQL%908596361
+      METHOD asSentencaSQL
+    // Additional Public Declarations
+      //## begin IInsertStatement.public preserve=yes
+      //## end IInsertStatement.public
+END CLASS
+// Class IInsertStatement
+
+METHOD init(),()
+RETURN self
+
+//IString IInsertStatement::asSentencaSQL()
+METHOD asSentencaSQL()
+  local sentenca,i
+  //## begin IInsertStatement::asSentencaSQL%908596361.body preserve=yes
+	// teste : "Insert into <tabela> (coluna),... values ()
+  sentenca="INSERT INTO "
+  sentenca+= ::tabelaAlvo()
+
+	// colunas
+	// id
+   sentenca +=" ("
+   sentenca += IBroker():nomeColunaID()
+   for i=1 to ::theColunas():count()
+      sentenca+=","
+      sentenca+=  ( ::theColunas():subscript(i) )
+   next
+
+	// valores
+   sentenca += ") VALUES( "
+	// id
+   sentenca += ::ID():asString()
+   for i=1 to ::theValues():count()
+      sentenca+=","
+      sentenca+= ltrim( ( ::theValues():subscript(i) ) )
+   next
+   sentenca += ") "
+  //## end IInsertStatement::asSentencaSQL%908596361.body
+  RETURN sentenca
+// Additional Declarations
+//## begin IInsertStatement.declarations preserve=yes
+//## end IInsertStatement.declarations
+
+
+
+

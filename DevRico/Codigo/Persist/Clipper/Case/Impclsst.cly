@@ -1,0 +1,139 @@
+#include "IPersist.ch"
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IMapClassTable
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+
+CREATE CLASS IMapClassTable
+   //## begin IMapClassTable.initialDeclarations preserve=yes
+   //## end IMapClassTable.initialDeclarations
+
+PROTECTED:
+   METHOD init
+EXPORT:
+
+   //## Get and Set Operations for Has Relationships (generated)
+
+   //## Documentation IMapClassTable::ListaAtributos.has
+   METHOD ListaAtributos
+   //## Documentation IMapClassTable::DataStore.has
+   // guarda um datastore especifico para a classe mapeada.
+   // não pode ser nulo se o estado do objeto estiver
+   // isComplete
+   // deve ser sempre igual ao
+   // IPersistenteBroker::DefaultDataStore()
+   METHOD DataStore
+   METHOD setDataStore
+   //## Get and Set Operations for Class Attributes (generated)
+   //## Attribute: nomeClasse
+   METHOD nomeClasse
+   METHOD setnomeClasse
+   //## Attribute: nomeTabela
+   METHOD nomeTabela
+   METHOD setnomeTabela
+   //## Attribute: isComplete
+   // se torna .T. quando as informaçoes complementares
+   // estiverem preenchidas (nome da tabela e tipo das colunas)
+   METHOD isComplete
+   METHOD setisComplete
+   // Additional EXPORT Declarations
+   //## begin IMapClassTable.EXPORT preserve=yes
+   //## end IMapClassTable.EXPORT
+
+PROTECTED:
+   // Additional PROTECTED Declarations
+   //## begin IMapClassTable.PROTECTED preserve=yes
+   //## end IMapClassTable.PROTECTED
+
+
+HIDDEN:                                          //## implementation
+   // Data Members for Has Relationships
+
+   //## begin IMapClassTable::ListaAtributos.has preserve=no  EXPORT: IMapAtrColuna { -> nRO}
+   VAR m_ListaAtributos
+   VAR m_DataStore
+   VAR m_nomeClasse
+   //## end IMapClassTable::nomeClasse.attr
+
+   //## begin IMapClassTable::nomeTabela.attr preserve=no  EXPORT: IString {U}
+   VAR m_nomeTabela
+   //## end IMapClassTable::nomeTabela.attr
+
+   //## begin IMapClassTable::isComplete.attr preserve=no  EXPORT: bool {U} .F.
+   VAR m_isComplete
+   //## end IMapClassTable::isComplete.attr
+
+   // Additional Implementation Declarations
+   //## begin IMapClassTable.implementation preserve=yes
+   //## end IMapClassTable.implementation
+
+END CLASS
+
+// Class IMapClassTable
+METHOD init(),()
+   ::m_ListaAtributos := Lista():new()
+   ::m_DataStore := nil
+   ::m_nomeClasse := nil
+   ::m_nomeTabela := nil
+   ::m_isComplete := .f.
+RETURN self
+
+//ListaPointer<IMapAtrColuna> & IMapClassTable::ListaAtributos()
+METHOD ListaAtributos()
+RETURN ::m_ListaAtributos
+
+//IDataStore * IMapClassTable::DataStore()
+METHOD DataStore()
+RETURN ::m_DataStore
+
+//void IMapClassTable::setDataStore(IDataStore *const  value)
+METHOD setDataStore(value)
+::m_DataStore := value
+RETURN nil
+
+//## Get and Set Operations for Class Attributes (implementation)
+
+//IString IMapClassTable::nomeClasse()
+METHOD nomeClasse()
+RETURN ::m_nomeClasse
+
+//void IMapClassTable::setnomeClasse(const IString value)
+METHOD setnomeClasse(value)
+::m_nomeClasse := value
+RETURN nil
+
+//IString IMapClassTable::nomeTabela()
+METHOD nomeTabela()
+RETURN ::m_nomeTabela
+
+//void IMapClassTable::setnomeTabela(const IString value)
+METHOD setnomeTabela(value)
+::m_nomeTabela := value
+RETURN nil
+
+//bool IMapClassTable::isComplete()
+METHOD isComplete()
+RETURN ::m_isComplete
+
+//void IMapClassTable::setisComplete(const bool value)
+METHOD setisComplete(value)
+::m_isComplete := value
+RETURN nil
+
+
+
+
+
+
+
+
+
+
+
+

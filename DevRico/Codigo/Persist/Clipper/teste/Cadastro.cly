@@ -1,0 +1,31 @@
+#include "IPersist.ch"
+CREATE CLASS Cadastro INHERIT IPersistente
+EXPORT:
+   VAR numero
+   VAR endereco
+   VAR nome
+   VAR peso
+   VAR theTitulos
+EXPORT:
+   METHOD init
+   METHOD getNomeClasse
+   METHOD OnClassInfo
+END CLASS
+
+METHOD OnClassInfo
+   ::registraMembro( "numero",1,4,IsInt)
+   ::registraMembro( "endereco",2,40,IsStringFix)
+   ::registraMembro( "nome",3,30,IsStringFix)
+   ::registraMembro( "peso",4,10,IsDouble)
+return self
+
+METHOD getNomeClasse
+return "Cadastro"
+
+METHOD init(),()
+   ::numero   := 0
+   ::endereco := " "
+   ::nome     := " "
+   ::peso     := 0
+   ::theTitulos := IAssociacao():new("CadXTit",self,Titulo(),eForte,eMuitos):pronto()
+return self

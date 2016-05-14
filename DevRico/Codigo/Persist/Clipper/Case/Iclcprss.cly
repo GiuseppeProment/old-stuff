@@ -1,0 +1,421 @@
+//## begin module.cm preserve=no
+//   %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IColecaoPersistenteBase; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: e:\meusdo~1\projetos\persist\codigo\casecode\iclcprss.h
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+
+// IDirecaoFetch
+// IEstadoColecao
+// IQueryStatement
+// IObservador
+
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IColecaoPersistenteBase; Abstract
+// Esta classe faz operacoes de Select somente atraves de
+// um criterio opcional.
+// OPEN CURSOR cHandleCursor
+// Select <ID,campo1,...n> FROM <Tabela> [ WHERE [ campon
+// <rel> [campox|valor] [AND | OR] ...] TO cHandleCursor
+// O cursor fica aberto enquanto a instancia existir. e
+// acessado para obter nova linha :
+// FECTH cHandleCursor
+// Portando a conexao com o meio persistente é igual a dura
+// o da instancia.
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+//## Uses: registra-se em; IBroker { -> F}
+//## Uses: <unnamed>; IDirecaoFetch { -> }
+//## Uses: <unnamed>; IPersistente { -> F}
+//## Uses: <unnamed>; friend IPersistente { -> F}
+
+CREATE CLASS IColecaoPersistenteBase INHERIT IObservador //## Inherits: <unnamed>
+   //## begin IColecaoPersistenteBase.initialDeclarations preserve=yes
+   //## end IColecaoPersistenteBase.initialDeclarations
+PROTECTED:
+   METHOD init
+EXPORT:
+   CLASS METHOD initClass
+   //## Other Operations (specified)
+   //## Operation: releaseDummy%910837611
+
+   //virtual void releaseDummy(IPersistente* pNulo) = 0;
+   MESSAGE releaseDummy IS DEFERRED
+   //## Operation: createDummy%908340282
+   // retorna um objeto IPersistente por valor, vazio. apenas
+   // para reconhecimento adiantado do mesmo (mapeamento). O
+   // IPersistente necessita possuir um construtor default,
+   // sem nenhum processamento.
+   //## Semantics:
+   // talvez crie-se um construtor especial no IPersistente
+   // com um parametro escondido para evitar que o construtor
+   // seja modificado pelas subclasses.
+   //virtual IPersistente* createDummy() = 0;
+   MESSAGE createDummy IS DEFERRED
+
+   //## Operation: count%908340284
+   // número de objetos disponiveis. defalt é 0
+   //int count();
+   METHOD count
+
+   //## Operation: isFim%908340285
+   // retorna true se não houver mais objetos na lista tanto
+   // para cima quanto para baixo.
+   // bool isFim();
+   METHOD isFim
+
+   //## Operation: pronto%908340283
+   //## Semantics:
+   // 1. não aceita mais modificações
+   // 2. processa a coleção
+   // 3. muda o estado para executando.
+   //IColecaoPersistenteBase& pronto();
+   METHOD pronto
+
+   //## Operation: goPrimeiro%908340286
+   // coloca o ponteiro de objetos no primeiro da lista.
+   //IColecaoPersistenteBase& goPrimeiro();
+   METHOD goPrimeiro
+   //## Operation: goUltimo%908340287
+   // coloca o ponteiro de objetos no ultimo da lista.
+   //IColecaoPersistenteBase& goUltimo();
+   METHOD goUltimo
+   //## Operation: goProximo%908340288
+   // avança o ponteiro de objetos para o proximo.
+   //IColecaoPersistenteBase& goProximo();
+   METHOD goProximo
+   //## Operation: goAnterior%908340289
+   // retrocede o ponteiro de objetos para o anterior.
+   //IColecaoPersistenteBase& goAnterior();
+   METHOD goAnterior
+   //## Operation: ReavalieColecao%908340290
+   // causa o reprocessamento da coleção. count pode mudar.
+   //IColecaoPersistenteBase& ReavalieColecao();
+   METHOD ReavalieColecao
+   //## Operation: ReavaliePointer%908340291
+   // causa a reavaliação do ponteiro de objetos.
+   //IColecaoPersistenteBase& ReavaliePointer();
+   METHOD ReavaliePointer
+   //## Operation: addCriterio%908581620
+   // adiciona um criterio a lista theCriterio
+   //## Semantics:
+   // somente no estado NOVO
+   //IColecaoPersistenteBase& addCriterio(ICriterio umCriterio);
+   METHOD addCriterio
+   //## Operation: addOrdem%908581621
+   // adiciona objeto ordenador a lista de ordenacao.
+   //## Semantics:
+   // somente no estado NOVO
+   //IColecaoPersistenteBase& addOrdem(IOrdem umaOrdem);
+   METHOD addOrdem
+   //## Operation: crieInstancia%908340292
+   // cria um objeto do tipo mantido pela coleção e guarda-o
+   // no ponteiro InstanciaCorrente. que será deletado a cada
+   // nova chamada de crieInstancia e se a coleção for
+   // destruida. Inicie com NULL.
+   //virtual IPersistente& crieInstancia();
+   METHOD crieInstancia
+   //## Get and Set Operations for Has Relationships (generated)
+
+   //## Documentation IColecaoPersistenteBase::theDataStore.has
+   // guarda o datastore do IPersistente para agilizar as
+   // chamadas.
+   //IDataStore * theDataStore();
+   METHOD theDataStore
+   //void settheDataStore(IDataStore *const  value);
+   METHOD settheDataStore
+   //## Documentation IColecaoPersistenteBase::theQuery.has
+   // guarda o query montado pelo broker para a coleção
+   //IQueryStatement & theQuery();
+   METHOD theQuery
+   //void settheQuery(const IQueryStatement &value);
+   METHOD settheQuery
+   //## Documentation IColecaoPersistenteBase::estado.has
+   // dependendo do estado, diversas operações devem ser
+   // recusadas.
+   //IEstadoColecao estado();
+   METHOD estado
+   //void setestado(const IEstadoColecao value);
+   METHOD setestado
+
+   METHOD Mapa
+   METHOD setMapa
+
+   //## Documentation IColecaoPersistenteBase::ListaCriterio.has
+   //Lista<ICriterio> & ListaCriterio();
+   METHOD ListaCriterio
+
+   //## Documentation IColecaoPersistenteBase::ListaOrdem.has
+   //Lista<IOrdem> & ListaOrdem();
+   METHOD ListaOrdem
+
+   // Additional Public Declarations
+   //## begin IColecaoPersistenteBase.public preserve=yes
+   //## end IColecaoPersistenteBase.public
+
+
+PROTECTED:
+
+   METHOD checkCriterioOrdem
+
+   //## Other Operations (specified)
+   //## Operation: movePointer%908340293
+   // causa o ponteiro ser movimentado.
+   //IColecaoPersistenteBase& movePointer(IDirecaoFetch direcao = proximo);
+   METHOD movePointer
+
+   // Data Members for Class Attributes
+
+   //## Attribute: InstanciaCorrente
+   // guarda o objeto corrente mantido pela coleção.
+   //## begin IColecaoPersistenteBase::InstanciaCorrente.attr preserve=no  public: IPersistente {R}
+   //IPersistente *m_InstanciaCorrente;
+   VAR m_InstanciaCorrente
+   //## end IColecaoPersistenteBase::InstanciaCorrente.attr
+
+   // Additional Protected Declarations
+   //## begin IColecaoPersistenteBase.protected preserve=yes
+   //## end IColecaoPersistenteBase.protected
+
+
+PROTECTED:
+   // Additional Private Declarations
+   //## begin IColecaoPersistenteBase.private preserve=yes
+   //## end IColecaoPersistenteBase.private
+   //## begin IColecaoPersistenteBase::theDataStore.has preserve=no  public: IDataStore { -> 1RFO}
+   //IDataStore *m_theDataStore;
+   VAR m_theDataStore
+   //## end IColecaoPersistenteBase::theDataStore.has
+
+   //## begin IColecaoPersistenteBase::theQuery.has preserve=no  public: IQueryStatement { -> 1VO}
+   //IQueryStatement m_theQuery;
+   VAR m_theQuery CLASS IQueryStatement
+   //## end IColecaoPersistenteBase::theQuery.has
+
+   //## begin IColecaoPersistenteBase::estado.has preserve=no  public: IEstadoColecao { -> 1VO}
+   //IEstadoColecao m_estado;
+   VAR m_estado
+   //## end IColecaoPersistenteBase::estado.has
+
+   //## begin IColecaoPersistenteBase::ListaCriterio.has preserve=no  public: ICriterio { -> nVFO}
+   //Lista<ICriterio> m_ListaCriterio;
+   VAR m_ListaCriterio CLASS Lista
+   //## end IColecaoPersistenteBase::ListaCriterio.has
+
+   //## begin IColecaoPersistenteBase::ListaOrdem.has preserve=no  public: IOrdem { -> nVFO}
+   //Lista<IOrdem> m_ListaOrdem;
+   VAR m_ListaOrdem CLASS Lista
+   //## end IColecaoPersistenteBase::ListaOrdem.has
+
+   // Additional Implementation Declarations
+   //## begin IColecaoPersistenteBase.implementation preserve=yes
+   //## end IColecaoPersistenteBase.implementation
+   VAR m_mapa CLASS IMapClassTable
+
+END CLASS
+// Class IColecaoPersistenteBase
+
+
+//ÍÍÍÍÍÍÍÍÍÍÍÍÍIMPLEMENTACAOÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ
+
+
+METHOD init(),()
+   ::m_theQuery := IQueryStatement():new()
+   ::m_ListaCriterio := Lista():new()
+   ::m_ListaOrdem := Lista():new()
+   ::m_estado := NOVA
+RETURN self
+
+METHOD initClass(),()
+RETURN self
+
+METHOD Mapa
+RETURN ::m_Mapa
+
+METHOD setMapa(value)
+   ::m_mapa := value
+RETURN nil
+
+//int IColecaoPersistenteBase::count()
+METHOD count()
+   local Contagem
+   Contagem:=0
+RETURN Contagem
+
+//bool IColecaoPersistenteBase::isFim()
+METHOD isFim()
+RETURN ::m_theQuery:isFim()
+
+//IColecaoPersistenteBase& IColecaoPersistenteBase::pronto()
+METHOD pronto()
+   //## begin IColecaoPersistenteBase::pronto%908340283.body preserve=yes
+   IASSERT( ::estado()==NOVA,"IColecao em estado invalido" )
+
+   // checar criterios e ordem
+   @:checkCriterioOrdem()
+
+   IBroker():processeColecao( self )
+
+   ::setestado( PRONTA )
+   //## end IColecaoPersistenteBase::pronto%908340283.body
+RETURN self
+
+METHOD checkCriterioOrdem()
+   local n,oCriterio,oAtributo,cb,mT,oOrdem
+   IASSERT(::m_mapa!=NIL,"IColecao:ListaCriterio chamada fora de sequencia")
+   for n := 1 to ::m_ListaCriterio:count()
+      oCriterio := ::m_ListaCriterio:subscript(n)
+      if ! oCriterio:isConector()
+         // obter atributo
+         cb := &("{|o| allTrim(upper(o:nomeMembro()))==["+allTrim(upper(oCriterio:atributo()))+"]  }")
+
+         SE ( (oAtributo:=::m_mapa:listaAtributos():search(cb))==NIL) THROW "Criterio tem atributo Invalido"
+         // preencher coluna
+         oCriterio:setColuna( oAtributo:nomeColuna() )
+         // tipo argumento compativel com atributo
+         // vamos usar o tipo declarado
+         mt := oAtributo:tipoMembro()
+         do case
+            case mt >= IsDouble .and. mt < IsChar  // numerico
+                 SE valType(oCriterio:argumento())!="N" THROW "IColecao: atributo numerico incompativel com argumento"
+            case mt >= IsChar   .and. mt < IsTimestamp  // caracter,memo
+                 SE valType(oCriterio:argumento())!="C" THROW "IColecao: atributo caracter incompativel com argumento"
+            case mt == IsTimestamp               // date
+                 SE valType(oCriterio:argumento())!="D" THROW "IColecao: atributo data incompativel com argumento"
+            case mt == IsUnknow                  // unknow
+            otherwise
+               THROW "ISSO NAO PODE ACONTECER NUNCA"
+         endcase
+         // comparacao valida
+         // at‚ agora foram todas analisadas e nao conclui nenhuma que seja invalida
+      endif
+   next
+   // logica :
+   // vamos apenas checar o nome do atributo e preencher a coluna
+   for n := 1 to ::m_ListaOrdem:count()
+      oOrdem := ::m_ListaOrdem:subscript(n)
+      cb := &("{|o| allTrim(upper(o:nomeMembro()))==["+allTrim(upper(oOrdem:atributo()))+"]  }")
+      SE ( (oAtributo:=::m_mapa:listaAtributos():search(cb)) ==NIL) THROW "Ordem tem atributo Invalido"
+      oOrdem:setColuna( oAtributo:nomeColuna() )
+   next
+RETURN nil
+
+//IColecaoPersistenteBase& IColecaoPersistenteBase::goPrimeiro()
+METHOD goPrimeiro()
+   ::movePointer(primeiro)
+RETURN self
+
+//IColecaoPersistenteBase& IColecaoPersistenteBase::goUltimo()
+METHOD goUltimo()
+   ::movePointer(ultimo)
+RETURN self
+
+//IColecaoPersistenteBase& IColecaoPersistenteBase::goProximo()
+METHOD goProximo()
+   ::movePointer(proximo)
+RETURN self
+
+//IColecaoPersistenteBase& IColecaoPersistenteBase::goAnterior()
+METHOD goAnterior()
+   ::movePointer(previo)
+RETURN self
+
+//IColecaoPersistenteBase& IColecaoPersistenteBase::ReavalieColecao()
+METHOD ReavalieColecao()
+RETURN self
+
+//IColecaoPersistenteBase& IColecaoPersistenteBase::ReavaliePointer()
+METHOD ReavaliePointer()
+   ::movePointer(reavalia)
+RETURN self
+
+//IColecaoPersistenteBase& IColecaoPersistenteBase::movePointer(IDirecaoFetch direcao)
+METHOD movePointer(direcao)
+   //IBroker():requisitaObjeto(self, direcao)
+   ::m_theDataStore:requisitaDados(;
+      ::m_theQuery,;
+      direcao,;
+      ::m_instanciaCorrente,;
+      ::m_mapa)
+RETURN self
+
+
+//IColecaoPersistenteBase& IColecaoPersistenteBase::addCriterio(ICriterio umCriterio)
+METHOD addCriterio(umCriterio)
+   IASSERT( ::estado()==NOVA,"IColecao em estado invalido" )
+   IASSERT( umCriterio:isKindOf(ICriterio()),"IColecao:addCriterio objeto de classe invalida")
+   ::m_ListaCriterio:adiciona(umCriterio)
+   // regra 2 : conectores sao sempre indice par
+   // regra 3 : sentencas sao sempre impar
+   if umCriterio:isConector()
+      SE ! ISPAR( ::m_ListaCriterio:count() ) THROW "IColecao:addCriterio;encadeamento invalido"
+   else
+      SE ! ISIMPAR( ::m_ListaCriterio:count() ) THROW "IColecao:addCriterio;encadeamento invalido"
+   endif
+RETURN self
+
+//IColecaoPersistenteBase& IColecaoPersistenteBase::addOrdem(IOrdem umaOrdem)
+METHOD addOrdem(umaOrdem)
+   IASSERT( ::estado()==NOVA,"IColecao em estado invalido" )
+   IASSERT( umaOrdem:isKindOf(IOrdem()),"IColecao:addOrdem objeto de classe invalida")
+   ::m_ListaOrdem:adiciona(umaOrdem)
+RETURN self
+
+//IPersistente& IColecaoPersistenteBase::crieInstancia()
+METHOD crieInstancia()
+   THROW "IColecaoPersistenteBase:crieInstancia virtual nao redefinida"
+RETURN NIL
+
+//## Get and Set Operations for Has Relationships (implementation)
+
+//IDataStore * IColecaoPersistenteBase::theDataStore()
+METHOD theDataStore()
+RETURN ::m_theDataStore
+
+//void IColecaoPersistenteBase::settheDataStore(IDataStore *const  value)
+METHOD settheDataStore(value)
+   ::m_theDataStore := value
+RETURN nil
+
+//IQueryStatement & IColecaoPersistenteBase::theQuery()
+METHOD theQuery()
+RETURN ::m_theQuery
+
+//void IColecaoPersistenteBase::settheQuery(const IQueryStatement &value)
+METHOD settheQuery(value)
+   ::m_theQuery := value
+RETURN nil
+
+//IEstadoColecao IColecaoPersistenteBase::estado()
+METHOD estado()
+RETURN ::m_estado
+
+//void IColecaoPersistenteBase::setestado(const IEstadoColecao value)
+METHOD setestado(value)
+   ::m_estado := value
+RETURN nil
+
+//Lista<ICriterio> & IColecaoPersistenteBase::ListaCriterio()
+METHOD ListaCriterio()
+RETURN ::m_ListaCriterio
+
+//Lista<IOrdem> & IColecaoPersistenteBase::ListaOrdem()
+METHOD ListaOrdem()
+RETURN ::m_ListaOrdem

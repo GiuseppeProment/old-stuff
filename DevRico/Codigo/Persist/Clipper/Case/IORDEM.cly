@@ -1,0 +1,40 @@
+#include "IPersist.ch"
+
+CREATE CLASS IOrdem
+PROTECTED:
+   METHOD init
+EXPORT:
+   METHOD atributo
+   METHOD isAsc
+   METHOD coluna
+   METHOD setcoluna
+HIDDEN:
+   //## begin IOrdem::atributo.attr preserve=no  public: IString {U}
+   VAR m_atributo
+   //## begin IOrdem::isAsc.attr preserve=no  public: bool {U} true
+   VAR m_isAsc
+   //## begin IOrdem::coluna.attr preserve=no  public: IString {U}
+   VAR m_coluna
+END CLASS
+
+METHOD init(atributo,isAsc)
+   IASSERT(valType(atributo)=="C","Iordem:init Tipo errado")
+   IASSERT(valType(isAsc)=="L","Iordem:init Tipo errado")
+   ::m_atributo := atributo
+   ::isAsc := isAsc
+RETURN self
+
+METHOD atributo
+RETURN ::m_atributo
+
+METHOD isAsc
+RETURN ::m_isAsc
+
+METHOD coluna
+RETURN ::m_coluna
+
+METHOD setcoluna(value)
+   IASSERT(valtype(value)=="C","IOrdem:setColuna tipo errado")
+   ::m_coluna = value
+RETURN nil
+

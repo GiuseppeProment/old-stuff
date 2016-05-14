@@ -1,0 +1,67 @@
+//## begin module.cm preserve=no
+//   %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IUpdateStatement; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\ipdtsttm.h
+
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IUpdateStatement
+// UPDATE <tabela> SET (nomeColuna)=exp,...
+// WHERE [ CURRENT OF <cursorName> | where_clausula ]
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+
+CREATE CLASS IUpdateStatement INHERIT IModifyStatement //## Inherits: <unnamed>
+PROTECTED:
+   METHOD init
+EXPORT:
+   //## Operation: asSentencaSQL%908596355
+   METHOD asSentencaSQL
+END CLASS
+// Class IUpdateStatement
+
+
+METHOD init(),()
+RETURN self
+
+//## Other Operations (implementation)
+//IString IUpdateStatement::asSentencaSQL()
+METHOD asSentencaSQL()
+   Local sentenca,i
+   //## begin IUpdateStatement::asSentencaSQL%908596355.body preserve=yes
+   sentenca:="UPDATE "
+   sentenca+= ::tabelaAlvo()
+   sentenca+=" SET "
+   // colunas e valores
+   for i:=1 to ::theColunas():count()
+      if (i!=1)
+         sentenca+=","
+      endif
+      sentenca+= ( ::theColunas():subscript(i) )
+      sentenca+= "="
+      sentenca+= ltrim( ::theValues():subscript(i) )
+   next
+   // parte where
+   sentenca += ::getParteWhereID()
+   //## end IUpdateStatement::asSentencaSQL%908596355.body
+RETURN sentenca
+
+

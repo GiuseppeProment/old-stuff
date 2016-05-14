@@ -1,0 +1,207 @@
+Giuseppe Enrico Proment Jr.  1998 (c)
+5-11-9993-6363
+5-11-6099-1970
+gproment@sti.com.br
+
+Um excelente Desenvolvedor sabe que há mais a Desenvolver do que desenvolver.
+FrameWork I++ (c)
+
+
+
+
+
+
+
+
+Componentes para C++ Builder e Delphi
+
+Versão Preliminar
+
+
+Índice Analítico
+Componentes para C++ Builder e Delphi	1
+Versão Preliminar	1
+Copyright	3
+Audiência	3
+Reconhecimentos	3
+Introdução	3
+Arquitetura de componentes no C++ Builder	3
+Estratégia de construção	4
+Detalhes de Projeto	4
+Requisitos do usuário de componentes	4
+1o Ciclo de Desenvolvimento	6
+
+
+
+Copyright 
+O contéudo deste documento é obra intelectual de Giuseppe Enrico Proment Junior, é permitida sua livre distribuição e uso desde que citada a fonte. 
+
+Audiência
+Este documento é distribuido na Intenet para qualquer pessoa ou instituição. Para o desenvolvedor experiente, se é que exista algum que esteja lendo isto,  espero que me mande críticas ou sugestões, para o novato é um excelente inicio.
+
+Reconhecimentos
+Em nosso mundo nada se cria tudo se transforma, em computação essa lei é uma constante, tudo que vemos hoje é consequência do conhecimento acumulado e aprimorado,  todos os desenvolvedores devem seu conhecimento aos desenvolvedores que nos antecederam, mas eu tenho algumas fontes que para mim foram as mais importantes, assim meus agradecimentos aos trabalhos de Scott Ambler consultor independente que escreveu matérias sobre persistencia, A equipe da IBM responsável pela IOC (IBM Open Class), VisualAge e OS/2, ao OMG sobre os trabalhos que culminaram no padrão CORBA, A Borland por suas ferramentas sempre práticas, Aos criadores da Internet, porque sem ela não teria conseguido todas as informações, A Grady Booch pelo qual me iniciei na senda OO, a Rational Software por suas ferramentas Case-OO, A Gane & Sarson através deles entendi que codificação é um grão de areia, a Microsoft que apesar das críticas e das limitações tem sido muito útil durante minha carreira e a minha esposa Carmen, porque mulheres de malucos como eu, são criaturas divinas.
+
+
+Introdução
+A parte de persistência da FrameWork está pronta, faltando apenas pequenos ajustes de performance e desempenho que serão feitos após o primeiro uso da mesma que dará as informações para tal. Agora surgi a necessidade de encapsular a framework como componentes para que possam ser utilizados em ambientes que trabalham com componentes como VisualAge, Delphi, C++Builder e os ambientes Java ( Se bem que ainda não temos a versão da FrameWork I++ (c) para java, mas teremos em breve ). A maioria dos ambientes são proprietarios, visto que até a presente data, e creio que isso durará muito, não existe um padrão para componentes, exceto para java, mas java é em si, um padrão proprietário aceito por todos com seus JavaBeans1 ( alguém falou microsoft ?). Assim sendo, temos as seguintes diretrizes para a componetização da FrameWork I++ (c) :
+* Não vincular características de ambiente proprietário com a FrameWork
+* Prover somente os componentes necessários que não precisam ter necessáriamente paralelo com a FrameWork I++ (c)
+* Prover componentes que possibilitem a construção visual de aplicativos utilizando a FrameWork I++ (c).
+* Prover componentes do tipo Coleção Visual, que são os visualizadores de objetos.
+* Prover componentes concientes de objetos persistentes I++-Aware.
+
+O Ambiente escolhido será o C++Builder da Borland, que apesar de violar a linguagem C++2, apresenta uma boa arquitetura de componentes, e possui o excelente conceito de construir a aplicação com os componentes ´rodando´.
+Arquitetura de componentes no C++ Builder
+O componente em C++ Builder pode ser visual ou grafico, ( obvius ) e é uma classe como se esperaria de um bom ambiente. As características especiais desta classe são:
+* Deve herdar do TComponent
+* Deve, para ser útil, possuir propriedades properties3 de visibilidade published3  para sejam manipuladas pelo inspetor de objetos.
+* Pode possuir eventos ( closures3 )
+* Tem de ser registrada de acordo com as regras da ferramenta
+* Pode possuir ´Editores de propriedades´ que são construidos para finalidades especificas do componente e também registrados na ferramenta.
+* componente deve ter unidade de tradução e ser compilado conforme manda a ferramenta.
+* componente deve ser consciente de que pode ´rodar´ em ambiente de desenvolvimento ou real.
+* Pode-se esperar que o estado ajustado pelo programador pode ser guardado e resgatado.
+Estratégia de construção
+Conforme visto no item anterior, o ambiente é bastante personalizado para a ferramenta, haja visto a falta de padrões para componentes. Assim sendo torna-se claro que a Framework I++ (c) deverá ser utilizada pelos componentes criados, os componentes serão uma camada que utiliza a FrameWork I++ (c). Teremos que ter cuidado para não sobrecarregar a implementação, o que significaria a perda da perfomance conseguida pela FrameWork I++ (c).
+Detalhes de Projeto 
+Um dos primeiros problemas que vemos é a impossibilidade do uso de templates4 do C++, porque os templates são construidos em tempo de compilação, como é o caso da classe IColeção, assim sendo os templates deverão ser especificados completamente no componente IBColecao conforme veremos mais adiante.
+Requisitos do usuário de componentes
+	Vamos pensar em como os componentes serão utilizados, para verificar quais são os seus requisitos. A sequência poderia ser ( iniciando na implementação ):
+1. Projetistas criam as classes de negócio que são persistentes herdando de IPersistente.
+2. Um pacote com essas classes é compilado e fica disponível como DLL, esse pacote pode conter os templates IColeção5 para cada classe de negócio também.
+3. Os Implementadores de aplicativo usam os componentes que usam a DLL contendo todas as classes de negócio, ou podem usar diretamente a DLL conforme a necessidade.
+Bem, podemos ver que a coisa começa a se tornar simples.
+Quais seriam os componentes principais ? Seriam algo que ´represente´ o objeto persistente e a coleção de objetos persistentes, eu digo represente, porque num ambiente comum o Implementador normalmente manipula vários objetos persistentes. Para ficar mais claro, vamos imaginar uma aplicação simples, um cadastro de pessoas ( coisa mais simples que isso, só se for um Hello word! ). Em nossa simples aplicação, existe uma classe pessoa que é persistente, e o aplicativo faz inserção, alteração, exclusão, pesquisa e impressão das pessoas. O aplicativo possui somente uma tela com um controle que é um ListView6 onde são exibidas as pessoas com pequeno icone e o nome da mesma, e teclas para inserir, gravar, excluir e imprimir. Okey, vamos começar imaginando que a equipe de projeto construiu o modelo de negócio e já fez a DLL usando as técnicas OO, então nosso intrépido e competente Implementador Zé Mané que conhece tudo de Builder, Delphi, VB e PowerBuilder vai construir esta complexa aplicação, apesar das imensas qualidades de nosso superprogramador que tem o perfil exigido pelo mercado,  ele não precisa do modelo de negócio, já que o importante é programar..., mesmo assim devido as suas muitas atividades, ele sabe somente o nome das linguagens bases de suas ferramentas de trabalho, afinal de contas a programação hoje em dia é "Visual", sendo assim a nossa equipe de projeto que passa suas horas "lendo" e "pesquisando" e portando tem tempo sobrando, tem de desenvolver os componentes "visuais" para que o Zé possa fazer sua "árdua tarefa". A equipe de projeto então imagina como o Zé vai fazer sua grandiosa aplicação:
+1. Arrastar e Soltar um componente IBroker7 
+2. Arrastar e Soltar um componente IDataStore que representa a Base de dados física
+3. Arrastar e Soltar um componente IColeçãoVisual para o Form8 
+4. Ajustar este componente para Coleção de Pessoa
+5. Arrastar e Soltar um componente IRepresenta 
+6. Ajustar este componente para representar Pessoa
+7. Vincular o IRepresenta ao IColeçãoVisual
+Neste ponto temos o seguinte: O Componente IColeçãoVisual é um agrupamento de objetos do tipo Pessoa, o componente IRepresenta é capaz de representar as pessoas de IColeçãoVisual uma de cada vez, Assim sendo quando um item em IColeçãoVisual é selecionado o IRepresenta representa esta pessoa automaticamente. O IRepresenta possui todos os atributos e métodos relevantes de IPersistente como save, erase etc... O IColeçãoVisual possui métodos como refresh, seleciona primeiro, próximo etc... O IRepresenta também possui eventos como QuandoSalvar, QuandoApagar, QuandoAlterar, QuandoMudarRepresentação etc...
+Os componentes visuais possuem duas coisas úteis durante a construção "visual" : propriedades e eventos, aqui vale uma pergunta: E os métodos ? Os métodos podem ser utilizados programaticamente, até o Zé sabe disso. Assim se o Zé tiver que acionar um método específico de Pessoa, terá de solicitar o objeto Pessoa ao IRepresenta ou ao IColeçãoVisual e acionar o método que deseja, normalmente os métodos são acionados durante as respostas aos eventos que são codificados pelo Zé como funções-membros ou métodos ( chame do que quiser9) do Form em questão. Agora vamos as operações complicadas como inserção, alteração, exclusão e impressão de pessoas:
+
+Inserção e Alteração
+No evento do botão "Inserir/alterar" que foi colocado de forma genial pelo Zé ( não é piada, você precisa ver como ele ajustou o tamanho do botão para o tamanho do texto, incrível ! nunca ví tamanha capacidade...) ele "pega" ( não achei termo melhor...) os contéudos de controles de entrada de texto ( TEdit em Builder ) para nome, idade e peso e coloca no objeto Pessoa de IRepresenta, exemplificando em código fonte:
+
+Pessoa& umaPessoa;
+umaPessoa = (Pessoa) mIRepresenta.NovoObjeto( );  se inserção
+umaPessoa = (Pessoa) mIRepresenta.RefObjeto( );   se alteração
+umaPessoa.setNome( mNome );
+umaPessoa.setIdade( mIdade );
+umaPessoa.setPeso( mPeso );
+umaPessoa.save( );
+
+Exclusão
+No evento do botão "Excluir"
+
+Pessoa& umaPessoa;
+umaPessoa = (Pessoa) mIRepresenta.RefObjeto( ); 
+umaPessoa.erase( );
+
+OU mais eficiente
+
+mIColecaoVisual.ExcluirSeleção();
+
+Impressão
+No evento do botão "Imprimir"
+
+Pessoa& umaPessoa;
+mIColecaoVisual.primeiro();
+while ( ! mIColecaoVisual.fim() )
+{
+ umaPessoa = (Pessoa) mIRepresenta.RefObjeto( ); 
+ /* rotina de impressão aqui */
+ mIColecaoVisual.proximo()
+}
+
+Okey, agora um PRF10
+
+Como o IRepresenta sabe que o objeto foi salvo ?
+R: Ele é um observador11,  então ele observa a pessoa que representa, assim quando o método save de pessoa é executado o evento IPersistente::Salvando é disparado para os observadores que se registraram para observar Pessoa.
+
+Como a IColeçãoVisual vai se atualizar quanto ao novo objeto ?
+R: O IRepresenta esta vinculado ao IColecaoVisual, assim ele comunica  o IColeçãoVisual que toma a devida atitude. 
+
+Porque você esta usando funções set* ?
+R: Neste caso, que não deve ser o seu, nosso superprogramador Zé não tem a menor noção de conversões de tipo, e a equipe de projeto sobrecarregou os set*.
+
+Porque o cast12?
+R: Porque o IRepresenta é polimórfico quando ao tipo que representa, ou seja, representa qualquer subclasse de IPersistente, assim o método NovoObjeto que retorna uma referência ao objeto devolve IPersistente, apesar de ser do tipo Pessoa que foi criado através de metaclasse.
+
+Como funciona o IColeçãoVisual:ExcluirSeleçao ?
+R: Simplesmente aciona o método erase em cada um dos objeto IPersistente que estiverem selecionados.
+
+Melhoramentos
+Logicamente podemos fazer componentes que facilitem o árduo trabalho do Zé, por exemplo Componentes de edição de texto que sejam conscientes e vinculaveis ao componente IRepresenta, poderiam ser por exemplo IEdit que seriam vinculados a um atributo especifido do objeto representado pelo IRepresenta, que apesar de conhecer apenas o IPersistente pode obter a descrição dos atributos do objeto representado. Podemos também criar componentes para relatório similares aos descritos.
+
+1o Ciclo de Desenvolvimento
+Conforme visto acima temos os seguintes componentes básicos para a utilização prática da FrameWork I++(c)  e necessitamos ainda de componentes que possuam a funcionalidade para representar : IDataStore13, o IDataStore é a conexão com o banco de dados. Deve existir um 'modelo' que regulamente a relação entre os componentes. Neste primeiro  ciclo de desenvolvimento chegamos aos seguintes componentes :
+
+* IBObjeto (ao invés de IRepresenta) representará um objeto da classe persistente.
+* IBColeção  (ao invés de IColecaoVisual) representará um conjunto de objetos do tipo persistente.
+* IBLista  Lista os objetos de uma IBColecao.
+* IBBroker Representa o broker para necessidades avançadas.
+* IBDataStoreOracleActivex é a implementação para datastore oracle com activex faz a conexão com o banco de dados.
+* IBDataStoreODBC idem acima para ODBC.
+
+Problemas
+	Encontrei alguns problemas, particulares do ambiente de componentes do C++Builder, não são exatamente problemas, mas sim cuidados especiais que devem ser tomados.
+	Em primeiro lugar um componente no C++Builder terá suas propriedades gravadas quando a aplicação for salva, depois quando a aplicação é carregada na IDE ou executada, ocorre o seguinte:
+1. Os componentes são criados na memória.
+2. As propriedades são lidas e escritas nos componentes recém criados durante este momento o componente apresenta o estado ComponentState = csLoading.
+3. Ao final o método Loaded é invocado em cada componente.
+Nota-se que quando a aplicação é salva ocorre o mesmo para o form em edição ou forms abertos ( não verifiquei ainda) e também quando mudamos a visão de View As Text para View As Form. E daí ? e daí que a ordem de criação de componentes e escrita das propriedades é sequencial, assim se tivermos um componente que exige alguns dados para depois ser ativado, como por exemplo o IDataStore que exige nomeBanco,nome,senha para depois ter sua propriedade Ativo ligada, durante a "carga" do form terá sua propriedade Ativo ligada antes das outras ( ordem Alfabética ), logicamente isto gerará um disparo de exceção no mínimo, além disso se um componente "usa" outro e tenta usar antes que ele tenha sido atribuido, isto gerará uma violação de acesso a memória. Num primeiro momento tentei resolver isto usando o ComponentState e Loaded da seguinte maneira: quando o estado for csLoading, qualquer atribuição de propriedade somente faz com que a mesma seja preenchida, depois o Loaded que foi sobrescrito é chamado e o componente inicializado de acordo com cada propriedade. Ok, funcionou bem, mas não resolve o problema da inter-relação entre componentes e nem a propagação de mudança de estado entre componentes com dependencias. Vamos esclarecer isto:
+IBColecao usa 1 IDataStore
+IBLista  usa 1 IBColecao
+
+Logicamente a ordem de criação e inicialização deve ser 
+
+IDataStore->IBColecao->IBLista
+
+evento/mudança estado
+
+Que é também a ordem de propagação de mudança de estado ou evento.
+
+Solução
+	Vamos precisar de modelos Orientados a Objeto dinamico e estático  para solucionar este problema. São necessários comportamentos diferentes para o tempo de carga, que é quando os componentes estarão com ComponentState="csLoading", para tempo de execução (ComponentState!="csLoading") e talvez para tempo de projeto (ComponentState="csDesigning" ), e de uma arquitetura que possibilite a "propagação de mudança de estado ou evento".
+Para carga:
+1. Todos componentes carregados.
+2. Devem ser inicializados de acordo com a prioridade de cada um
+OU
+1. Todos componentes carregados.
+2. Inicialização em 'cascata'
+
+A inicialização em cascata ocorre da seguinte forma: Quando um componente tem seu método Loaded chamado, ajusta reve seu estado corrente. Durante essa revisão se houver componentes que usa, antes de usa-lo verifica se esta com IsPronto=true. Ocorre que sempre que a propriedade IsPronto de um componente é invokada, se o mesmo não estiver pronto, faz a revisão e ajusta IsPronto para true. Observamos que o método Loaded também verifica IsPronto antes de fazer a revisão que já pode ter sido efetuada em cascata. Essa propriedade IsPronto deve vir de uma superclasse que vamos chamar de IComponent. A única restrição é que somente componentes não visuais podem herdar de IComponent já que IComponent herda de TComponent e os componentes não visuais herdam de classes diversas que herdam de TComponent não dando a chance de modificarmos os TComponent. Mas isso não representa problema porque os componentes de alta prioridade são os não visuais.
+
+Para "Propagação de mudança de estado/evento".
+1. Se um componente muda de estado deve avisar os que o utilizam, isso exige um esquema de notificação entre objetos que se conhecem.
+
+Neste caso usaremos a mesma estratégia do IComponent adicionando ao mesmo a mesma capacidade 
+do mecanismo de notificação existente na IFrameWork ( classe INotificadorObservador ) 
+
+
+No caso do Cbuilder, e mais especificamente da VCL, teremos que usar diretamente o INotificadorObservador, porque a VCL não suporta multipla herança ( é feita em Pascal ). Assim o IComponent vai possuir a funcionalidade do INotificadorObservador (ie, todos os métodos e atributos do INotificador e do IObservador.
+
+1 Excelente implementação para componentes, vale a pena estudar
+2 Viola visibilidade e armazenamento
+3 Não existe em Ansi C++
+4 Aliás eu julgo os ´Templates´ um negócio muito mal resolvido... 
+5 Vide Especificação da FrameWork I++ (c)
+6 Controle típico do Windows que possui vários items dentro de um quadrado
+7 IBroker relacionador padrão de Persistencia x Banco de Dados
+8 É incrivel como um jargão pode ser recursivo...
+9 Aliás é uma baita confusão função-membro, método, operação e por ai vai
+10 Ora bolas é tradução de FAQ !
+11 Veja esquema de notificação na especificação da FrameWork I++ (c)
+12 Cast é molde, quando você tem de "exergar" uma váriavel como se fosse de outro tipo
+13 Vide Especificação da FrameWork I++ (c) - Persistência
+23 de Maio de 2000
+Página 8
+
+
+
+
+

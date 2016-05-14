@@ -1,0 +1,6 @@
+FUNCTION SayGrConPg(nCodigo)
+	Local nOrder1 := GrConPg->(IndexOrd())
+	GrConPg->(DbSetOrder(1))
+	GrConPg->(DbSeek(nCodigo))
+	GrConPg->(DbSetOrder(nOrder1))
+	Return If(GrConPg->(Found()),GrConPg->GrcDescr," NAO EXISTE ")

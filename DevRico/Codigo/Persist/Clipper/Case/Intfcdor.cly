@@ -1,0 +1,156 @@
+//## begin module.cm preserve=no
+//   %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: INotificador; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\intfcdor.h
+
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+
+
+
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: INotificador
+// Classe que visa manter relações de notificação simples
+// entre objetos.
+// Temos o Cliente e o Servidor, ambos descendendo de
+// INotifyProtocol
+// Protocolo:
+// Cliente (->) Servidor.enableNotifyEventsFor( Cliente );
+// Servidor on Event : Servidor.notifyObservers(
+// INotifyEvent );
+// Cliente.onReceiveNotifyEvent( INotifyEvent );
+// Cliente (->) Servidor.disableNotifyEventsFor( Cliente );
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+//## Uses: <unnamed>; IEventoNotificacao { -> F}
+
+CREATE CLASS INotificador
+PROTECTED:
+   METHOD init
+EXPORT:
+   CLASS METHOD initClass
+EXPORT:
+   METHOD ligaNotificarObservadores
+   METHOD desligaNotificarObservadores
+   METHOD NotificarEventosPara
+   METHOD notificarObservadores
+   METHOD PararNotificarEventosPara
+   //## Get and Set Operations for Class Attributes (generated)
+
+   //## Attribute: nomeClasse
+   // pode ser sobrescrito com o nome da subclasse.
+   METHOD nomeClasse
+   METHOD setnomeClasse
+   // Data Members for Class Attributes
+   //## Attribute: evtDefault
+   //## begin INotificador::evtDefault.attr preserve=no  EXPORT: static TypeEvento {V} "INotificador::Default"
+   CLASS VAR evtDefault READONLY
+   //## end INotificador::evtDefault.attr
+   // Additional Public Declarations
+   //## begin INotificador.public preserve=yes
+   //## end INotificador.public
+PROTECTED:
+   // Additional PROTECTED Declarations
+   //## begin INotificador.PROTECTED preserve=yes
+   //## end INotificador.PROTECTED
+HIDDEN:
+   // Additional HIDDEN Declarations
+   //## begin INotificador.HIDDEN preserve=yes
+   //## end INotificador.HIDDEN
+HIDDEN:                                          //## implementation
+   // Data Members for Has Relationships
+   //## Documentation INotificador::Observadores.has
+   //## begin INotificador::Observadores.has preserve=no  EXPORT: IObservador { -> 0..nRFO}
+   VAR m_Observadores
+   //## end INotificador::Observadores.has
+
+   // Data Members for Class Attributes
+
+   //## Attribute: notificarObservadores
+   // estado de notificação de observadores on/off.
+   //## begin INotificador::notificarObservadores.attr preserve=no  HIDDEN: bool {U} .T.
+   VAR m_notificarObservadores
+   //## end INotificador::notificarObservadores.attr
+
+   //## begin INotificador::nomeClasse.attr preserve=no  EXPORT: IString {U} "INotificador"
+   VAR m_nomeClasse
+   //## end INotificador::nomeClasse.attr
+
+   // Additional Implementation Declarations
+   //## begin INotificador.implementation preserve=yes
+   //## end INotificador.implementation
+END CLASS
+// Class INotificador
+
+METHOD init(),()
+   ::m_Observadores := Lista():new()
+   ::m_notificarObservadores := .t.
+   ::m_nomeClasse := "INotificador"
+RETURN self
+
+METHOD initClass(),()
+   //TypeEvento INotificador
+   ::evtDefault := "INotificador::Default"
+RETURN self
+
+//INotificador& INotificador::ligaNotificarObservadores()
+METHOD ligaNotificarObservadores()
+   ::m_notificarObservadores := .t.
+RETURN self
+
+//INotificador& INotificador::desligaNotificarObservadores()
+METHOD desligaNotificarObservadores()
+   ::m_notificarObservadores := .f.
+RETURN self
+
+//INotificador& INotificador::NotificarEventosPara(IObservador& Observador)
+METHOD NotificarEventosPara(Observador)
+   IASSERT(Observador:isKindOf(IObservador()),"NotificarEventosPara: ;recebido nao ‚ observador")
+   // deveria checar se descende do IObservador ??
+   //  adicionar na lista
+   ::m_Observadores:adiciona( Observador )
+RETURN self
+
+//INotificador& INotificador::PararNotificarEventosPara(IObservador& Observador)
+METHOD PararNotificarEventosPara(Observador)
+   //  retirar da lista
+   ::m_Observadores:removeObjeto( Observador )
+RETURN self
+
+//INotificador& INotificador::notificarObservadores(IEventoNotificacao& evento)
+METHOD notificarObservadores(evento)
+   local i
+   for i := 1 to ::m_Observadores:count()
+      ::m_Observadores:subscript(i):quandoEventoNotificacao(evento)
+   next
+RETURN self
+
+//## Get and Set Operations for Class Attributes (implementation)
+
+//IString INotificador::nomeClasse()
+METHOD nomeClasse()
+RETURN ::m_nomeClasse
+
+//void INotificador::setnomeClasse(const IString value)
+METHOD setnomeClasse(value)
+::m_nomeClasse = value
+RETURN nil
+
+

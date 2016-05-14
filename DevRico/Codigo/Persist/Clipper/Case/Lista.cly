@@ -1,0 +1,89 @@
+#include "IPersist.ch"
+
+CREATE CLASS Lista
+HIDDEN:
+  VAR pp
+  VAR mCount
+PROTECTED:
+  METHOD init
+EXPORT:
+  METHOD subscript
+  //int posicaoDe( T& objeto )
+  METHOD posicaoDe
+  METHOD search
+  METHOD adiciona
+  METHOD repoe
+  METHOD remove
+  METHOD removeObjeto
+  METHOD troca
+  METHOD ordena
+  METHOD count
+END CLASS
+
+/* --------- implementacao ------------ */
+
+METHOD init(),()
+   ::pp = {}
+   ::mCount = 0
+RETURN self
+
+METHOD subscript(i)
+RETURN  ::pp[i]
+
+METHOD repoe(i,objeto)
+   ::pp[i] := objeto
+RETURN self
+
+METHOD adiciona( objeto )
+   ::mCount++
+   aadd(::pp,objeto)
+RETURN objeto
+
+METHOD remove( i )
+   local x,newMat
+   newMat := {}
+   for x := 1 to ::mCount
+      if i != x
+         aadd(newMat,::pp[x])
+      endif
+   next
+   ::mCount--
+   ::pp := AClone( newMat )
+RETURN SELF
+
+METHOD posicaoDe( objeto )
+//T& objeto
+  // varrer comparando
+  local posicao := -1
+  local i
+  for  i := 1 to ::mCount
+   if ( objeto==::pp[i] )
+      posicao := i
+      exit
+   endif
+  next
+RETURN posicao
+
+METHOD removeObjeto( objeto )
+  ::remove( ::posicaoDe(objeto) )
+RETURN SELF
+
+METHOD troca(x, y)
+//int x, int y
+  // testar indices e trocar
+  local i
+  i=::pp[x]
+  ::pp[x]=::pp[y]
+  ::pp[y]=i
+RETURN SELF
+
+METHOD ordena( codeBlock )
+RETURN SELF
+
+METHOD search( codeBlock)
+   local nPos := ascan(::pp,codeBlock)
+RETURN iif(nPos!=0,::pp[nPos],NIL)
+
+METHOD count
+RETURN ::mCount
+

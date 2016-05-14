@@ -1,0 +1,1058 @@
+{\rtf1\ansi \deff4
+{\fonttbl{\f4\froman\fcharset0\fprq2 Times New Roman;}}
+{\stylesheet
+{\f4\fs20 \snext0 Normal;}
+{\s1\sb240 \i\f4\fs20 \sbasedon0\snext1 Rose_Label;}
+{\s2 \b\f4\fs28\sbasedon0\snext2 Rose_Class;}
+{\s3 \f4\fs20 \sbasedon0\snext3 Rose_Decl;}
+{\s4 \f4\fs20 \sbasedon0\snext4 Rose_CDoc;}
+{\s5 \f4\fs20 \sbasedon0\snext5 Rose_Doc;}
+{\s6 \f4\fs20 \sbasedon0\snext6 Rose_SClass;}
+{\s7 \b\f4\fs28\sbasedon0\snext7 Rose_Heading1;}
+}
+\pard\plain \s7 \b\f4\fs28 Classes\par
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IKnowType{\v{\xe {IKnowType{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 ISTO É UM ENUM DOS TIPOS CONHECIDOS.
+Existe uma brecha que é IsUnknow e IsUnknowPointe\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 INotificador{\v{\xe {INotificador{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 Classe que visa manter relações de notificação simples
+entre objetos.
+Temos o Cliente e o Servidor, ambos descendendo de
+INotifyProtocol
+Protocolo:
+Cliente (->) Servidor.enableNotifyEventsFor( Cliente );
+Servidor on Event : Servidor.notifyObservers(
+INotifyEvent );
+Cliente.onReceiveNotifyEvent( INotifyEvent );
+Cliente (->) Servidor.disableNotifyEventsFor( Cliente
+);\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 notificarObservadores : bool = true{\v{\xe {notificarObservadores{\i{ -- attributes}}\:INotificador}}}\par
+\pard\plain \s5 \f4\fs20 estado de notificação de observadores on/off\par
+\pard\plain \s3 \f4\fs20 nomeClasse : IString = "INotificado{\v{\xe {nomeClasse{\i{ -- attributes}}\:INotificador}}}\par
+\pard\plain \s5 \f4\fs20 pode ser sobrescrito com o nome da subclasse.\par
+\pard\plain \s3 \f4\fs20 evtDefault : TypeEvento = "INotificador::Default"{\v{\xe {evtDefault{\i{ -- attributes}}\:INotificador}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 Observadores : IObservador{\v{\xe {Observadores{\i{ -- has-relation}}\:INotificador}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 ligaNotificarObservadores( ) : INotificador&{\v{\xe {ligaNotificarObservadores{\i{ -- operation}}\:INotificador}}}\par
+\pard\plain \s3 \f4\fs20 desligaNotificarObservadores( ) : INotificador&{\v{\xe {desligaNotificarObservadores{\i{ -- operation}}\:INotificador}}}\par
+\pard\plain \s3 \f4\fs20 NotificarEventosPara( Observador : IObservador&) : INotificador&{\v{\xe {NotificarEventosPara{\i{ -- operation}}\:INotificador}}}\par
+\pard\plain \s3 \f4\fs20 notificarObservadores( evento : IEventoNotificacao&) : INotificador&{\v{\xe {notificarObservadores{\i{ -- operation}}\:INotificador}}}\par
+\pard\plain \s3 \f4\fs20 PararNotificarEventosPara( Observador : IObservador&) : INotificador&{\v{\xe {PararNotificarEventosPara{\i{ -- operation}}\:INotificador}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IEventoNotificacao{\v{\xe {IEventoNotificacao{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 evento : TypeEvento{\v{\xe {evento{\i{ -- attributes}}\:IEventoNotificacao}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 Notificador : INotificador{\v{\xe {Notificador{\i{ -- has-relation}}\:IEventoNotificacao}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 IEventoNotificacao( notificador : INotificador&, evento : TypeEvento = INotificador::evtDefault){\v{\xe {IEventoNotificacao{\i{ -- operation}}\:IEventoNotificacao}}}\par
+\pard\plain \s3 \f4\fs20 IEventoNotificacao( notificador : INotificador&){\v{\xe {IEventoNotificacao{\i{ -- operation}}\:IEventoNotificacao}}}\par
+\pard\plain \s3 \f4\fs20 IEventoNotificacao( ){\v{\xe {IEventoNotificacao{\i{ -- operation}}\:IEventoNotificacao}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IObservador{\v{\xe {IObservador{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 quandoEventoNotificacao( evento : IEventoNotificacao&) : IObservador&{\v{\xe {quandoEventoNotificacao{\i{ -- operation}}\:IObservador}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 INotificadorObservador{\v{\xe {INotificadorObservador{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 INotificador, IObservador\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 Lista{\v{\xe {Lista{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 guarda somente referencias a objetos
+nao foi feita para guardar objetos.
+
+
+interfac\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 pp : void**{\v{\xe {pp{\i{ -- attributes}}\:Lista}}}\par
+\pard\plain \s3 \f4\fs20 mCount : int{\v{\xe {mCount{\i{ -- attributes}}\:Lista}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 Lista( ) : Lista{\v{\xe {Lista{\i{ -- operation}}\:Lista}}}\par
+\pard\plain \s3 \f4\fs20 ~Lista( ){\v{\xe {~Lista{\i{ -- operation}}\:Lista}}}\par
+\pard\plain \s3 \f4\fs20 posicaoDe( objeto : T*) : int{\v{\xe {posicaoDe{\i{ -- operation}}\:Lista}}}\par
+\pard\plain \s3 \f4\fs20 operator []( i : int) : const class T&{\v{\xe {operator []{\i{ -- operation}}\:Lista}}}\par
+\pard\plain \s3 \f4\fs20 adiciona( objeto : T*) : Lista&{\v{\xe {adiciona{\i{ -- operation}}\:Lista}}}\par
+\pard\plain \s3 \f4\fs20 remove( i : int) : Lista&{\v{\xe {remove{\i{ -- operation}}\:Lista}}}\par
+\pard\plain \s3 \f4\fs20 removeObjeto( objeto : T*) : Lista&{\v{\xe {removeObjeto{\i{ -- operation}}\:Lista}}}\par
+\pard\plain \s3 \f4\fs20 troca( x : int, y : int) : Lista&{\v{\xe {troca{\i{ -- operation}}\:Lista}}}\par
+\pard\plain \s3 \f4\fs20 ordena( pf : int (*) (class T&, class T&)) : Lista&{\v{\xe {ordena{\i{ -- operation}}\:Lista}}}\par
+\pard\plain \s3 \f4\fs20 count( ) : int{\v{\xe {count{\i{ -- operation}}\:Lista}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IStatement{\v{\xe {IStatement{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 Responsavel pela montagem de sentenças SQL
+tabela, [ coluna = valor ], [insert|update|delete], id\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 tabelaAlvo : IString{\v{\xe {tabelaAlvo{\i{ -- attributes}}\:IStatement}}}\par
+\pard\plain \s3 \f4\fs20 linhasCount : int = 0{\v{\xe {linhasCount{\i{ -- attributes}}\:IStatement}}}\par
+\pard\plain \s5 \f4\fs20 total de linhas afetadas/contadas pelo statement.
+no caso do select é totalLinhas e no caso de outros é
+linhasAfetadas.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 theColunas : ListaString{\v{\xe {theColunas{\i{ -- has-relation}}\:IStatement}}}\par
+\pard\plain \s5 \f4\fs20 acesso será pelo [] da classe IString\par
+\pard\plain \s3 \f4\fs20 theValues : ListaString{\v{\xe {theValues{\i{ -- has-relation}}\:IStatement}}}\par
+\pard\plain \s5 \f4\fs20 usado tanto para escrita quando para leitura.
+exemplo Insert / select  o acesso será feito pelo []
+da classe IString.\par
+\pard\plain \s3 \f4\fs20 estado : IEstadoStatement{\v{\xe {estado{\i{ -- has-relation}}\:IStatement}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 asSentencaSQL( ) : IString{\v{\xe {asSentencaSQL{\i{ -- operation}}\:IStatement}}}\par
+\pard\plain \s5 \f4\fs20 retorna a sentenca SQL completa.\par
+\pard\plain \s3 \f4\fs20 addColuna( nome : IString&) : IStatement&{\v{\xe {addColuna{\i{ -- operation}}\:IStatement}}}\par
+\pard\plain \s5 \f4\fs20 adiciona o nome da coluna na lista theColunas, a ordem
+de adição é igual a ordem das colunas na sentença e
+equivale aos values na mesma ordem que são adicionados
+também neste metodo.\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IInsertStatement{\v{\xe {IInsertStatement{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 INSERT INTO <tabela>  (nomeColuna),...  VALUES
+(exp,...)\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 IModifyStatement\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 asSentencaSQL( ) : IString{\v{\xe {asSentencaSQL{\i{ -- operation}}\:IInsertStatement}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IUpdateStatement{\v{\xe {IUpdateStatement{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 UPDATE <tabela> SET (nomeColuna)=exp,...
+WHERE [ CURRENT OF <cursorName> | where_clausula ]\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 IModifyStatement\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 asSentencaSQL( ) : IString{\v{\xe {asSentencaSQL{\i{ -- operation}}\:IUpdateStatement}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IDeleteStatement{\v{\xe {IDeleteStatement{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 DELETE <tabela>
+WHERE [ CURRENT OF <cursorName> | where_clausula ]\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 IModifyStatement\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 asSentencaSQL( ) : IString{\v{\xe {asSentencaSQL{\i{ -- operation}}\:IDeleteStatement}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IQueryStatement{\v{\xe {IQueryStatement{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 SELECT nomeColuna,... FROM <tabela>
+[ WHERE where_clausula ]
+[ ORDER BY nomeColuna,... ]\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 IStatement\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 lowLayerSlot : void* = NULL{\v{\xe {lowLayerSlot{\i{ -- attributes}}\:IQueryStatement}}}\par
+\pard\plain \s5 \f4\fs20 slot para ser usado pela camada de mais baixo nível
+representada pelo IDataStore para guardar informações
+sobre o cursor/canal. poder ser desde um handle de
+OBCD até uma estrutura que registra
+tabela,registro,indice no caso de Xbase puro.\par
+\pard\plain \s3 \f4\fs20 isFim : bool = false{\v{\xe {isFim{\i{ -- attributes}}\:IQueryStatement}}}\par
+\pard\plain \s5 \f4\fs20 true se durante alguma movimentação o fim ou inicio
+das linhas é alcançado.\par
+\pard\plain \s3 \f4\fs20 ValueID : IString{\v{\xe {ValueID{\i{ -- attributes}}\:IQueryStatement}}}\par
+\pard\plain \s5 \f4\fs20 para transferencia do valor do ID
+tamanho do ID real. (gravado).\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 <unnamed> : IOrdem\par
+\pard\plain \s3 \f4\fs20 <unnamed> : ICriterio\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 asSentencaSQL( ) : IString{\v{\xe {asSentencaSQL{\i{ -- operation}}\:IQueryStatement}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IModifyStatement{\v{\xe {IModifyStatement{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 IStatement\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 ID : IPersistID{\v{\xe {ID{\i{ -- has-relation}}\:IModifyStatement}}}\par
+\pard\plain \s5 \f4\fs20 exigido por Delete e Update e ignorado por Insert\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 addColunaValor( coluna : IString&, valor : IString&) : IModifyStatement&{\v{\xe {addColunaValor{\i{ -- operation}}\:IModifyStatement}}}\par
+\pard\plain \s5 \f4\fs20 adiciona coluna,valor nas respectivas listas, é apenas
+um facilitador já que usará o AddColuna herdado e
+acessará o theValues[].\par
+\pard\plain \s3 \f4\fs20 getParteWhereID( ) : IString{\v{\xe {getParteWhereID{\i{ -- operation}}\:IModifyStatement}}}\par
+\pard\plain \s5 \f4\fs20 retorna algo similar a "WHERE ID=345234534" é o id do
+objeto sendo manipulado.\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IErro{\v{\xe {IErro{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 Simples classe que será arremesada em caso de erro.
+throw.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 textError : char*{\v{\xe {textError{\i{ -- attributes}}\:IErro}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 IErro( texto : char*){\v{\xe {IErro{\i{ -- operation}}\:IErro}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IString{\v{\xe {IString{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 deve receber algumas incrementações para trabalhar com
+conteudo binario.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 IStringStruct\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 IString( ) : IString{\v{\xe {IString{\i{ -- operation}}\:IString}}}\par
+\pard\plain \s3 \f4\fs20 IString( pValue : char*) : IString{\v{\xe {IString{\i{ -- operation}}\:IString}}}\par
+\pard\plain \s3 \f4\fs20 IString( pValue : const char*) : IString{\v{\xe {IString{\i{ -- operation}}\:IString}}}\par
+\pard\plain \s3 \f4\fs20 IString( pAddress : IString&) : IString{\v{\xe {IString{\i{ -- operation}}\:IString}}}\par
+\pard\plain \s3 \f4\fs20 ~IString( ){\v{\xe {~IString{\i{ -- operation}}\:IString}}}\par
+\pard\plain \s3 \f4\fs20 operator char*( ) : char*{\v{\xe {operator char*{\i{ -- operation}}\:IString}}}\par
+\pard\plain \s3 \f4\fs20 operator const char*( ) : const char*{\v{\xe {operator const char*{\i{ -- operation}}\:IString}}}\par
+\pard\plain \s3 \f4\fs20 operator =( pAddress : IString&) : IString&{\v{\xe {operator ={\i{ -- operation}}\:IString}}}\par
+\pard\plain \s3 \f4\fs20 operator =( pValue : char*) : IString&{\v{\xe {operator ={\i{ -- operation}}\:IString}}}\par
+\pard\plain \s3 \f4\fs20 alocar( qtde : unsigned int) : void{\v{\xe {alocar{\i{ -- operation}}\:IString}}}\par
+\pard\plain \s3 \f4\fs20 liberar( ) : void{\v{\xe {liberar{\i{ -- operation}}\:IString}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IDataStoreOracleActivex{\v{\xe {IDataStoreOracleActivex{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 IDataStore\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 nomeDb : IString{\v{\xe {nomeDb{\i{ -- attributes}}\:IDataStoreOracleActivex}}}\par
+\pard\plain \s5 \f4\fs20 nome do banco de dados a trabalhar (ou serviço).\par
+\pard\plain \s3 \f4\fs20 dataBase : ODatabase{\v{\xe {dataBase{\i{ -- attributes}}\:IDataStoreOracleActivex}}}\par
+\pard\plain \s5 \f4\fs20 Instancia da classe ODatabase providenciada pela
+Oracle Co. para acesso ao banco de dados.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 execute( setenca : IModifyStatement&) : bool{\v{\xe {execute{\i{ -- operation}}\:IDataStoreOracleActivex}}}\par
+\pard\plain \s5 \f4\fs20 deve afetar somente 1 linha, senão é merda.\par
+\pard\plain \s3 \f4\fs20 execute( anQuery : IQueryStatement&) : bool{\v{\xe {execute{\i{ -- operation}}\:IDataStoreOracleActivex}}}\par
+\pard\plain \s3 \f4\fs20 requisitaDados( theQuery : IQueryStatement&, tipo : IDirecaoFetch = proximo) : IDataStore&{\v{\xe {requisitaDados{\i{ -- operation}}\:IDataStoreOracleActivex}}}\par
+\pard\plain \s3 \f4\fs20 PegueDados( pDyn : ODynaset*, theQuery : IQueryStatement&) : void{\v{\xe {PegueDados{\i{ -- operation}}\:IDataStoreOracleActivex}}}\par
+\pard\plain \s5 \f4\fs20 Transfere os dados vindos do Banco Dados Oracle para o
+objeto temporario.\par
+\pard\plain \s3 \f4\fs20 isFim( theQuery : IQueryStatement&) : bool{\v{\xe {isFim{\i{ -- operation}}\:IDataStoreOracleActivex}}}\par
+\pard\plain \s5 \f4\fs20 retorna true se a operação de moveCursor encontra o
+inicio ou fim dos dados.\par
+\pard\plain \s3 \f4\fs20 libereQuery( anQuery : IQueryStatement&) : IDataStore&{\v{\xe {libereQuery{\i{ -- operation}}\:IDataStoreOracleActivex}}}\par
+\pard\plain \s5 \f4\fs20 libera alocações que estão guardadas no
+IQueryStatement.lowLayerSlot\par
+\pard\plain \s3 \f4\fs20 ligar( ) : IDataStore&{\v{\xe {ligar{\i{ -- operation}}\:IDataStoreOracleActivex}}}\par
+\pard\plain \s5 \f4\fs20 conecta ao banco ou prepara-se para servir.\par
+\pard\plain \s3 \f4\fs20 desligar( ) : IDataStore&{\v{\xe {desligar{\i{ -- operation}}\:IDataStoreOracleActivex}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IMapClassTable{\v{\xe {IMapClassTable{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 nomeClasse : IString{\v{\xe {nomeClasse{\i{ -- attributes}}\:IMapClassTable}}}\par
+\pard\plain \s3 \f4\fs20 nomeTabela : IString{\v{\xe {nomeTabela{\i{ -- attributes}}\:IMapClassTable}}}\par
+\pard\plain \s3 \f4\fs20 isComplete : bool = false{\v{\xe {isComplete{\i{ -- attributes}}\:IMapClassTable}}}\par
+\pard\plain \s5 \f4\fs20 se torna true quando as informaçoes complementares
+estiverem preenchidas (nome da tabela e tipo das
+colunas)\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 ListaAtributos : IMapAtrColuna{\v{\xe {ListaAtributos{\i{ -- has-relation}}\:IMapClassTable}}}\par
+\pard\plain \s3 \f4\fs20 DataStore : IDataStore{\v{\xe {DataStore{\i{ -- has-relation}}\:IMapClassTable}}}\par
+\pard\plain \s5 \f4\fs20 guarda um datastore especifico para a classe mapeada.
+não pode ser nulo se o estado do objeto estiver
+isComplete
+deve ser sempre igual ao
+IPersistenteBroker::DefaultDataStore()\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IMapAtrColuna{\v{\xe {IMapAtrColuna{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 nomeMembro : IString{\v{\xe {nomeMembro{\i{ -- attributes}}\:IMapAtrColuna}}}\par
+\pard\plain \s3 \f4\fs20 offSet : unsigned int{\v{\xe {offSet{\i{ -- attributes}}\:IMapAtrColuna}}}\par
+\pard\plain \s3 \f4\fs20 tamanho : unsigned int{\v{\xe {tamanho{\i{ -- attributes}}\:IMapAtrColuna}}}\par
+\pard\plain \s3 \f4\fs20 varSizeMax : unsigned int = 0{\v{\xe {varSizeMax{\i{ -- attributes}}\:IMapAtrColuna}}}\par
+\pard\plain \s3 \f4\fs20 nomeColuna : IString{\v{\xe {nomeColuna{\i{ -- attributes}}\:IMapAtrColuna}}}\par
+\pard\plain \s5 \f4\fs20 se houver definicao no MapClass.Ini, obtem dele, caso
+contrario é igual ao nome do membro.\par
+\pard\plain \s3 \f4\fs20 isProxy : bool = false{\v{\xe {isProxy{\i{ -- attributes}}\:IMapAtrColuna}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 tipoMembro : IKnowType{\v{\xe {tipoMembro{\i{ -- has-relation}}\:IMapAtrColuna}}}\par
+\pard\plain \s3 \f4\fs20 tipoColuna : IKnowType{\v{\xe {tipoColuna{\i{ -- has-relation}}\:IMapAtrColuna}}}\par
+\pard\plain \s5 \f4\fs20 deve ser preenchido pelo broker\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 asString( anPersist : IPersistente&) : IString{\v{\xe {asString{\i{ -- operation}}\:IMapAtrColuna}}}\par
+\pard\plain \s5 \f4\fs20 retorna o conteudo do membro como char* transformado,
+exemplo : membro é 100.00 devolve '100.00'\par
+\pard\plain \s3 \f4\fs20 setValue( anPersist : IPersistente&, dado : char*, copyLen : int = 0) : void{\v{\xe {setValue{\i{ -- operation}}\:IMapAtrColuna}}}\par
+\pard\plain \s5 \f4\fs20 copia dado ao membro de anPersist. copyLen indica
+comprimento do dado / numero de bytes a serem copiados
+até o maximo do tamanho do membro. converte de acordo
+com o tipoMembro x tipoColuna. se for do tipo IUnknow
+então copia byte a byte até copyLen ou tamanho.
+Se copyLen for 0 então copia de acordo com o
+tipoMembro/tamanho. usualmente conclui que é tipo de
+tamanho fixo (string terminada com \\0).\par
+\pard\plain \s3 \f4\fs20 asPuro( anPersist : IPersistente&) : char const*{\v{\xe {asPuro{\i{ -- operation}}\:IMapAtrColuna}}}\par
+\pard\plain \s5 \f4\fs20 retorna o conteudo do membro como char* puro, nao
+transfoma é apenas `cast`
+talvez seja usado pelo propria AsString quando
+verificar que tipo é um tipo blob.
+o que tornará a copia muito custosa e não necessita de
+conversao.\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IColecao{\v{\xe {IColecao{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 IColecaoPersistenteBase\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 itens : IPersistente{\v{\xe {itens{\i{ -- has-relation}}\:IColecao}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 createDummy( ) : IPersistente*{\v{\xe {createDummy{\i{ -- operation}}\:IColecao}}}\par
+\pard\plain \s5 \f4\fs20 retorna um objeto IPersistente por valor, vazio.
+apenas para reconhecimento adiantado do mesmo
+(mapeamento). O IPersistente necessita possuir um
+construtor default, sem nenhum processamento.\par
+\pard\plain \s3 \f4\fs20 releaseDummy( pNulo : IPersistente*) : void{\v{\xe {releaseDummy{\i{ -- operation}}\:IColecao}}}\par
+\pard\plain \s3 \f4\fs20 ObjectPointer( ) : PersistenteSubClass*{\v{\xe {ObjectPointer{\i{ -- operation}}\:IColecao}}}\par
+\pard\plain \s3 \f4\fs20 ObjectRef( ) : PersistenteSubClass&{\v{\xe {ObjectRef{\i{ -- operation}}\:IColecao}}}\par
+\pard\plain \s3 \f4\fs20 ObjectCopy( ) : PersistenteSubClass{\v{\xe {ObjectCopy{\i{ -- operation}}\:IColecao}}}\par
+\pard\plain \s5 \f4\fs20 devolve uma cópia do objeto apontado pelo ponteiro de
+objetos. vai ter que ser implementado pelas classes
+template.\par
+\pard\plain \s3 \f4\fs20 crieInstancia( ) : IPersistente&{\v{\xe {crieInstancia{\i{ -- operation}}\:IColecao}}}\par
+\pard\plain \s5 \f4\fs20 cria um objeto do tipo mantido pela coleção e guarda-o
+no ponteiro InstanciaCorrente. que será deletado a
+cada nova chamada de crieInstancia e se a coleção for
+destruida. Inicie com NULL.\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IAssociacao{\v{\xe {IAssociacao{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 Faz a associacao entre dois IPersistentes, é um tipo
+de IColecaoPersistenteBase, porem restrita, necessita
+conhecer o ASSOCIADO, pois vai cria-los, do ASSOCIANDO
+somente precisa conhecer IPersistente que possui o ID.
+ASSOCIANDO.ID X ASSOCIADO.ID
+Necessita da tabela de associacao que sempre sera
+constituida de duas colunas IDAssociado,IDAssociando
+sua clausula SQL sera sempre
+SELECT IDAssociado FROM <tabela> WHERE IDAssociando =
+ASSOCIANDO.ID
+VAMOS TER QUE TRABALHAR COM BUFFERIZAÇÃO DE OBJETOS,
+COISA QUE A COLEÇÃO NORMAL, NÃO VAI TER.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 IColecaoPersistenteBase\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s3 \f4\fs20 <no rolename>{\v{\xe {pelas subclasses{\i{ -- association}}\:IAssociacao}}} in association pelas subclasses\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 IAssociacao( Dono : IPersistente&){\v{\xe {IAssociacao{\i{ -- operation}}\:IAssociacao}}}\par
+\pard\plain \s5 \f4\fs20 construtor unico. deve apresentar-se como observadora
+do persistente.
+Dono.NotificarEventosPara( *this );
+adiciona um criterio em si propria :
+"ID in ( Select AgregadoID from Broker::TabelaRelacao
+where AgregandoID = <Dono.ID> )"\par
+\pard\plain \s3 \f4\fs20 ~IAssociacao( ){\v{\xe {~IAssociacao{\i{ -- operation}}\:IAssociacao}}}\par
+\pard\plain \s5 \f4\fs20 Dono.PararNotificarEventosPara( *this );\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IPersistID{\v{\xe {IPersistID{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 Identificador unico dos objetos persistentes.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 id : IString{\v{\xe {id{\i{ -- attributes}}\:IPersistID}}}\par
+\pard\plain \s3 \f4\fs20 sequencial : int = 0{\v{\xe {sequencial{\i{ -- attributes}}\:IPersistID}}}\par
+\pard\plain \s3 \f4\fs20 CRAE : int = 0{\v{\xe {CRAE{\i{ -- attributes}}\:IPersistID}}}\par
+\pard\plain \s5 \f4\fs20 Chave de Resolução de Ambiguidade Externa
+valores válidos 0 a 128.\par
+\pard\plain \s3 \f4\fs20 RAP : int = 0{\v{\xe {RAP{\i{ -- attributes}}\:IPersistID}}}\par
+\pard\plain \s5 \f4\fs20 Resolução de Ambiguidade em Processo
+valores validos 0 a 32\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 generate( ) : IPersistID&{\v{\xe {generate{\i{ -- operation}}\:IPersistID}}}\par
+\pard\plain \s5 \f4\fs20 gera um id novo.\par
+\pard\plain \s3 \f4\fs20 asString( ) : char*{\v{\xe {asString{\i{ -- operation}}\:IPersistID}}}\par
+\pard\plain \s5 \f4\fs20 retorna o valor do id como string. pode ser algo como
+"12FC:3423A:FECD"\par
+\pard\plain \s3 \f4\fs20 setValue( valor : char*) : IPersistID&{\v{\xe {setValue{\i{ -- operation}}\:IPersistID}}}\par
+\pard\plain \s5 \f4\fs20 para operações de leitura de um persistente o set deve
+receber o valor do id persistido.\par
+\pard\plain \s3 \f4\fs20 RAP( ) : int{\v{\xe {RAP{\i{ -- operation}}\:IPersistID}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IStringStruct{\v{\xe {IStringStruct{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 pBuffer : char*{\v{\xe {pBuffer{\i{ -- attributes}}\:IStringStruct}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 ListaString{\v{\xe {ListaString{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IEstadoStatement{\v{\xe {IEstadoStatement{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 enum \{
+novo, incompleto, completo, executando,
+executado ,falhou ,terminado \}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IDirecaoFetch{\v{\xe {IDirecaoFetch{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 enum dos tipos de fetch
+primeiro,ultimo
+proximo,previo
+reavalia\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IEstadoColecao{\v{\xe {IEstadoColecao{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 enum : novo,pronto,terminado,erro\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IOperComparacao{\v{\xe {IOperComparacao{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 enum \{
+maior,menor,maiorOuIgual,menorOuIgual,igual,diferente,s
+imilar,
+entre,dentro \}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IOperLogicoPrecedencia{\v{\xe {IOperLogicoPrecedencia{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 enum \{AND,OR,AbreParentesis,FechaParentesis\}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IOrdem{\v{\xe {IOrdem{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 necessita de tradução\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 atributo : IString{\v{\xe {atributo{\i{ -- attributes}}\:IOrdem}}}\par
+\pard\plain \s3 \f4\fs20 isAsc : bool = true{\v{\xe {isAsc{\i{ -- attributes}}\:IOrdem}}}\par
+\pard\plain \s3 \f4\fs20 coluna : IString{\v{\xe {coluna{\i{ -- attributes}}\:IOrdem}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 IOrdem( atributo : IString&, isAsc : bool = true){\v{\xe {IOrdem{\i{ -- operation}}\:IOrdem}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 TypeEvento{\v{\xe {TypeEvento{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IEstadoGenerico{\v{\xe {IEstadoGenerico{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IDataStoreODBC{\v{\xe {IDataStoreODBC{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 14.11.99 - temos problemas com alguns drivres de odbc
+que não os da microsoft. Que invariavelmente não tem
+capacidade para cursores rolaveis, e outras
+características como cursores dinamicos. Temos que
+prover mecanismos
+para suporta-los. A Solução seria:
+1. identificar a versão suportada de ODBC ( 2 ou 3 )
+2. identificar o suporte a cursor rolavel ou somente
+para frente\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 IDataStore\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 DSN : IString{\v{\xe {DSN{\i{ -- attributes}}\:IDataStoreODBC}}}\par
+\pard\plain \s5 \f4\fs20 Data Source Name\par
+\pard\plain \s3 \f4\fs20 hConnection : SQLHDBC{\v{\xe {hConnection{\i{ -- attributes}}\:IDataStoreODBC}}}\par
+\pard\plain \s5 \f4\fs20 SQL handle DataBase Connection.\par
+\pard\plain \s3 \f4\fs20 hEnvironment : SQLHENV{\v{\xe {hEnvironment{\i{ -- attributes}}\:IDataStoreODBC}}}\par
+\pard\plain \s5 \f4\fs20 SQL Handle Environment.\par
+\pard\plain \s3 \f4\fs20 hStatement : SQLHSTMT{\v{\xe {hStatement{\i{ -- attributes}}\:IDataStoreODBC}}}\par
+\pard\plain \s5 \f4\fs20 SQL Handle Statement para operações de uma linha.\par
+\pard\plain \s3 \f4\fs20 IshConnection : bool = false{\v{\xe {IshConnection{\i{ -- attributes}}\:IDataStoreODBC}}}\par
+\pard\plain \s3 \f4\fs20 IshEnvironment : bool = false{\v{\xe {IshEnvironment{\i{ -- attributes}}\:IDataStoreODBC}}}\par
+\pard\plain \s3 \f4\fs20 IsConectado : bool = false{\v{\xe {IsConectado{\i{ -- attributes}}\:IDataStoreODBC}}}\par
+\pard\plain \s3 \f4\fs20 IshStatement : bool = false{\v{\xe {IshStatement{\i{ -- attributes}}\:IDataStoreODBC}}}\par
+\pard\plain \s3 \f4\fs20 nVersaoODBC : int = 0{\v{\xe {nVersaoODBC{\i{ -- attributes}}\:IDataStoreODBC}}}\par
+\pard\plain \s5 \f4\fs20 Versão de ODBC suportado pelo Driver em uso.\par
+\pard\plain \s3 \f4\fs20 IsCursorRolavelSuportado : bool{\v{\xe {IsCursorRolavelSuportado{\i{ -- attributes}}\:IDataStoreODBC}}}\par
+\pard\plain \s5 \f4\fs20 Indica se o driver em uso suporta Cursor Rolavel.
+Se não suportar vamos ter que prover ação compativel
+com navegação ou disparar excessão ou warning.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 execute( setenca : IModifyStatement&) : bool{\v{\xe {execute{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\pard\plain \s5 \f4\fs20 deve afetar somente 1 linha, senão é merda.\par
+\pard\plain \s3 \f4\fs20 execute( anQuery : IQueryStatement&) : bool{\v{\xe {execute{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\pard\plain \s3 \f4\fs20 requisitaDados( theQuery : IQueryStatement&, tipo : IDirecaoFetch = proximo) : IDataStore&{\v{\xe {requisitaDados{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\pard\plain \s3 \f4\fs20 isFim( theQuery : IQueryStatement&) : bool{\v{\xe {isFim{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\pard\plain \s5 \f4\fs20 retorna true se a operação de moveCursor encontra o
+inicio ou fim dos dados.\par
+\pard\plain \s3 \f4\fs20 libereQuery( anQuery : IQueryStatement&) : IDataStore&{\v{\xe {libereQuery{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\pard\plain \s5 \f4\fs20 libera alocações que estão guardadas no
+IQueryStatement.lowLayerSlo\par
+\pard\plain \s3 \f4\fs20 ligar( ) : IDataStore&{\v{\xe {ligar{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\pard\plain \s5 \f4\fs20 conecta ao banco ou prepara-se para servir. dispara
+execessao.\par
+\pard\plain \s3 \f4\fs20 desligar( ) : IDataStore&{\v{\xe {desligar{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\pard\plain \s3 \f4\fs20 aloqueENV( ) : void{\v{\xe {aloqueENV{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\pard\plain \s3 \f4\fs20 aloqueDBC( ) : void{\v{\xe {aloqueDBC{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\pard\plain \s3 \f4\fs20 conectar( ) : void{\v{\xe {conectar{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\pard\plain \s3 \f4\fs20 freeHandles( ) : void{\v{\xe {freeHandles{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\pard\plain \s3 \f4\fs20 aloqueStatementUmaLinha( ) : void{\v{\xe {aloqueStatementUmaLinha{\i{ -- operation}}\:IDataStoreODBC}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IColecaoPersistenteBase{\v{\xe {IColecaoPersistenteBase{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 Esta classe faz operacoes de Select somente atraves de
+um criterio opcional.
+OPEN CURSOR cHandleCursor
+Select <ID,campo1,...n> FROM <Tabela> [ WHERE [ campon
+<rel> [campox|valor] [AND | OR] ...] TO cHandleCursor
+O cursor fica aberto enquanto a instancia existir. e é
+acessado para obter nova linha :
+FECTH cHandleCursor
+Portando a conexao com o meio persistente é igual a
+duração da instancia.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 IObservador\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 InstanciaCorrente : IPersistente{\v{\xe {InstanciaCorrente{\i{ -- attributes}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 guarda o objeto corrente mantido pela coleção.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 theDataStore : IDataStore{\v{\xe {theDataStore{\i{ -- has-relation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 guarda o datastore do IPersistente para agilizar as
+chamadas.\par
+\pard\plain \s3 \f4\fs20 theQuery : IQueryStatement{\v{\xe {theQuery{\i{ -- has-relation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 guarda o query montado pelo broker para a coleção\par
+\pard\plain \s3 \f4\fs20 estado : IEstadoColecao{\v{\xe {estado{\i{ -- has-relation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 dependendo do estado, diversas operações devem ser
+recusadas.\par
+\pard\plain \s3 \f4\fs20 ListaCriterio : ICriterio{\v{\xe {ListaCriterio{\i{ -- has-relation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s3 \f4\fs20 ListaOrdem : IOrdem{\v{\xe {ListaOrdem{\i{ -- has-relation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 releaseDummy( pNulo : IPersistente*) : void{\v{\xe {releaseDummy{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s3 \f4\fs20 createDummy( ) : IPersistente*{\v{\xe {createDummy{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 retorna um objeto IPersistente por valor, vazio.
+apenas para reconhecimento adiantado do mesmo
+(mapeamento). O IPersistente necessita possuir um
+construtor default, sem nenhum processamento.\par
+\pard\plain \s3 \f4\fs20 count( ) : int{\v{\xe {count{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 número de objetos disponiveis. defalt é 0\par
+\pard\plain \s3 \f4\fs20 isFim( ) : bool{\v{\xe {isFim{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 retorna true se não houver mais objetos na lista tanto
+para cima quanto para baixo.\par
+\pard\plain \s3 \f4\fs20 pronto( ) : IColecaoPersistenteBase&{\v{\xe {pronto{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s3 \f4\fs20 goPrimeiro( ) : IColecaoPersistenteBase&{\v{\xe {goPrimeiro{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 coloca o ponteiro de objetos no primeiro da lista.\par
+\pard\plain \s3 \f4\fs20 goUltimo( ) : IColecaoPersistenteBase&{\v{\xe {goUltimo{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 coloca o ponteiro de objetos no ultimo da lista.\par
+\pard\plain \s3 \f4\fs20 goProximo( ) : IColecaoPersistenteBase&{\v{\xe {goProximo{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 avança o ponteiro de objetos para o proximo.\par
+\pard\plain \s3 \f4\fs20 goAnterior( ) : IColecaoPersistenteBase&{\v{\xe {goAnterior{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 retrocede o ponteiro de objetos para o anterior.\par
+\pard\plain \s3 \f4\fs20 ReavalieColecao( ) : IColecaoPersistenteBase&{\v{\xe {ReavalieColecao{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 causa o reprocessamento da coleção. count pode mudar.\par
+\pard\plain \s3 \f4\fs20 ReavaliePointer( ) : IColecaoPersistenteBase&{\v{\xe {ReavaliePointer{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 causa a reavaliação do ponteiro de objetos.\par
+\pard\plain \s3 \f4\fs20 movePointer( direcao : IDirecaoFetch = proximo) : IColecaoPersistenteBase&{\v{\xe {movePointer{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 causa o ponteiro ser movimentado.\par
+\pard\plain \s3 \f4\fs20 addCriterio( umCriterio : ICriterio) : IColecaoPersistenteBase&{\v{\xe {addCriterio{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 adiciona um criterio a lista theCriterio\par
+\pard\plain \s3 \f4\fs20 addOrdem( umaOrdem : IOrdem) : IColecaoPersistenteBase&{\v{\xe {addOrdem{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 adiciona objeto ordenador a lista de ordenacao.\par
+\pard\plain \s3 \f4\fs20 crieInstancia( ) : IPersistente&{\v{\xe {crieInstancia{\i{ -- operation}}\:IColecaoPersistenteBase}}}\par
+\pard\plain \s5 \f4\fs20 cria um objeto do tipo mantido pela coleção e guarda-o
+no ponteiro InstanciaCorrente. que será deletado a
+cada nova chamada de crieInstancia e se a coleção for
+destruida. Inicie com NULL.\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IAtributo{\v{\xe {IAtributo{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 somente para facilitar operacoes, é opcional\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s5 \f4\fs20 <none>\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IDataStore{\v{\xe {IDataStore{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 responsável pela implementação específica para cada
+tipo de meio.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 nome : IString = "DEFAULT"{\v{\xe {nome{\i{ -- attributes}}\:IDataStore}}}\par
+\pard\plain \s5 \f4\fs20 nome da datastore.\par
+\pard\plain \s3 \f4\fs20 usuario : IString{\v{\xe {usuario{\i{ -- attributes}}\:IDataStore}}}\par
+\pard\plain \s3 \f4\fs20 senha : IString{\v{\xe {senha{\i{ -- attributes}}\:IDataStore}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 execute( setenca : IModifyStatement&) : bool{\v{\xe {execute{\i{ -- operation}}\:IDataStore}}}\par
+\pard\plain \s5 \f4\fs20 deve afetar somente 1 linha, senão é merda.\par
+\pard\plain \s3 \f4\fs20 execute( anQuery : IQueryStatement&) : bool{\v{\xe {execute{\i{ -- operation}}\:IDataStore}}}\par
+\pard\plain \s3 \f4\fs20 requisitaDados( theQuery : IQueryStatement&, tipo : IDirecaoFetch = proximo) : IDataStore&{\v{\xe {requisitaDados{\i{ -- operation}}\:IDataStore}}}\par
+\pard\plain \s3 \f4\fs20 isFim( theQuery : IQueryStatement&) : bool{\v{\xe {isFim{\i{ -- operation}}\:IDataStore}}}\par
+\pard\plain \s5 \f4\fs20 retorna true se a operação de moveCursor encontra o
+inicio ou fim dos dados.\par
+\pard\plain \s3 \f4\fs20 libereQuery( anQuery : IQueryStatement&) : IDataStore&{\v{\xe {libereQuery{\i{ -- operation}}\:IDataStore}}}\par
+\pard\plain \s5 \f4\fs20 libera alocações que estão guardadas no
+IQueryStatement.lowLayerSlot\par
+\pard\plain \s3 \f4\fs20 ligar( ) : IDataStore&{\v{\xe {ligar{\i{ -- operation}}\:IDataStore}}}\par
+\pard\plain \s5 \f4\fs20 conecta ao banco ou prepara-se para servir.\par
+\pard\plain \s3 \f4\fs20 desligar( ) : IDataStore&{\v{\xe {desligar{\i{ -- operation}}\:IDataStore}}}\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IBroker{\v{\xe {IBroker{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 Responsavel pelas operações DDL e DML e suas trascriç
+es entre os meios persistentes e as respectivas
+classes persistentes.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 UsarDataStoreDefault : bool = true{\v{\xe {UsarDataStoreDefault{\i{ -- attributes}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 usar o datastore default caso não seja especificado um.\par
+\pard\plain \s3 \f4\fs20 estado : IEstadoGenerico = gInicial{\v{\xe {estado{\i{ -- attributes}}\:IBroker}}}\par
+\pard\plain \s3 \f4\fs20 ixDStoreDefault : int = -1{\v{\xe {ixDStoreDefault{\i{ -- attributes}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 guarda o indice do dataStore default.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 ListaDataStore : IDataStore{\v{\xe {ListaDataStore{\i{ -- has-relation}}\:IBroker}}}\par
+\pard\plain \s3 \f4\fs20 theColecoes : IColecaoPersistenteBase{\v{\xe {theColecoes{\i{ -- has-relation}}\:IBroker}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 inicialize( ) : void{\v{\xe {inicialize{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 processo de inicialização.\par
+\pard\plain \s3 \f4\fs20 addDataStore( dataStore : IDataStore&) : void{\v{\xe {addDataStore{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 adiciona o datastore a lista e passa a ser seu dono.
+deve sempre haver um datastore default. seguira o
+seguinte critério :
+1. se a listaDataStore estiver vazia quando de alguma
+operação que necessite dispara uma excessão.
+1. se houver somente um DataStore, será
+automáticamente DEFAULT
+2. se houver vários o primeiro que se chamar DEFAULT
+3. se houver vários e nenhum se chamar DEFAULT, será o
+primeiro da lista\par
+\pard\plain \s3 \f4\fs20 saveMe( anPersist : IPersistente&) : void{\v{\xe {saveMe{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s3 \f4\fs20 deleteMe( anPersiste : IPersistente&) : void{\v{\xe {deleteMe{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s3 \f4\fs20 preenchaMapa( anPersist : IPersistente&, anStatement : IModifyStatement&, mapa : IMapClassTable&) : void{\v{\xe {preenchaMapa{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s3 \f4\fs20 regDataStoreForClass( anPersiste : IPersistente&, dataStoreName : char*) : void{\v{\xe {regDataStoreForClass{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 registra o dataStore identificado pelo nome para a
+classe especificada.
+0. chama apresentoPersistente em self
+1. procura pelo dataStore em ListaDataStore
+2. se nao achar dispara um erro IPersistenteErro
+3. se achou pega uma referencia se chama
+IClassMap::setDataStoreFor\par
+\pard\plain \s3 \f4\fs20 apresento( anPersistente : IPersistente&) : void{\v{\xe {apresento{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 serve para antecipar o reconhecimento das subclasses
+persistentes, faz o classmap ser inicializado com as
+informações do persistente.\par
+\pard\plain \s3 \f4\fs20 newColecao( anColecao : IColecaoPersistenteBase&) : void{\v{\xe {newColecao{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 reconhece a nova coleção e insere-a na lista de coleç
+es\par
+\pard\plain \s3 \f4\fs20 processeColecao( anColecao : IColecaoPersistenteBase&) : void{\v{\xe {processeColecao{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 solicita processamento da
+IColecaoPersistenteBase.theQuery ao
+IColecaoPersistenteBase.theDataStore e muda o estado
+da colecao.\par
+\pard\plain \s3 \f4\fs20 libereColecao( anColecao : IColecaoPersistenteBase&) : void{\v{\xe {libereColecao{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 solicita processamento da
+IColecaoPersistenteBase.theQuery ao
+IColecaoPersistenteBase.theDataStore e muda o estado
+da colecao.\par
+\pard\plain \s3 \f4\fs20 requisitaObjeto( anColecao : IColecaoPersistenteBase&, direcao : IDirecaoFetch = proximo) : void{\v{\xe {requisitaObjeto{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 processar requisicao de objeto na direcao especificada.\par
+\pard\plain \s3 \f4\fs20 TabelaRelacao( ) : IString{\v{\xe {TabelaRelacao{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 retorna o nome da tabela relacao obtido do ClassMap\par
+\pard\plain \s3 \f4\fs20 DefaultDataStore( ) : IDataStore&{\v{\xe {DefaultDataStore{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 Retorna o DataStore Default.\par
+\pard\plain \s3 \f4\fs20 asDebug( ) : IString{\v{\xe {asDebug{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 retorna informações para debug.\par
+\pard\plain \s3 \f4\fs20 nomeColunaID( ) : IString{\v{\xe {nomeColunaID{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s3 \f4\fs20 criarBasePara( anPersistente : IPersistente&) : void{\v{\xe {criarBasePara{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 cria a base de dados para o persistente especifico.\par
+\pard\plain \s3 \f4\fs20 removeDataStore( dataStore : IDataStore&) : void{\v{\xe {removeDataStore{\i{ -- operation}}\:IBroker}}}\par
+\pard\plain \s5 \f4\fs20 remove o datastore da lista do mapa se estiver la.\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IClassMap{\v{\xe {IClassMap{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 O mapeamento classe x tabela e membro x coluna pode
+ser default pelos nomes de classe e membro ou caso
+exista o arquivo mapClass.Ini, o mesmo sera lido pois
+tera as correspondentes relacoes. o DataStore
+especifico de cada classe não é guardado no INI\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 TabelaRelacao : IString = "Relacao"{\v{\xe {TabelaRelacao{\i{ -- attributes}}\:IClassMap}}}\par
+\pard\plain \s3 \f4\fs20 ColunaId : IString = "ID"{\v{\xe {ColunaId{\i{ -- attributes}}\:IClassMap}}}\par
+\pard\plain \s5 \f4\fs20 nome da coluna chave primaria que existira em todas
+tabelas.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 ListaMapClassTable : IMapClassTable{\v{\xe {ListaMapClassTable{\i{ -- has-relation}}\:IClassMap}}}\par
+\pard\plain \s3 \f4\fs20 mapaCorrente : IMapClassTable{\v{\xe {mapaCorrente{\i{ -- has-relation}}\:IClassMap}}}\par
+\pard\plain \s5 \f4\fs20 somente para trabalho durante operacoes internas,
+normalmente esta com NULL.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 registraMembroClasse( anPersistente : IPersistente&, nomeMembro : char*, offset : unsigned int, tamanho : unsigned int, tipoMembro : IKnowType = IsStringFix, varSizeMax : unsigned int = 0, isProxy : bool = false) : void{\v{\xe {registraMembroClasse{\i{ -- operation}}\:IClassMap}}}\par
+\pard\plain \s5 \f4\fs20 no caso de não especificar o tipo, tipo será
+StringFixa de tamanho = tamanho.\par
+\pard\plain \s3 \f4\fs20 getMapaFor( anPersist : IPersistente &) : IMapClassTable&{\v{\xe {getMapaFor{\i{ -- operation}}\:IClassMap}}}\par
+\pard\plain \s3 \f4\fs20 searchClassName( nomeClasse : char*) : int{\v{\xe {searchClassName{\i{ -- operation}}\:IClassMap}}}\par
+\pard\plain \s5 \f4\fs20 procura na lista de IMapClassTable pelo objeto igual
+ao nome e retorna o indice.
+retorna -1 se nao achou\par
+\pard\plain \s3 \f4\fs20 insertClassInfoOf( anPersist : IPersistente&) : void{\v{\xe {insertClassInfoOf{\i{ -- operation}}\:IClassMap}}}\par
+\pard\plain \s5 \f4\fs20 chamado quando search() retorna -1 para um objeto
+anPersist.
+chama self.resolveMapa ao final\par
+\pard\plain \s3 \f4\fs20 resolveMapa( <unnamed> : <no type>) : void{\v{\xe {resolveMapa{\i{ -- operation}}\:IClassMap}}}\par
+\pard\plain \s5 \f4\fs20 resolve nome da tabela, colunas e tipos e torna estado
+do mapa isComplete true.
+processa as informações do MapClass.ini\par
+\pard\plain \s3 \f4\fs20 setDataStoreFor( anPersiste : IPersistente&, anDataStore : IDataStore&) : void{\v{\xe {setDataStoreFor{\i{ -- operation}}\:IClassMap}}}\par
+\pard\plain \s5 \f4\fs20 atualiza o meDatastore para uma subclasse de
+IPersistente.\par
+\pard\plain \s3 \f4\fs20 inicialize( ) : void{\v{\xe {inicialize{\i{ -- operation}}\:IClassMap}}}\par
+\pard\plain \s5 \f4\fs20 inicialização.\par
+\pard\plain \s3 \f4\fs20 asDebug( ) : IString{\v{\xe {asDebug{\i{ -- operation}}\:IClassMap}}}\par
+\pard\plain \s3 \f4\fs20 removeDataStore( dataStore : IDataStore&) : void{\v{\xe {removeDataStore{\i{ -- operation}}\:IClassMap}}}\par
+\pard\plain \s5 \f4\fs20 Remove todas as Tabelas de mapeamento que estao usando
+o datastore removido.\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 ICriterio{\v{\xe {ICriterio{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 Responsavel pela montagem do criterio de selecao
+(clausula WHERE)
+cada sentença é montada como :
+SENTENÇA => <campoValido> <opRelacional>
+[valorValido|<campoValido>]
+SENTENÇA [AND|OR] SENTENÇA [AND|OR] ...
+
+Os críterios devem ser processados para trocar os
+atributos pelos nomes_colunas reais.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 atributo : IString{\v{\xe {atributo{\i{ -- attributes}}\:ICriterio}}}\par
+\pard\plain \s3 \f4\fs20 comparador : IOperComparacao{\v{\xe {comparador{\i{ -- attributes}}\:ICriterio}}}\par
+\pard\plain \s3 \f4\fs20 argumento : IString{\v{\xe {argumento{\i{ -- attributes}}\:ICriterio}}}\par
+\pard\plain \s3 \f4\fs20 isNecessitaTraducao : bool = false{\v{\xe {isNecessitaTraducao{\i{ -- attributes}}\:ICriterio}}}\par
+\pard\plain \s5 \f4\fs20 true se o atributo deve ser traduzido para o nome da
+coluna.\par
+\pard\plain \s3 \f4\fs20 isArgPrecisaAspas : bool = true{\v{\xe {isArgPrecisaAspas{\i{ -- attributes}}\:ICriterio}}}\par
+\pard\plain \s3 \f4\fs20 coluna : IString{\v{\xe {coluna{\i{ -- attributes}}\:ICriterio}}}\par
+\pard\plain \s3 \f4\fs20 fraseLivre : IString{\v{\xe {fraseLivre{\i{ -- attributes}}\:ICriterio}}}\par
+\pard\plain \s5 \f4\fs20 uso interno\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s5 \f4\fs20 <none>\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 asSentencaSQL( ) : char*{\v{\xe {asSentencaSQL{\i{ -- operation}}\:ICriterio}}}\par
+\pard\plain \s3 \f4\fs20 ICriterio( atributo : IString&, comparacao : IOperComparacao, argumento : char*){\v{\xe {ICriterio{\i{ -- operation}}\:ICriterio}}}\par
+\pard\plain \s3 \f4\fs20 ICriterio( atributo : IString&, comparacao : IOperComparacao, argumento : int){\v{\xe {ICriterio{\i{ -- operation}}\:ICriterio}}}\par
+\pard\plain \s3 \f4\fs20 ICriterio( atributo : IString&, comparacao : IOperComparacao, argumento : IString&){\v{\xe {ICriterio{\i{ -- operation}}\:ICriterio}}}\par
+\pard\plain \s3 \f4\fs20 ICriterio( FraseLivre : char*){\v{\xe {ICriterio{\i{ -- operation}}\:ICriterio}}}\par
+\pard\plain \s5 \f4\fs20 não necessita traducao\par
+\pard\plain \s3 \f4\fs20 ICriterio( conectorLogico : IOperLogicoPrecedencia){\v{\xe {ICriterio{\i{ -- operation}}\:ICriterio}}}\par
+\pard\plain \s5 \f4\fs20 não necessita traducao.\par
+\page
+\pard\plain \s1\sb240 \i\f4\fs20 Class name:\par
+\pard\plain \s2 \b\f4\fs28 IPersistente{\v{\xe {IPersistente{\i{ -- class}}}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Documentation:\par
+\pard\plain \s4 \f4\fs20 Esta classe faz operações de Insert, Delete, Update e
+Select pelo ID somente. Insert <campo1,...n> into
+<Tabela> values <valor1,...n>
+Delete <Tabela> For ID == <ValorID>
+Update <campo1,...n> into <Tabela> values
+<valor1,...n> For ID == <ValorID>
+Select <campo1,...n> From <Tabela> For ID == <ValorID>
+portanto a conexao com o meio de persistencia é
+transitória e consequentemente somente de uma operacao
+DML.\par
+\pard\plain \s1\sb240 \i\f4\fs20 Superclasses:\par
+\pard\plain \s6 \f4\fs20 INotificador\par
+\pard\plain \s1\sb240 \i\f4\fs20 Roles/Associations:\par
+\pard\plain \s3 \f4\fs20 <no rolename>{\v{\xe {pelas subclasses{\i{ -- association}}\:IPersistente}}} in association pelas subclasses\par
+\pard\plain \s1\sb240 \i\f4\fs20 Attributes:\par
+\pard\plain \s3 \f4\fs20 isPersistido : bool = false{\v{\xe {isPersistido{\i{ -- attributes}}\:IPersistente}}}\par
+\pard\plain \s5 \f4\fs20 true se objeto já foi persistido.\par
+\pard\plain \s3 \f4\fs20 isProxy : bool = false{\v{\xe {isProxy{\i{ -- attributes}}\:IPersistente}}}\par
+\pard\plain \s5 \f4\fs20 true se o objeto foi retirado como "Proxy"\par
+\pard\plain \s3 \f4\fs20 evtSalvando : TypeEvento = "IPersistente::Salvando"{\v{\xe {evtSalvando{\i{ -- attributes}}\:IPersistente}}}\par
+\pard\plain \s1\sb240 \i\f4\fs20 Has-A Relationships:\par
+\pard\plain \s3 \f4\fs20 ID : IPersistID{\v{\xe {ID{\i{ -- has-relation}}\:IPersistente}}}\par
+\pard\plain \s5 \f4\fs20 Identificador unico generico\par
+\pard\plain \s1\sb240 \i\f4\fs20 Operations:\par
+\pard\plain \s5 \f4\fs20 \pard\plain \s3 \f4\fs20 save( ) : void{\v{\xe {save{\i{ -- operation}}\:IPersistente}}}\par
+\pard\plain \s5 \f4\fs20 grava o estado do objeto.\par
+\pard\plain \s3 \f4\fs20 erase( ) : void{\v{\xe {erase{\i{ -- operation}}\:IPersistente}}}\par
+\pard\plain \s5 \f4\fs20 apaga o objeto da base persistente. o que acontece com
+o objeto ?\par
+\pard\plain \s3 \f4\fs20 getNomeClasse( ) : char*{\v{\xe {getNomeClasse{\i{ -- operation}}\:IPersistente}}}\par
+\pard\plain \s5 \f4\fs20 Retorna o nome da classe, que por default sera o nome
+da tabela. deve ser implementado pela subclasse, caso
+contrario dispara uma excessao.\par
+\pard\plain \s3 \f4\fs20 registraMembro( nomeMembro : char*, offSet : unsigned int, tamanho : unsigned int, tipoMembro : IKnowType = IsStringFix, varSizeMax : unsigned int = 0, isProxy : bool = false) : IPersistente&{\v{\xe {registraMembro{\i{ -- operation}}\:IPersistente}}}\par
+\pard\plain \s5 \f4\fs20 adiciona um mapeamento de atributo x coluna, deve
+utilizar o IClassMap delegando a funcao de mapeamento.
+Caso não especifique o tipo, tipo será StringFixa de
+tamanho = tamanho.\par
+\pard\plain \s3 \f4\fs20 OnClassInfo( ) : void{\v{\xe {OnClassInfo{\i{ -- operation}}\:IPersistente}}}\par
+\pard\plain \s5 \f4\fs20 Este metodo sera chamado para obtenção indireta das
+informações sobre membros, deve ser implementado pela
+subclasse, na implementação deverão ser feitas
+chamadas a RegistraMembro() para cada membro a ser
+persistido\par
+\pard\plain \s3 \f4\fs20 getCampoPorNome( campo : char*) : IString{\v{\xe {getCampoPorNome{\i{ -- operation}}\:IPersistente}}}\par
+\pard\plain \s5 \f4\fs20 retorna o conteudo de um campo\par
+\pard\plain \s3 \f4\fs20 getCampoPorIndice( indice : int) : IString{\v{\xe {getCampoPorIndice{\i{ -- operation}}\:IPersistente}}}\par
+\pard\plain \s5 \f4\fs20 retorna conteudo de um campo pela posicao na lista de
+campos\par
+\pard\plain \s3 \f4\fs20 quantosCampos( ) : int{\v{\xe {quantosCampos{\i{ -- operation}}\:IPersistente}}}\par
+\pard\plain \s5 \f4\fs20 retorna o total de campos menos o IPersistId ( OUID )\par
+}

@@ -1,0 +1,125 @@
+//## begin module.cm preserve=no
+//	  %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IQueryStatement; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\iqrysttm.h
+
+
+#include "IPersist.ch"
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+//## end module.includes
+
+// IStatement
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+//## Class: IQueryStatement
+//	SELECT nomeColuna,... FROM <tabela>
+//	[ WHERE where_clausula ]
+//	[ ORDER BY nomeColuna,... ]
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+
+CREATE CLASS  IQueryStatement INHERIT IStatement  //## Inherits: <unnamed>
+PROTECTED:
+   METHOD init
+EXPORT:
+    //## Other Operations (specified)
+      //## Operation: asSentencaSQL%908596354
+      METHOD asSentencaSQL
+    //## Get and Set Operations for Has Relationships (generated)
+      //## Documentation IQueryStatement::<m_ListaOrdem>.has
+      METHOD ListaOrdem
+      METHOD setListaOrdem
+      //## Documentation IQueryStatement::<m_ListaCriterio>.has
+      METHOD ListaCriterio
+      METHOD setListaCriterio
+    //## Get and Set Operations for Class Attributes (generated)
+      //## Attribute: isFim
+      //	true se durante alguma movimentação o fim ou inicio das
+      //	linhas é alcançado.
+      METHOD isFim
+      METHOD setisFim
+    // Data Members for Class Attributes
+    // Additional Public Declarations
+      //## begin IQueryStatement.public preserve=yes
+      //## end IQueryStatement.public
+HIDDEN: //## implementation
+    // Data Members for Has Relationships
+      //## begin IQueryStatement::<m_ListaOrdem>.has preserve=no  public: IListaOrdem { -> nVF}
+      VAR m_ListaOrdem//Lista<IListaOrdem>*
+      //## end IQueryStatement::<m_ListaOrdem>.has
+      //## begin IQueryStatement::<m_ListaCriterio>.has preserve=no  public: ICriterio { -> nVF}
+      VAR m_ListaCriterio//Lista<ICriterio>*
+      //## end IQueryStatement::<m_ListaCriterio>.has
+    // Data Members for Class Attributes
+      //## begin IQueryStatement::isFim.attr preserve=no  public: bool {U} false
+      VAR m_isFim//bool
+      //## end IQueryStatement::isFim.attr
+    // Additional Implementation Declarations
+      //## begin IQueryStatement.implementation preserve=yes
+      //## end IQueryStatement.implementation
+END CLASS
+
+// Class IQueryStatement
+
+METHOD init(),()
+   ::m_isFim := .f.
+   //::m_ListaOrdem
+   //::m_ListaCriterio
+RETURN self
+
+//IString IQueryStatement::asSentencaSQL()
+METHOD asSentencaSQL()
+   local sentenca,i
+   sentenca:="SELECT "+IBroker():nomeColunaID()+","
+   // colunas
+   for i:=1 to ::theColunas():count()
+      if (i!=1)
+         sentenca+=","
+      endif
+      sentenca+= ( ::theColunas():subscript(i) )
+   next
+   sentenca+= " FROM "
+   sentenca+= ::tabelaAlvo()
+RETURN sentenca
+
+//Lista<IListaOrdem>* IQueryStatement::ListaOrdem()
+METHOD ListaOrdem()
+RETURN ::m_ListaOrdem
+
+//void IQueryStatement::setListaOrdem(Lista<IListaOrdem>*const  value)
+METHOD setListaOrdem(value)
+  ::m_ListaOrdem := value
+RETURN nil
+
+//Lista<ICriterio>* IQueryStatement::ListaCriterio()
+METHOD ListaCriterio()
+RETURN ::m_ListaCriterio
+
+//void IQueryStatement::setListaCriterio(Lista<ICriterio>*const  value)
+METHOD setListaCriterio(value)
+  ::m_ListaCriterio := value
+RETURN nil
+
+//bool IQueryStatement::isFim()
+METHOD isFim()
+RETURN ::m_isFim
+
+//void IQueryStatement::setisFim(const bool value)
+METHOD setisFim(value)
+  ::m_isFim := value
+RETURN value
+

@@ -1,0 +1,69 @@
+//   %X% %Q% %Z% %W%
+//## end module.cm
+//## begin module.cp preserve=no
+//## end module.cp
+//## Module: IEventoNotificacao; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\ivntntfc.h
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+// INotificador
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+//## Class: IEventoNotificacao
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+CREATE CLASS IEventoNotificacao
+PROTECTED:
+   METHOD init
+   //## begin IEventoNotificacao.initialDeclarations preserve=yes
+   //## end IEventoNotificacao.initialDeclarations
+EXPORT:
+   //## Get and Set Operations for Has Relationships (generated)
+   //## Documentation IEventoNotificacao::Notificador.has
+   METHOD Notificador
+   //## Get and Set Operations for Class Attributes (generated)
+   //## Attribute: evento
+   METHOD evento
+   // Additional Public Declarations
+   //## begin IEventoNotificacao.public preserve=yes
+   //## end IEventoNotificacao.public
+HIDDEN:                                          //## implementation
+   // Data Members for Has Relationships
+   //## begin IEventoNotificacao::Notificador.has preserve=no  public: INotificador { -> 1RO}
+   VAR m_Notificador                             //INotificador *
+   //## end IEventoNotificacao::Notificador.has
+   // Data Members for Class Attributes
+   //## begin IEventoNotificacao::evento.attr preserve=no  public: TypeEvento {U}
+   VAR m_evento                                  //TypeEvento
+   //## end IEventoNotificacao::evento.attr
+   // Additional Implementation Declarations
+   //## begin IEventoNotificacao.implementation preserve=yes
+   //## end IEventoNotificacao.implementation
+END CLASS
+// Class IEventoNotificacao
+
+
+METHOD init(notificador,evento),()
+   default evento to INotificador():evtDefault
+   ::m_Notificador := notificador
+   ::m_evento = evento
+RETURN self
+
+//## Get and Set Operations for Has Relationships (implementation)
+
+//INotificador * IEventoNotificacao::Notificador()
+METHOD Notificador()
+RETURN ::m_Notificador
+
+//## Get and Set Operations for Class Attributes (implementation)
+
+//TypeEvento IEventoNotificacao::evento()
+METHOD evento()
+RETURN ::m_evento

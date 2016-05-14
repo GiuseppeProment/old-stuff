@@ -1,0 +1,294 @@
+//## begin module.cm preserve=no
+//   %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IPersistID; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\iprsstid.h
+
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+
+
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IPersistID
+// Identificador unico dos objetos persistentes.
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+
+CREATE CLASS IPersistID
+   //## begin IPersistID.initialDeclarations preserve=yes
+   //## end IPersistID.initialDeclarations
+   // Construtores
+PROTECTED:
+   METHOD init
+EXPORT:
+   CLASS METHOD initClass
+   METHOD Assign
+   //## Other Operations (specified)
+   //## Operation: generate%909013228
+   // gera um id novo.
+   METHOD generate
+   //## Operation: asString%908596369
+   // retorna o valor do id como string. pode ser algo como
+   // "12FC:3423A:FECD"
+   METHOD asString
+   METHOD asDado
+   //## Operation: setValue%909013229
+   // para operações de leitura de um persistente o set deve
+   // receber o valor do id persistido.
+   METHOD setValue
+   // Additional Public Declarations
+   //## begin IPersistID.public preserve=yes
+   //## end IPersistID.public
+   CLASS METHOD setCRAE
+PROTECTED:
+   // Additional PROTECTED Declarations
+   //## begin IPersistID.PROTECTED preserve=yes
+   //## end IPersistID.PROTECTED
+   CLASS METHOD getCRAE
+   CLASS METHOD getRAP
+HIDDEN:
+   //## Get and Set Operations for Class Attributes (generated)
+   //## Attribute: sequencial
+   // Additional HIDDEN Declarations
+   //## begin IPersistID.HIDDEN preserve=yes
+   //## end IPersistID.HIDDEN
+HIDDEN:                                          //## implementation
+   // Data Members for Class Attributes
+
+   //## Attribute: id
+   //## begin IPersistID::id.attr preserve=no  HIDDEN: IString {U}
+   VAR m_id
+   //## end IPersistID::id.attr
+
+   CLASS VAR CRAE                                // Chave Resolu‡Æo Ambiguidade Externa 0 - 128
+   CLASS VAR RAP                                 // Resolucao Ambiguidade em Processo 0 - 32
+
+
+   // Additional Implementation Declarations
+   //## begin IPersistID.implementation preserve=yes
+   //## end IPersistID.implementation
+
+END CLASS
+
+// Class IPersistID
+
+METHOD init(),()
+   ::m_id := nil
+RETURN self
+
+METHOD initClass(),()
+   ::RAP := 0
+   ::CRAE := 0
+RETURN self
+
+METHOD setCRAE(nValue)
+   if valtype(nValue) == "N"
+      if nValue >= 0 .and. nValue <= 128
+         ::CRAE := nValue
+      else
+         THROW "IPersistID:setCRAE - Chave Resolu‡Æo Ambiguidade;"+;
+               "Externa deve estar na faixa 0 a 128"
+      endif
+   else
+      THROW "IPersistID:setCRAE - Chave Resolu‡Æo Ambiguidade;"+;
+            "Externa deve estar na faixa 0 a 128"
+   endif
+RETURN nil
+
+METHOD getCRAE
+RETURN ::CRAE
+
+METHOD getRAP
+local nRet := ::RAP++
+if ::RAP > 32
+   ::RAP := 0
+endif
+RETURN nRet
+
+//## end IPersistID::sequencial.attr
+
+
+//const IPersistID & IPersistID::operator=(const IPersistID &right)
+METHOD Assign(right)
+   ::m_id = right:m_id
+RETURN self
+
+//## Other Operations (implementation)
+//IPersistID& IPersistID::generate()
+METHOD generate()
+   local data
+   local cBin
+   local aByte := array(7)
+
+   data := date()
+
+   cBin := ;
+      DecToBin(year(data),11)+;
+      DecToBin(data - ctod("01/01/" + substr(dtos(data), 3, 2)),9)+;
+      DecToBin(seconds()*100,24)+;
+      DecToBin(::Class:getRAP(),5) +;
+      DecToBin(::Class:getCRAE(),7)
+
+   aByte[1] := substr(cBin,1,8)
+   aByte[2] := substr(cBin,9,8)
+   aByte[3] := substr(cBin,17,8)
+   aByte[4] := substr(cBin,25,8)
+   aByte[5] := substr(cBin,33,8)
+   aByte[6] := substr(cBin,41,8)
+   aByte[7] := substr(cBin,49,8)
+
+   ::m_id :=;
+      chr( BinToDec( aByte[1] ) )+;
+      chr( BinToDec( aByte[2] ) )+;
+      chr( BinToDec( aByte[3] ) )+;
+      chr( BinToDec( aByte[4] ) )+;
+      chr( BinToDec( aByte[5] ) )+;
+      chr( BinToDec( aByte[6] ) )+;
+      chr( BinToDec( aByte[7] ) )
+
+RETURN self
+
+//char* IPersistID::asString()
+METHOD asString()
+RETURN "'"+ltrim(::m_id)+"'"
+
+METHOD asDado()
+RETURN ltrim(::m_id)
+
+//IPersistID& IPersistID::setValue(char* valor)
+METHOD setValue(valor)
+   ::m_id := valor
+RETURN self
+
+
+
+/*
+ GERACAO DO UID  (UNIFORM IDENTIFICATOR)
+it   faixa        bits    ³   56 bits / 8 bits/bytes =
+ano  0 - 2048       11    ³
+dia  0 - 365         9    ³           7 bytes
+sec  0 - 86400.99   24    ³
+RAP  0 - 32          5    ³
+CRAE 0 - 128         7    ³
+                   ----   ³
+total               56    ³
+ÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ
+
+bytes
+    1      2       3       4       5       6       7
+ÚÄÄÄÄÄÄ¿ÚÄÄÄÄÄÄ¿ÚÄÄÄÄÄÄ¿ÚÄÄÄÄÄÄ¿ÚÄÄÄÄÄÄ¿ÚÄÄÄÄÄÄ¿ÚÄÄÄÄÄÄ¿
+12345678901123456789123456789012345678901234123451234567
+ÃÄÄÄÄÄÄÄÄÄÙÃÄÄÄÄÄÄÄÙÃÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙÃÄÄÄÙÃÄÄÄÄÄÙ
+³          ³        ³                       ³    ³
+ano        dia      segundos                RAP  CRAE
+
+RAP (Resolutor Ambiguidade em Processo)
+CRA (Chave Resolu‡Æo Ambiguidade Externa)
+*/
+
+#stdout >>IPersistID: AS FUNCOES ABAIXO DEVEM SER REPOSTAS POR FUNCOES EM "C"
+
+/* CREDITOS DA FUNCAO ABAIXO PARA
+   "POWER TOOLS FOR CLIPPER 5.2" */
+function DecToBin( nNumber,size )
+
+  local cRetValue := ""
+  local lSign
+  local lOddNumber
+  local nStart
+
+   if size==nil
+      size:=8
+   endif
+
+    lSign      := (nNumber < 0 )
+    lOddNumber := !( nNumber / 2 = INT( nNumber / 2) )
+    nStart     := 1
+
+    nNumber := abs(nNumber)
+
+    while (nStart * 2) <= nNumber
+      nStart *= 2
+    enddo
+
+    while nStart > 1.00
+
+      if nNumber >= nStart
+        cRetValue    += "1"
+        nNumber -= nStart
+
+      else
+        cRetValue += "0"
+
+      endif
+      nStart /= 2
+
+    enddo
+
+    cRetValue := ;
+      if(lSign, "-", "") + ;
+      padL( cRetValue + if(lOddNumber, "1", "0"),size,"0")
+
+RETURN ( cRetValue )
+
+/*
+function DecToBin(nNumber,size)
+   local cRet := "",nResto,i,nLen,cInv
+   if size==nil
+      size:=8
+   endif
+   while .t.
+      nResto := nNumber%2
+      nNumber := int(nNumber/2)
+      cRet += iif(nResto==1,"1","0")
+      if nNumber <= 1
+         cRet += iif(nNumber==1,"1","0")
+         exit
+      endif
+   enddo
+   // deve inverter
+   cInv := ""
+   nLen := len(cRet)
+   for i := 1 to nLen
+      cInv += substr(cRet,(nLen+1)-i,1)
+   next
+RETURN padL(cInv,size,"0")
+*/
+
+/* CREDITOS DA FUNCAO ABAIXO PARA
+   "POWER TOOLS FOR CLIPPER 5.2" */
+static function BinToDec( cNumber )
+   local nRetValue := 0
+   local lSign
+   local nPower
+   local nBase
+   lSign   := "-" $ cNumber
+   cNumber := strtran(cNumber, "-", "")
+   nPower  := 2 ^ (len(cNumber)-1)
+   nBase   := 0
+   while nPower > 1
+      nBase   += ( val( left( cNumber, 1)) ) * nPower
+      nPower  /= 2
+      cNumber := substr(cNumber, 2)
+   enddo
+   nRetValue := int( (nBase + ( ( val(left(cNumber, 1)) ) * nPower )) * ;
+      if(lSign, -1, 1))
+RETURN( nRetValue )
+
+

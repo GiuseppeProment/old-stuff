@@ -1,0 +1,313 @@
+//## begin module.cm preserve=no
+//   %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IMapAtrColuna; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\imptrcln.h
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+// IKnowType
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IMapAtrColuna
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+//## Uses: <unnamed>; IPersistente { -> F}
+
+CREATE CLASS IMapAtrColuna
+   // Construtores
+PROTECTED:
+   METHOD init
+EXPORT:
+   //## Other Operations (specified)
+   //## Operation: asString%908596383
+   // retorna o conteudo do membro como char* transformado,
+   // exemplo : membro é 100.00 devolve '100.00'
+   METHOD asString
+
+   MESSAGE len METHOD lenAtributo
+
+   //## Operation: setValue%908596384
+   // copia dado ao membro de anPersist. copyLen indica
+   // comprimento do dado / numero de bytes a serem copiados
+   // até o maximo do tamanho do membro. converte de acordo
+   // com o tipoMembro x tipoColuna. se for do tipo IUnknow
+   // então copia byte a byte até copyLen ou tamanho.
+   // Se copyLen for 0 então copia de acordo com o
+   // tipoMembro/tamanho. usualmente conclui que é tipo de
+   // tamanho fixo (string terminada com \0).
+   METHOD setValue
+   METHOD setPuro
+
+   //## Operation: asPuro%908596385
+   // retorna o conteudo do membro como char* puro, nao
+   // transfoma é apenas `cast`
+   // talvez seja usado pelo propria AsString quando verificar
+   // que tipo é um tipo blob.
+   // o que tornará a copia muito custosa e não necessita de
+   // conversao.
+   METHOD asPuro
+
+   //## Get and Set Operations for Has Relationships (generated)
+
+   //## Documentation IMapAtrColuna:tipoMembro.has
+   METHOD tipoMembro
+   METHOD settipoMembro
+
+   //## Documentation IMapAtrColuna:tipoColuna.has
+   // deve ser preenchido pelo broker
+   METHOD tipoColuna
+   METHOD settipoColuna
+
+   //## Get and Set Operations for Class Attributes (generated)
+
+   //## Attribute: nomeMembro
+   METHOD nomeMembro
+   METHOD setnomeMembro
+
+   //## Attribute: offSet
+   METHOD offSet
+   METHOD setoffSet
+
+   //## Attribute: tamanho
+   METHOD tamanho
+   METHOD settamanho
+
+   //## Attribute: varSizeMax
+   METHOD varSizeMax
+   METHOD setvarSizeMax
+
+   //## Attribute: nomeColuna
+   // se houver definicao no MapClass.Ini, obtem dele, caso
+   // contrario é igual ao nome do membro.
+   METHOD nomeColuna
+   METHOD setnomeColuna
+
+   //## Attribute: isProxy
+   METHOD isProxy
+   METHOD setisProxy
+
+   // Additional Public Declarations
+   //## begin IMapAtrColuna.public preserve=yes
+   //## end IMapAtrColuna.public
+
+
+PROTECTED:
+   // Additional PROTECTED Declarations
+   //## begin IMapAtrColuna.PROTECTED preserve=yes
+   //## end IMapAtrColuna.PROTECTED
+HIDDEN:                                          //## implementation
+   // Data Members for Has Relationships
+   VAR m_tipoMembro
+   VAR m_tipoColuna
+
+   // Data Members for Class Attributes
+
+   VAR m_nomeMembro
+   VAR m_offSet
+   VAR m_tamanho
+   VAR m_varSizeMax
+   VAR m_nomeColuna
+   VAR m_isProxy
+END CLASS
+// Class IMapAtrColuna
+
+
+METHOD init(),()
+   ::m_varSizeMax := 0
+   ::m_isProxy := .f.
+RETURN self
+
+METHOD asString(anPersist)
+   //IString IMapAtrColuna::asString(IPersistente& anPersist)
+   local conteudo
+   do case
+      case ::m_tipoMembro==IsInt
+         conteudo := ltrim(str( anPersist[::m_offSet] ))
+      case ::m_tipoMembro==IsDouble
+         conteudo := ltrim(str( anPersist[::m_offSet] ))
+      case ::m_tipoMembro==IsFloat
+         conteudo := ltrim(str( anPersist[::m_offSet] ))
+      case ::m_tipoMembro==IsShortInt
+         conteudo := ltrim(str( anPersist[::m_offSet] ))
+      case ::m_tipoMembro==IsChar
+         conteudo := [']+anPersist[::m_offSet]+[']
+      case ::m_tipoMembro==IsStringVar
+         conteudo := [']+anPersist[::m_offSet]+[']
+      case ::m_tipoMembro==IsStringFix
+         conteudo := [']+anPersist[::m_offSet]+[']
+      case ::m_tipoMembro==IsCharArray
+         conteudo := [']+anPersist[::m_offSet]+[']
+      case ::m_tipoMembro==IsTimestamp
+         conteudo := [']+dtoc( anPersist[::m_offSet] )+[']
+      case ::m_tipoMembro==IsStringBlob
+         conteudo := [']+anPersist[::m_offSet]+[']
+      case ::m_tipoMembro==IsUnknow
+         conteudo := anPersist[::m_offSet]
+      otherwise
+         THROW "IMapAtrColuna::asString tipoMembro desconhecido"
+   endcase
+RETURN conteudo
+
+
+METHOD lenAtributo(anPersist)
+   //IString IMapAtrColuna::asString(IPersistente& anPersist)
+   local len
+   do case
+      case ::m_tipoMembro==IsInt
+         len := len( ltrim(str( anPersist[::m_offSet] )) )
+      case ::m_tipoMembro==IsDouble
+         len := len( ltrim(str( anPersist[::m_offSet] )) )
+      case ::m_tipoMembro==IsFloat
+         len := len( ltrim(str( anPersist[::m_offSet] )) )
+      case ::m_tipoMembro==IsShortInt
+         len := len( ltrim(str( anPersist[::m_offSet] )) )
+      case ::m_tipoMembro==IsChar
+         len := len( anPersist[::m_offSet] )
+      case ::m_tipoMembro==IsStringVar
+         len := len( anPersist[::m_offSet] )
+      case ::m_tipoMembro==IsStringFix
+         len := len( anPersist[::m_offSet] )
+      case ::m_tipoMembro==IsCharArray
+         len := len( anPersist[::m_offSet] )
+      case ::m_tipoMembro==IsTimestamp
+         len := len ( dtoc( anPersist[::m_offSet] ) )
+      case ::m_tipoMembro==IsStringBlob
+         len := len ( anPersist[::m_offSet] )
+      case ::m_tipoMembro==IsUnknow
+         THROW "IMapAtrColuna::len de IsUnknow nao implementado"
+      otherwise
+         THROW "IMapAtrColuna::asString tipoMembro desconhecido"
+   endcase
+RETURN len
+
+
+//setValue(IPersistente& anPersist, char* dado, int copyLen)
+METHOD setValue(anPersist, dado, copyLen)
+   //## begin IMapAtrColuna::setValue%908596384.body preserve=yes
+   do case
+      case ::m_tipoMembro==IsInt
+         anPersist[::m_offSet] := val(dado)
+      case ::m_tipoMembro==IsDouble
+         anPersist[::m_offSet] := val(dado)
+      case ::m_tipoMembro==IsFloat
+         anPersist[::m_offSet] := val(dado)
+      case ::m_tipoMembro==IsShortInt
+         anPersist[::m_offSet] := val(dado)
+      case ::m_tipoMembro==IsChar
+         anPersist[::m_offSet] := dado
+      case ::m_tipoMembro==IsStringVar
+         anPersist[::m_offSet] := dado
+      case ::m_tipoMembro==IsStringFix
+         anPersist[::m_offSet] := dado
+      case ::m_tipoMembro==IsCharArray
+         anPersist[::m_offSet] := dado
+      case ::m_tipoMembro==IsTimestamp
+         anPersist[::m_offSet] := ctod(dado)
+      case ::m_tipoMembro==IsStringBlob
+         anPersist[::m_offSet] := dado
+      case ::m_tipoMembro==IsUnknow
+         anPersist[::m_offSet] := dado
+      otherwise
+         THROW "IMapAtrColuna::setValue tipoMembro desconhecido"
+   endcase
+RETURN nil
+
+METHOD setPuro(anPersist,dado)
+   anPersist[::m_offSet] := dado
+RETURN nil
+
+//char const* IMapAtrColuna::asPuro(IPersistente& anPersist)
+METHOD asPuro(anPersist)
+RETURN anPersist[::m_offSet]
+//## Get and Set Operations for Has Relationships (implementation)
+
+//IKnowType IMapAtrColuna::tipoMembro()
+METHOD tipoMembro()
+RETURN ::m_tipoMembro
+
+//void IMapAtrColuna::settipoMembro(const IKnowType value)
+METHOD settipoMembro(value)
+   //## begin IMapAtrColuna::settipoMembro%.set preserve=no
+   ::m_tipoMembro := value
+   //## end IMapAtrColuna::settipoMembro%.set
+RETURN nil
+
+//IKnowType IMapAtrColuna::tipoColuna()
+METHOD tipoColuna()
+RETURN ::m_tipoColuna
+
+//void IMapAtrColuna::settipoColuna(const IKnowType value)
+METHOD settipoColuna(value)
+   ::m_tipoColuna := value
+RETURN nil
+
+//## Get and Set Operations for Class Attributes (implementation)
+
+//IString IMapAtrColuna::nomeMembro()
+METHOD nomeMembro()
+RETURN ::m_nomeMembro
+
+//void IMapAtrColuna::setnomeMembro(const IString value)
+METHOD setnomeMembro(value)
+  ::m_nomeMembro := value
+RETURN nil
+
+//unsigned int IMapAtrColuna::offSet()
+METHOD offSet()
+RETURN ::m_offSet
+
+//void IMapAtrColuna::setoffSet(const unsigned int value)
+METHOD setoffSet(value)
+::m_offSet := value
+RETURN nil
+
+//unsigned int IMapAtrColuna::tamanho()
+METHOD tamanho()
+RETURN ::m_tamanho
+
+//void IMapAtrColuna::settamanho(const unsigned int value)
+METHOD settamanho(value)
+  ::m_tamanho := value
+RETURN nil
+
+//unsigned int IMapAtrColuna::varSizeMax()
+METHOD varSizeMax()
+RETURN ::m_varSizeMax
+
+//void IMapAtrColuna::setvarSizeMax(const unsigned int value)
+METHOD setvarSizeMax(value)
+  ::m_varSizeMax := value
+RETURN nil
+
+//IString IMapAtrColuna::nomeColuna()
+METHOD nomeColuna()
+RETURN ::m_nomeColuna
+
+//void IMapAtrColuna::setnomeColuna(const IString value)
+METHOD setnomeColuna(value)
+  ::m_nomeColuna := value
+RETURN nil
+
+//bool IMapAtrColuna::isProxy()
+METHOD isProxy()
+RETURN ::m_isProxy
+
+//void IMapAtrColuna::setisProxy(const bool value)
+METHOD setisProxy(value)
+::m_isProxy := value
+RETURN nil

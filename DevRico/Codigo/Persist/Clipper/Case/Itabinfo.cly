@@ -1,0 +1,40 @@
+#include "IPersist.ch"
+CREATE CLASS ITabelaInfo
+PROTECTED:
+   METHOD init
+EXPORT:
+   VAR PrivateAlias TYPE character
+   VAR numeroAarea  TYPE integer
+   VAR tabela       TYPE character
+   VAR IsInUse      TYPE logical
+   VAR Indices      CLASS Lista                  // lista de IIndice
+   VAR IndiceAtivo                               // indice ativo classe Iindice
+   VAR Colunas      CLASS Lista                  // lista de IColunas
+
+END CLASS
+
+CREATE CLASS IIndice
+EXPORT:
+   VAR tagNome    TYPE character
+   VAR tagNumero  TYPE integer
+   VAR colunas    TYPE array                     // unidimensional caracter
+   VAR expressao
+   VAR Valido
+END CLASS
+
+CREATE CLASS IColunas // wrap para estrutura do DbStruct
+EXPORT:
+   VAR Nome
+   VAR Tipo
+   VAR Tamanho
+   VAR Decimais
+END CLASS
+//  IMPLEMENTA€ÇO 
+
+METHOD init(),()
+   ::IsInUse := .f.
+   ::Indices := Lista():new()
+   ::Colunas := Lista():new()
+RETURN self
+
+

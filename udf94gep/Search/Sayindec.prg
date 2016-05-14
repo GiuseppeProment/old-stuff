@@ -1,0 +1,6 @@
+FUNCTION SayIndeCon(nCodigo)
+	Local nOrder1 := IndeCon->(IndexOrd())
+	IndeCon->(DbSetOrder(1))
+	IndeCon->(DbSeek(nCodigo) )
+	IndeCon->(DbSetOrder(nOrder1))
+	Return If(IndeCon->(Found()),IndeCon->IeDescrAb," NAO EXISTE ")

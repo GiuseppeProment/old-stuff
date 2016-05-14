@@ -1,0 +1,136 @@
+#include "IPersist.ch"
+/* -------- INTERFACE -------- */
+
+CREATE CLASS IPersistente INHERIT INotificador
+   // Construtores
+PROTECTED:
+   METHOD init
+EXPORT:
+   CLASS METHOD initClass
+   // Metodos
+EXPORT:
+   METHOD save
+   METHOD erase
+   METHOD getNomeClasse
+   METHOD OnClassInfo
+   METHOD ID
+   METHOD setID
+   METHOD isPersistido
+   METHOD setisPersistido
+   METHOD setStamp
+   METHOD Stamp
+PROTECTED:
+   METHOD registraMembro
+HIDDEN:
+   METHOD isProxy
+   METHOD setisProxy
+   // Variaveis
+EXPORT:
+   CLASS VAR evtSalvando
+   CLASS VAR evtApagado
+HIDDEN:
+   VAR m_ID
+   VAR m_isPersistido
+   VAR m_isProxy
+   VAR m_stamp
+END CLASS
+
+/* -------- IMPLEMENTACAO -------- */
+
+METHOD initClass(),()
+   ::evtSalvando := "IPersistente::Salvando"
+   ::evtApagado  := "IPersistente::Apagado"
+RETURN self
+
+METHOD init(),()
+   ::m_isPersistido:=.F.
+   ::m_isProxy:=.F.
+   ::m_stamp := 0
+   ::m_ID    := IPersistID():new()
+RETURN self
+
+METHOD setStamp(value)
+   ::m_stamp := value
+RETURN self
+
+METHOD Stamp()
+RETURN ::m_stamp
+
+METHOD save()
+   ::notificarObservadores( IEventoNotificacao():new( self, ::class:evtSalvando )  )
+   IBroker():saveMe(self)
+RETURN self
+
+METHOD erase()
+   IBroker():deleteMe(self)
+   ::notificarObservadores( IEventoNotificacao():new( self, ::class:evtApagado )  )
+RETURN self
+
+METHOD getNomeClasse()
+   THROW "funcao-membro IPersistente:getNomeClasse nao foi redefinida."
+RETURN "Disparar Excessao"
+
+METHOD registraMembro(/*char*/ nomeMembro, /*unsigned int*/ offSet, /*unsigned int */ tamanho, /*IKnowType*/ tipoMembro, /*unsigned int*/ varSizeMax, /*bool */isProxy)
+
+// fazer defaults
+   default tamanho to 50
+   default tipoMembro to IsStringFix
+   default varSizeMax to 0
+   default isProxy to .f.
+
+// somar 7 ao off_set por causa das outras instancias das classes
+// herdadas 4 do IPersistente e 3 do INotificador
+   offSet += 7
+
+IClassMap():registraMembroClasse(;
+   self,;
+   nomeMembro,;
+   offSet,;
+   tamanho,;
+   tipoMembro,;
+   varSizeMax,;
+   isProxy)
+RETURN self
+
+METHOD OnClassInfo()
+   //## begin IPersistente::OnClassInfo%908414767.body preserve=yes
+  /*-----------------21/10/98 18:12-------------------
+  Use registraMembro( ADI( classe, membro) [,tipo,varSizeMax,isProxy] )
+  para cada membro.
+  --------------------------------------------------*/
+   THROW "funcao-membro IPersistente::OnClassInfo nao foi redefinida."
+RETURN nil
+//## Get and Set Operations for Has Relationships (implementation)
+
+METHOD ID()
+   //## begin IPersistente::ID%.get preserve=no
+RETURN ::m_ID
+//## end IPersistente::ID%.get
+
+METHOD setID(value)
+//setID(/*IPersistID*/ value)
+   //## begin IPersistente::setID%.set preserve=no
+   ::m_ID := value
+   //## end IPersistente::setID%.set
+RETURN nil
+
+//## Get and Set Operations for Class Attributes (implementation)
+
+METHOD isPersistido()
+   //## begin IPersistente::isPersistido%.get preserve=no
+RETURN ::m_isPersistido
+//## end IPersistente::isPersistido%.get
+
+METHOD setisPersistido( value)
+   //## begin IPersistente::setisPersistido%.set preserve=no
+   ::m_isPersistido := value
+   //## end IPersistente::setisPersistido%.set
+RETURN nil
+
+METHOD isProxy()
+RETURN ::m_isProxy
+
+METHOD setisProxy( value)
+   ::m_isProxy := value
+RETURN nil
+

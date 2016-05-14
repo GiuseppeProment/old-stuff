@@ -1,0 +1,21 @@
+>>IBroker:brokerInictForClipper - checar data no exe
+>>IBroker:brokerInictForClipper - o CRAE pode ser nStation()
+>>IBroker:inicialize() imp. rot. DS default...
+>>IBroker:newColecao - falta traducao dos criterios
+>>IBroker:newAssociacao - falta traducao dos criterios
+
+>>IClassMap::registraMembroClasse nomeColuna = nomeMembro
+>>IClassMap::resolveMapa Coluna e Tipo implementar
+
+>>IPersistID: as funcoes abaixo devem ser repostas por funcoes em "c"
+
+>>IDataStore:preenchaMapa erro. nomeMembro nao e nomeColuna!
+
+>>INativoDataStore:setCaminho Checar a Validade do Caminho
+>>INativoDataStore:executeModify - falta checagem do TimeStamp
+>>INativoDataStore:executeModify - o que fazer se nao encontra mais o objeto???
+>>INativoDataStore:executeModify - falta checagem do TimeStamp
+>>INativoDataStore:lockAction - commit seguido de unlock para integridade de dados
+>>InativoDataStore:requisitaDados provavel melhoria de performance aqui
+>>InativoDataStore:requisitaDados provavel melhoria de performance aqui
+>>INativoDataStore:requisitaDados Usar RelSelectByID com !NULL no 2. ID

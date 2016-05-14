@@ -1,0 +1,4151 @@
+
+(object Petal
+    version    	37)
+
+(object Class "IAtributo"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\iatrbuto.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\iatrbuto.cpp"))
+    documentation 	"somente para facilitar operacoes, é opcional"
+    abstract   	TRUE)
+
+(object Class "IBroker"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\ibroker.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\ibroker.cpp")
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateDefaultConstructor"
+	    value      	("GenerateSet" 206))
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateCopyConstructor"
+	    value      	("GenerateSet" 206))
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateDestructor"
+	    value      	FALSE))
+    documentation 	
+|Responsavel pelas operações DDL e DML e suas trascrições entre os meios persistentes e as respectivas classes persistentes.
+|
+    
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    label      	"ListaDataStore"
+	    supplier   	"IDataStore"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "1..n")
+	    static     	TRUE)
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    label      	"theColecoes"
+	    supplier   	"IColecaoPersistenteBase"
+	    Containment 	"By Reference"
+	    supplier_cardinality 	(value cardinality "1..n")
+	    static     	TRUE))
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    supplier   	"IClassMap"
+	    supplier_cardinality 	(value cardinality "1")
+	    client_cardinality 	(value cardinality "1")
+	    friend     	TRUE)
+	(object Uses_Relationship
+	    supplier   	"IStatement"
+	    friend     	TRUE)
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    supplier   	"IDirecaoFetch")
+	(object Uses_Relationship
+	    supplier   	"IInsertStatement")
+	(object Uses_Relationship
+	    supplier   	"IUpdateStatement")
+	(object Uses_Relationship
+	    supplier   	"IDeleteStatement")
+	(object Uses_Relationship
+	    supplier   	"IMapClassTable")
+	(object Uses_Relationship
+	    supplier   	"IPersistente")
+	(object Uses_Relationship
+	    supplier   	"IModifyStatement"))
+    operations 	(list Operations
+	(object Operation "inicialize"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	
+|processo de inicialização.
+	    
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909189395)
+	(object Operation "addDataStore"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	
+|adiciona o datastore a lista e passa a ser seu dono. deve sempre haver um datastore default. seguira o seguinte critério :
+|1. se a listaDataStore estiver vazia quando de alguma operação que necessite dispara uma excessão.
+|1. se houver somente um DataStore, será automáticamente DEFAULT
+|2. se houver vários o primeiro que se chamar DEFAULT 
+|3. se houver vários e nenhum se chamar DEFAULT, será o primeiro da lista
+	    
+	    parameters 	(list Parameters
+		(object Parameter "dataStore"
+		    type       	"IDataStore&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596375)
+	(object Operation "saveMe"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 203))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    parameters 	(list Parameters
+		(object Parameter "anPersist"
+		    type       	"IPersistente&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	
+|1. se objeto.isPersistido : cria IUpdateStatement e chama setID do Statement
+|2. se ! objeto.isPersistido: cria IInsertStatement
+|3. pega o DataStore do IPersistente com o IMapClassTable
+|4. invoca DataStore.execute( IModifyStatement)
+|5. altera o estado do IPersistente se deu tudo certo para Persistido.
+|6. destroi IInsert ou IUpdate.
+		)
+	    opExportControl 	"Public"
+	    uid        	907292337)
+	(object Operation "deleteMe"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    parameters 	(list Parameters
+		(object Parameter "anPersiste"
+		    type       	"IPersistente&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    pre_condition 	(object Semantic_Info
+		PDL        	"somente se objeto.isPersistido")
+	    semantics  	(object Semantic_Info
+		PDL        	
+|1. monta IDeleteStatement de ac. com isPersistido
+|2. pega o DataStore do IPersistente com o IMapClassTable
+|3. invoca DataStore.execute( IModifyStatement)
+|4. altera o estado do IPersistente se deu tudo certo para ! isPersistido.
+|5. destroi IDelete.
+		)
+	    opExportControl 	"Public"
+	    uid        	908596376)
+	(object Operation "preenchaMapa"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    parameters 	(list Parameters
+		(object Parameter "anPersist"
+		    type       	"IPersistente&")
+		(object Parameter "anStatement"
+		    type       	"IModifyStatement&")
+		(object Parameter "mapa"
+		    type       	"IMapClassTable&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Private"
+	    uid        	909032151)
+	(object Operation "regDataStoreForClass"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	
+|registra o dataStore identificado pelo nome para a classe especificada.
+|0. chama apresentoPersistente em self
+|1. procura pelo dataStore em ListaDataStore
+|2. se nao achar dispara um erro IPersistenteErro
+|3. se achou pega uma referencia se chama IClassMap::setDataStoreFor 
+	    
+	    parameters 	(list Parameters
+		(object Parameter "anPersiste"
+		    type       	"IPersistente&")
+		(object Parameter "dataStoreName"
+		    type       	"char*"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596377)
+	(object Operation "apresento"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	
+|serve para antecipar o reconhecimento das subclasses persistentes, faz o classmap ser inicializado com as informações do persistente.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "anPersistente"
+		    type       	"IPersistente&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596378)
+	(object Operation "newColecao"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	
+|reconhece a nova coleção e insere-a na lista de coleções
+	    
+	    parameters 	(list Parameters
+		(object Parameter "anColecao"
+		    type       	"IColecaoPersistenteBase&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596379)
+	(object Operation "processeColecao"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	"solicita processamento da IColecaoPersistenteBase.theQuery ao IColecaoPersistenteBase.theDataStore e muda o estado da colecao."
+	    parameters 	(list Parameters
+		(object Parameter "anColecao"
+		    type       	"IColecaoPersistenteBase&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596380)
+	(object Operation "libereColecao"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	"solicita processamento da IColecaoPersistenteBase.theQuery ao IColecaoPersistenteBase.theDataStore e muda o estado da colecao."
+	    parameters 	(list Parameters
+		(object Parameter "anColecao"
+		    type       	"IColecaoPersistenteBase&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596381)
+	(object Operation "requisitaObjeto"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	"processar requisicao de objeto na direcao especificada."
+	    parameters 	(list Parameters
+		(object Parameter "anColecao"
+		    type       	"IColecaoPersistenteBase&")
+		(object Parameter "direcao"
+		    type       	"IDirecaoFetch"
+		    initv      	"proximo"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596382)
+	(object Operation "TabelaRelacao"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas")
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return IClassMap::TabelaRelacao();")))
+	    documentation 	"retorna o nome da tabela relacao obtido do ClassMap"
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908938911)
+	(object Operation "DefaultDataStore"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	"Retorna o DataStore Default."
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909457534)
+	(object Operation "asDebug"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	
+|retorna informações para debug.
+	    
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909457535)
+	(object Operation "nomeColunaID"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas")
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return IClassMap::ColunaId();")))
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909724212)
+	(object Operation "criarBasePara"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	"cria a base de dados para o persistente especifico."
+	    parameters 	(list Parameters
+		(object Parameter "anPersistente"
+		    type       	"IPersistente&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	910406193)
+	(object Operation "removeDataStore"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	"remove o datastore da lista do mapa se estiver la."
+	    parameters 	(list Parameters
+		(object Parameter "dataStore"
+		    type       	"IDataStore&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	958533754))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "UsarDataStoreDefault"
+	    documentation 	
+|usar o datastore default caso não seja especificado um.
+	    
+	    type       	"bool"
+	    initv      	"true"
+	    static     	TRUE)
+	(object ClassAttribute "estado"
+	    type       	"IEstadoGenerico"
+	    initv      	"gInicial"
+	    exportControl 	"Public"
+	    Containment 	"By Value"
+	    static     	TRUE)
+	(object ClassAttribute "ixDStoreDefault"
+	    documentation 	"guarda o indice do dataStore default."
+	    type       	"int"
+	    initv      	"-1"
+	    Containment 	"By Value"
+	    static     	TRUE)))
+
+(object Class "IClassMap"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\iclssmap.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\iclssmap.cpp")
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateDefaultConstructor"
+	    value      	("GenerateSet" 206))
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateCopyConstructor"
+	    value      	("GenerateSet" 206))
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateDestructor"
+	    value      	FALSE))
+    documentation 	
+|O mapeamento classe x tabela e membro x coluna pode ser default pelos nomes de classe e membro ou caso exista o arquivo mapClass.Ini, o mesmo sera lido pois tera as correspondentes relacoes. o DataStore especifico de cada classe não é guardado no INI
+    
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateSetOperation"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateGetOperation"
+		    value      	FALSE))
+	    label      	"ListaMapClassTable"
+	    supplier   	"IMapClassTable"
+	    exportControl 	"Private"
+	    Containment 	"By Reference"
+	    supplier_cardinality 	(value cardinality "n")
+	    static     	TRUE)
+	(object Has_Relationship
+	    documentation 	"somente para trabalho durante operacoes internas, normalmente esta com NULL."
+	    label      	"mapaCorrente"
+	    supplier   	"IMapClassTable"
+	    exportControl 	"Private"
+	    Containment 	"By Reference"
+	    supplier_cardinality 	(value cardinality "1")
+	    static     	TRUE))
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    supplier   	"IKnowType")
+	(object Uses_Relationship
+	    supplier   	"IPersistente")
+	(object Uses_Relationship
+	    supplier   	"IDataStore")
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    supplier   	"IBroker"))
+    operations 	(list Operations
+	(object Operation "registraMembroClasse"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 203))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	
+|no caso de não especificar o tipo, tipo será StringFixa de tamanho = tamanho.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "anPersistente"
+		    type       	"IPersistente&")
+		(object Parameter "nomeMembro"
+		    type       	"char*")
+		(object Parameter "offset"
+		    type       	"unsigned int")
+		(object Parameter "tamanho"
+		    type       	"unsigned int")
+		(object Parameter "tipoMembro"
+		    type       	"IKnowType"
+		    initv      	"IsStringFix")
+		(object Parameter "varSizeMax"
+		    type       	"unsigned int"
+		    initv      	"0")
+		(object Parameter "isProxy"
+		    type       	"bool"
+		    initv      	"false"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	907292333)
+	(object Operation "getMapaFor"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 203))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    parameters 	(list Parameters
+		(object Parameter "anPersist"
+		    type       	"IPersistente &"))
+	    result     	"IMapClassTable&"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		diagram_ref 	
+|+Isolação
+		)
+	    opExportControl 	"Private"
+	    uid        	907292334)
+	(object Operation "searchClassName"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 203))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas")
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "int Posicao;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return Posicao;")))
+	    documentation 	
+|procura na lista de IMapClassTable pelo objeto igual ao nome e retorna o indice.
+|retorna -1 se nao achou
+	    
+	    parameters 	(list Parameters
+		(object Parameter "nomeClasse"
+		    type       	"char*"))
+	    result     	"int"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Private"
+	    uid        	907292335)
+	(object Operation "insertClassInfoOf"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 203))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	
+|chamado quando search() retorna -1 para um objeto anPersist. 
+|chama self.resolveMapa ao final
+	    
+	    parameters 	(list Parameters
+		(object Parameter "anPersist"
+		    type       	"IPersistente&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	"chama o OnClassInfo no anPersist.")
+	    opExportControl 	"Private"
+	    uid        	907292336)
+	(object Operation "resolveMapa"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	
+|resolve nome da tabela, colunas e tipos e torna estado do mapa isComplete true.
+|processa as informações do MapClass.ini
+	    
+	    parameters 	(list Parameters
+		(object Parameter ""))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Private"
+	    uid        	908596388)
+	(object Operation "setDataStoreFor"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	"atualiza o meDatastore para uma subclasse de IPersistente."
+	    parameters 	(list Parameters
+		(object Parameter "anPersiste"
+		    type       	"IPersistente&")
+		(object Parameter "anDataStore"
+		    type       	"IDataStore&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Private"
+	    uid        	908596387)
+	(object Operation "inicialize"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	
+|inicialização.
+	    
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909189394)
+	(object Operation "asDebug"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909716769)
+	(object Operation "removeDataStore"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"OperacoesEstaticas"))
+	    documentation 	"Remove todas as Tabelas de mapeamento que estao usando o datastore removido."
+	    parameters 	(list Parameters
+		(object Parameter "dataStore"
+		    type       	"IDataStore&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	958533755))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "TabelaRelacao"
+	    type       	"IString"
+	    initv      	
+|"Relacao"
+	    
+	    Containment 	"By Value"
+	    static     	TRUE)
+	(object ClassAttribute "ColunaId"
+	    documentation 	"nome da coluna chave primaria que existira em todas tabelas."
+	    type       	"IString"
+	    initv      	
+|"ID"
+	    
+	    exportControl 	"Public"
+	    Containment 	"By Value"
+	    static     	TRUE)))
+
+(object Parameterized_Class "IColecao"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\icolecao.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\icolecao.cpp"))
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet")
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateDataMember"
+		    value      	FALSE))
+	    label      	"itens"
+	    supplier   	"IPersistente"
+	    exportControl 	"Implementation"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "0..n")))
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"IColecaoPersistenteBase"))
+    operations 	(list Operations
+	(object Operation "createDummy"
+	    attributes 	(list Attribute_Set)
+	    documentation 	"retorna um objeto IPersistente por valor, vazio. apenas para reconhecimento adiantado do mesmo (mapeamento). O IPersistente necessita possuir um construtor default, sem nenhum processamento."
+	    result     	"IPersistente*"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	"talvez crie-se um construtor especial no IPersistente com um parametro escondido para evitar que o construtor seja modificado pelas subclasses.")
+	    opExportControl 	"Public"
+	    uid        	908340282)
+	(object Operation "releaseDummy"
+	    attributes 	(list Attribute_Set)
+	    parameters 	(list Parameters
+		(object Parameter "pNulo"
+		    type       	"IPersistente*"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	910837610)
+	(object Operation "ObjectPointer"
+	    attributes 	(list Attribute_Set)
+	    result     	"PersistenteSubClass*"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908407234)
+	(object Operation "ObjectRef"
+	    attributes 	(list Attribute_Set)
+	    result     	"PersistenteSubClass&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908407233)
+	(object Operation "ObjectCopy"
+	    attributes 	(list Attribute_Set)
+	    documentation 	
+|devolve uma cópia do objeto apontado pelo ponteiro de objetos. vai ter que ser implementado pelas classes template.
+	    
+	    result     	"PersistenteSubClass"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908340294)
+	(object Operation "crieInstancia"
+	    attributes 	(list Attribute_Set)
+	    documentation 	
+|cria um objeto do tipo mantido pela coleção e guarda-o no ponteiro InstanciaCorrente. que será deletado a cada nova chamada de crieInstancia e se a coleção for destruida. Inicie com NULL.
+	    
+	    result     	"IPersistente&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908340292))
+    parameters 	(list Parameters
+	(object Parameter "PersistenteSubClass"
+	    type       	"class")))
+
+(object Class "IColecaoPersistenteBase"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\iclcprss.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\iclcprss.cpp"))
+    documentation 	
+|Esta classe faz operacoes de Select somente atraves de um criterio opcional.
+|OPEN CURSOR cHandleCursor
+|Select <ID,campo1,...n> FROM <Tabela> [ WHERE [ campon <rel> [campox|valor] [AND | OR] ...] TO cHandleCursor
+|O cursor fica aberto enquanto a instancia existir. e é acessado para obter nova linha :
+|FECTH cHandleCursor
+|Portando a conexao com o meio persistente é igual a duração da instancia.
+    
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    documentation 	"guarda o datastore do IPersistente para agilizar as chamadas."
+	    label      	"theDataStore"
+	    supplier   	"IDataStore"
+	    Containment 	"By Reference"
+	    supplier_cardinality 	(value cardinality "1"))
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GetSetByReference"
+		    value      	TRUE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    documentation 	
+|guarda o query montado pelo broker para a coleção
+	    
+	    label      	"theQuery"
+	    supplier   	"IQueryStatement"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "1"))
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    documentation 	
+|dependendo do estado, diversas operações devem ser recusadas.
+	    
+	    label      	"estado"
+	    supplier   	"IEstadoColecao"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "1"))
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GetSetByReference"
+		    value      	TRUE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateSetOperation"
+		    value      	FALSE))
+	    label      	"ListaCriterio"
+	    supplier   	"ICriterio"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "n"))
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateSetOperation"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GetSetByReference"
+		    value      	TRUE))
+	    label      	"ListaOrdem"
+	    supplier   	"IOrdem"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "n")))
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"IObservador"))
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    label      	"registra-se em"
+	    supplier   	"IBroker")
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    supplier   	"IDirecaoFetch")
+	(object Uses_Relationship
+	    supplier   	"IPersistente")
+	(object Uses_Relationship
+	    supplier   	"IPersistente"
+	    friend     	TRUE))
+    abstract   	TRUE
+    operations 	(list Operations
+	(object Operation "releaseDummy"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 202)))
+	    parameters 	(list Parameters
+		(object Parameter "pNulo"
+		    type       	"IPersistente*"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	910837611)
+	(object Operation "createDummy"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 202)))
+	    documentation 	"retorna um objeto IPersistente por valor, vazio. apenas para reconhecimento adiantado do mesmo (mapeamento). O IPersistente necessita possuir um construtor default, sem nenhum processamento."
+	    result     	"IPersistente*"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	"talvez crie-se um construtor especial no IPersistente com um parametro escondido para evitar que o construtor seja modificado pelas subclasses.")
+	    opExportControl 	"Public"
+	    uid        	908340282)
+	(object Operation "count"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "int Contagem;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return Contagem;")))
+	    documentation 	"número de objetos disponiveis. defalt é 0"
+	    result     	"int"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908340284)
+	(object Operation "isFim"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "bool Final;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return Final;")))
+	    documentation 	
+|retorna true se não houver mais objetos na lista tanto para cima quanto para baixo.
+	    
+	    result     	"bool"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908340285)
+	(object Operation "pronto"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    result     	"IColecaoPersistenteBase&"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	
+|1. não aceita mais modificações
+|2. processa a coleção
+|3. muda o estado para executando.
+		)
+	    opExportControl 	"Public"
+	    uid        	908340283)
+	(object Operation "goPrimeiro"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	"coloca o ponteiro de objetos no primeiro da lista."
+	    result     	"IColecaoPersistenteBase&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908340286)
+	(object Operation "goUltimo"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	"coloca o ponteiro de objetos no ultimo da lista."
+	    result     	"IColecaoPersistenteBase&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908340287)
+	(object Operation "goProximo"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	"avança o ponteiro de objetos para o proximo."
+	    result     	"IColecaoPersistenteBase&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908340288)
+	(object Operation "goAnterior"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	"retrocede o ponteiro de objetos para o anterior."
+	    result     	"IColecaoPersistenteBase&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908340289)
+	(object Operation "ReavalieColecao"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	
+|causa o reprocessamento da coleção. count pode mudar.
+	    
+	    result     	"IColecaoPersistenteBase&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908340290)
+	(object Operation "ReavaliePointer"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	
+|causa a reavaliação do ponteiro de objetos.
+	    
+	    result     	"IColecaoPersistenteBase&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908340291)
+	(object Operation "movePointer"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	"causa o ponteiro ser movimentado."
+	    parameters 	(list Parameters
+		(object Parameter "direcao"
+		    type       	"IDirecaoFetch"
+		    initv      	"proximo"))
+	    result     	"IColecaoPersistenteBase&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Protected"
+	    uid        	908340293)
+	(object Operation "addCriterio"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	"adiciona um criterio a lista theCriterio"
+	    parameters 	(list Parameters
+		(object Parameter "umCriterio"
+		    type       	"ICriterio"))
+	    result     	"IColecaoPersistenteBase&"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	"somente no estado NOVO")
+	    opExportControl 	"Public"
+	    uid        	908581620)
+	(object Operation "addOrdem"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	"adiciona objeto ordenador a lista de ordenacao."
+	    parameters 	(list Parameters
+		(object Parameter "umaOrdem"
+		    type       	"IOrdem"))
+	    result     	"IColecaoPersistenteBase&"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	"somente no estado NOVO")
+	    opExportControl 	"Public"
+	    uid        	908581621)
+	(object Operation "crieInstancia"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201)))
+	    documentation 	
+|cria um objeto do tipo mantido pela coleção e guarda-o no ponteiro InstanciaCorrente. que será deletado a cada nova chamada de crieInstancia e se a coleção for destruida. Inicie com NULL.
+	    
+	    result     	"IPersistente&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908340292))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "InstanciaCorrente"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"ReadOnly")
+		(object Attribute
+		    tool       	"cg"
+		    name       	"DataMemberVisibility"
+		    value      	("DataMemberVisibilitySet" 44)))
+	    documentation 	
+|guarda o objeto corrente mantido pela coleção. 
+	    
+	    type       	"IPersistente"
+	    exportControl 	"Public"
+	    Containment 	"By Reference"))
+    statemachine 	(object State_Machine
+	states     	(list States
+	    (object State "$UNNAMED$0"
+		transitions 	(list transition_list
+		    (object State_Transition
+			supplier   	"novo"
+			Event      	(object Event "criar")
+			action     	(object action "new")
+			sendEvent  	(object sendEvent))
+		    (object State_Transition
+			supplier   	"novo"
+			Event      	(object Event "criar")
+			action     	(object action "implicito")
+			sendEvent  	(object sendEvent)))
+		type       	"StartState")
+	    (object State "$UNNAMED$1"
+		type       	"EndState")
+	    (object State "pronto"
+		documentation 	
+|quando a coleção esta pronta para ser usada
+		
+		transitions 	(list transition_list
+		    (object State_Transition
+			supplier   	"terminado"
+			Event      	(object Event "QdoDelete")
+			action     	(object action "destruir")
+			sendEvent  	(object sendEvent))
+		    (object State_Transition
+			supplier   	"erro"
+			Event      	(object Event "OnErro")
+			sendEvent  	(object sendEvent)))
+		type       	"Normal"
+		actions    	(list action_list
+		    (object sendEvent
+			ActionTime 	(object ActionTime
+			    when       	"Entry")
+			Event      	(object Event "processeColecao")
+			parameters 	"this"
+			target     	"Broker")))
+	    (object State "novo"
+		transitions 	(list transition_list
+		    (object State_Transition
+			supplier   	"pronto"
+			Event      	(object Event "QdoPronto")
+			action     	(object action "pronto")
+			sendEvent  	(object sendEvent)))
+		type       	"Normal"
+		actions    	(list action_list
+		    (object sendEvent
+			ActionTime 	(object ActionTime
+			    when       	"Entry")
+			Event      	(object Event "novaColecao")
+			parameters 	"this"
+			target     	"Broker")))
+	    (object State "terminado"
+		transitions 	(list transition_list
+		    (object State_Transition
+			supplier   	"$UNNAMED$1"
+			sendEvent  	(object sendEvent)))
+		type       	"Normal"
+		actions    	(list action_list
+		    (object sendEvent
+			ActionTime 	(object ActionTime
+			    when       	"Entry")
+			Event      	(object Event "deleteColecao")
+			parameters 	"this"
+			target     	"Broker")))
+	    (object State "erro"
+		type       	"Normal")))
+    statediagram 	(object State_Diagram ""
+	title      	""
+	zoom       	100
+	max_height 	28350
+	max_width  	21600
+	origin_x   	0
+	origin_y   	0
+	items      	(list diagram_item_list
+	    (object StateView "StartState" "$UNNAMED$0" @1
+		location   	(148, 204)
+		autoResize 	TRUE)
+	    (object StateView "EndState" "$UNNAMED$1" @2
+		location   	(1820, 1226)
+		autoResize 	TRUE)
+	    (object StateView "Normal" "pronto" @3
+		location   	(537, 809)
+		label      	(object ItemLabel
+		    Parent_View 	@3
+		    location   	(537, 745)
+		    anchor_loc 	1
+		    nlines     	1
+		    max_width  	807
+		    justify    	0
+		    label      	"pronto")
+		compartment 	(object Compartment
+		    Parent_View 	@3
+		    location   	(134, 785)
+		    anchor     	2
+		    nlines     	1
+		    max_width  	807
+		    justify    	0
+		    compartmentItems 	(list Compartment
+			"entry: ^Broker.processeColecao(this)"))
+		width      	819
+		height     	219
+		autoResize 	TRUE)
+	    (object StateView "Normal" "novo" @4
+		location   	(1187, 203)
+		label      	(object ItemLabel
+		    Parent_View 	@4
+		    location   	(1187, 139)
+		    anchor_loc 	1
+		    nlines     	1
+		    max_width  	600
+		    justify    	0
+		    label      	"novo")
+		compartment 	(object Compartment
+		    Parent_View 	@4
+		    location   	(887, 179)
+		    anchor     	2
+		    nlines     	1
+		    max_width  	600
+		    justify    	0
+		    compartmentItems 	(list Compartment
+			"entry: ^Broker.novaColecao(this)"))
+		width      	612
+		height     	219
+		autoResize 	TRUE)
+	    (object StateView "Normal" "terminado" @5
+		location   	(697, 1234)
+		label      	(object ItemLabel
+		    Parent_View 	@5
+		    location   	(697, 1192)
+		    anchor_loc 	1
+		    nlines     	1
+		    max_width  	637
+		    justify    	0
+		    label      	"terminado")
+		compartment 	(object Compartment
+		    Parent_View 	@5
+		    location   	(379, 1232)
+		    anchor     	2
+		    nlines     	1
+		    max_width  	637
+		    justify    	0
+		    compartmentItems 	(list Compartment
+			"entry: ^Broker.deleteColecao(this)"))
+		width      	649
+		height     	175
+		autoResize 	TRUE)
+	    (object TransView "" @6
+		label      	(object SegLabel @7
+		    Parent_View 	@6
+		    location   	(927, 536)
+		    anchor_loc 	1
+		    nlines     	1
+		    max_width  	450
+		    justify    	0
+		    label      	"QdoPronto / pronto"
+		    pctDist    	0.451770
+		    height     	68
+		    orientation 	0)
+		client     	@4
+		supplier   	@3
+		line_style 	0
+		x_offset   	FALSE)
+	    (object TransView "" @8
+		label      	(object SegLabel @9
+		    Parent_View 	@8
+		    location   	(663, 1017)
+		    anchor_loc 	1
+		    nlines     	1
+		    max_width  	450
+		    justify    	0
+		    label      	"QdoDelete / destruir"
+		    pctDist    	0.500000
+		    height     	45
+		    orientation 	0)
+		client     	@3
+		supplier   	@5
+		line_style 	0
+		x_offset   	FALSE)
+	    (object TransView "" @10
+		client     	@5
+		supplier   	@2
+		line_style 	0
+		x_offset   	FALSE)
+	    (object TransView "" @11
+		label      	(object SegLabel @12
+		    Parent_View 	@11
+		    location   	(529, 159)
+		    anchor_loc 	1
+		    nlines     	1
+		    max_width  	450
+		    justify    	0
+		    label      	"criar / new"
+		    pctDist    	0.500000
+		    height     	45
+		    orientation 	0)
+		client     	@1
+		supplier   	@4
+		line_style 	0
+		x_offset   	FALSE)
+	    (object TransView "" @13
+		label      	(object SegLabel @14
+		    Parent_View 	@13
+		    location   	(484, 287)
+		    anchor_loc 	1
+		    nlines     	1
+		    max_width  	276
+		    justify    	0
+		    label      	"criar / implicito"
+		    pctDist    	0.473002
+		    height     	29
+		    orientation 	0)
+		client     	@1
+		supplier   	@4
+		vertices   	(list Points
+		    (169, 234)
+		    (228, 319)
+		    (675, 312)
+		    (880, 266))
+		line_style 	0
+		x_offset   	FALSE)
+	    (object StateView "Normal" "erro" @15
+		location   	(1918, 808)
+		label      	(object ItemLabel
+		    Parent_View 	@15
+		    location   	(1918, 786)
+		    anchor_loc 	1
+		    nlines     	1
+		    max_width  	288
+		    justify    	0
+		    label      	"erro")
+		autoResize 	TRUE)
+	    (object TransView "" @16
+		label      	(object SegLabel @17
+		    Parent_View 	@16
+		    location   	(1357, 764)
+		    anchor_loc 	1
+		    nlines     	1
+		    max_width  	450
+		    justify    	0
+		    label      	"OnErro"
+		    pctDist    	0.500000
+		    height     	45
+		    orientation 	0)
+		client     	@3
+		supplier   	@15
+		line_style 	0
+		x_offset   	FALSE))))
+
+(object Class "ICriterio"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateDefaultConstructor"
+	    value      	("GenerateSet" 206))
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\icritrio.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\icritrio.cpp"))
+    documentation 	
+|Responsavel pela montagem do criterio de selecao (clausula WHERE)
+|cada sentença é montada como :
+|SENTENÇA => <campoValido> <opRelacional> [valorValido|<campoValido>] 
+|SENTENÇA [AND|OR] SENTENÇA [AND|OR] ...
+|Os críterios devem ser processados para trocar os atributos pelos nomes_colunas reais.
+    
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    supplier   	"IOperComparacao")
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    supplier   	"IOperLogicoPrecedencia"))
+    operations 	(list Operations
+	(object Operation "asSentencaSQL"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "IString Sentenca;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return Sentenca;")))
+	    result     	"char*"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	
+|se necessitar traducao monta coluna - comparador - argumento 
+|senão devolve fraseLivre diretamente.
+		)
+	    opExportControl 	"Public"
+	    uid        	908414766)
+	(object Operation "ICriterio"
+	    parameters 	(list Parameters
+		(object Parameter "atributo"
+		    type       	"IString&")
+		(object Parameter "comparacao"
+		    type       	"IOperComparacao")
+		(object Parameter "argumento"
+		    type       	"char*"))
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596363)
+	(object Operation "ICriterio"
+	    parameters 	(list Parameters
+		(object Parameter "atributo"
+		    type       	"IString&")
+		(object Parameter "comparacao"
+		    type       	"IOperComparacao")
+		(object Parameter "argumento"
+		    type       	"int"))
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596364)
+	(object Operation "ICriterio"
+	    parameters 	(list Parameters
+		(object Parameter "atributo"
+		    type       	"IString&")
+		(object Parameter "comparacao"
+		    type       	"IOperComparacao")
+		(object Parameter "argumento"
+		    type       	"IString&"))
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596365)
+	(object Operation "ICriterio"
+	    documentation 	
+|não necessita traducao
+	    
+	    parameters 	(list Parameters
+		(object Parameter "FraseLivre"
+		    type       	"char*"))
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596366)
+	(object Operation "ICriterio"
+	    documentation 	
+|não necessita traducao.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "conectorLogico"
+		    type       	"IOperLogicoPrecedencia"))
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596367))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "atributo"
+	    type       	"IString"
+	    exportControl 	"Public")
+	(object ClassAttribute "comparador"
+	    type       	"IOperComparacao"
+	    exportControl 	"Public")
+	(object ClassAttribute "argumento"
+	    type       	"IString"
+	    exportControl 	"Public")
+	(object ClassAttribute "isNecessitaTraducao"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    documentation 	"true se o atributo deve ser traduzido para o nome da coluna."
+	    type       	"bool"
+	    initv      	"false")
+	(object ClassAttribute "isArgPrecisaAspas"
+	    type       	"bool"
+	    initv      	"true"
+	    exportControl 	"Public")
+	(object ClassAttribute "coluna"
+	    type       	"IString"
+	    exportControl 	"Public")
+	(object ClassAttribute "fraseLivre"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    documentation 	"uso interno"
+	    type       	"IString"
+	    Containment 	"By Value")))
+
+(object Class "IDataStore"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\idtstore.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\idtstore.cpp"))
+    documentation 	
+|responsável pela implementação específica para cada tipo de meio.
+    
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    supplier   	"IStatement"
+	    friend     	TRUE)
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    supplier   	"IDirecaoFetch")
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set)
+	    supplier   	"IModifyStatement")
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set)
+	    supplier   	"IQueryStatement"))
+    abstract   	TRUE
+    operations 	(list Operations
+	(object Operation "execute"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "bool ok;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return ok;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201)))
+	    documentation 	
+|deve afetar somente 1 linha, senão é merda.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "setenca"
+		    type       	"IModifyStatement&"))
+	    result     	"bool"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596370)
+	(object Operation "execute"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return ok;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "bool ok;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201)))
+	    parameters 	(list Parameters
+		(object Parameter "anQuery"
+		    type       	"IQueryStatement&"))
+	    result     	"bool"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596371)
+	(object Operation "requisitaDados"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum")
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201)))
+	    parameters 	(list Parameters
+		(object Parameter "theQuery"
+		    type       	"IQueryStatement&")
+		(object Parameter "tipo"
+		    type       	"IDirecaoFetch"
+		    initv      	"proximo"))
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	
+|utiliza o lowLayerSlot :
+|1. checa se não é 0
+|2. checa o estado do Statement
+|3. obtem os dados de canal do lowLayerSlot que são dependentes da implementação.
+|4. copia os dados do canal para o theValues no IQuery
+|5. se não há dados (eof/bof) ajusta isFim do Query para true. não muda os dados.
+		)
+	    opExportControl 	"Public"
+	    uid        	908596372)
+	(object Operation "isFim"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "bool Final;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return Final;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201)))
+	    documentation 	
+|retorna true se a operação de moveCursor encontra o inicio ou fim dos dados.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "theQuery"
+		    type       	"IQueryStatement&"))
+	    result     	"bool"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596373)
+	(object Operation "libereQuery"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum")
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201)))
+	    documentation 	
+|libera alocações que estão guardadas no IQueryStatement.lowLayerSlot
+	    
+	    parameters 	(list Parameters
+		(object Parameter "anQuery"
+		    type       	"IQueryStatement&"))
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596374)
+	(object Operation "ligar"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum")
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201)))
+	    documentation 	"conecta ao banco ou prepara-se para servir."
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	910153638)
+	(object Operation "desligar"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum")
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201)))
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	910153639))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "nome"
+	    documentation 	"nome da datastore."
+	    type       	"IString"
+	    initv      	
+|"DEFAULT"
+	    
+	    exportControl 	"Public")
+	(object ClassAttribute "usuario"
+	    type       	"IString"
+	    exportControl 	"Public"
+	    Containment 	"By Value")
+	(object ClassAttribute "senha"
+	    type       	"IString"
+	    exportControl 	"Public"
+	    Containment 	"By Value")))
+
+(object Class "IDataStoreODBC"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\idtstrdb.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\idtstrdb.cpp"))
+    documentation 	
+|14.11.99 - temos problemas com alguns drivres de odbc que não os da microsoft. Que invariavelmente não tem capacidade para cursores rolaveis, e outras características como cursores dinamicos. Temos que prover mecanismos 
+|para suporta-los. A Solução seria:
+|1. identificar a versão suportada de ODBC ( 2 ou 3 )
+|2. identificar o suporte a cursor rolavel ou somente para frente
+|
+    
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"IDataStore"))
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    supplier   	"IModifyStatement")
+	(object Uses_Relationship
+	    supplier   	"IStatement"
+	    friend     	TRUE)
+	(object Uses_Relationship
+	    supplier   	"IQueryStatement"))
+    operations 	(list Operations
+	(object Operation "execute"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "bool ok;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return ok;")))
+	    documentation 	
+|deve afetar somente 1 linha, senão é merda.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "setenca"
+		    type       	"IModifyStatement&"))
+	    result     	"bool"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596370)
+	(object Operation "execute"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return ok;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "bool ok;")))
+	    parameters 	(list Parameters
+		(object Parameter "anQuery"
+		    type       	"IQueryStatement&"))
+	    result     	"bool"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596371)
+	(object Operation "requisitaDados"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    parameters 	(list Parameters
+		(object Parameter "theQuery"
+		    type       	"IQueryStatement&")
+		(object Parameter "tipo"
+		    type       	"IDirecaoFetch"
+		    initv      	"proximo"))
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	
+|utiliza o lowLayerSlot :
+|1. checa se não é 0
+|2. checa o estado do Statement
+|3. obtem os dados de canal do lowLayerSlot que são dependentes da implementação.
+|4. copia os dados do canal para o theValues no IQuery
+|5. se não há dados (eof/bof) ajusta isFim do Query para true. não muda os dados.
+		)
+	    opExportControl 	"Public"
+	    uid        	908596372)
+	(object Operation "isFim"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "bool Final;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return Final;")))
+	    documentation 	
+|retorna true se a operação de moveCursor encontra o inicio ou fim dos dados.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "theQuery"
+		    type       	"IQueryStatement&"))
+	    result     	"bool"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596373)
+	(object Operation "libereQuery"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	
+|libera alocações que estão guardadas no IQueryStatement.lowLayerSlo
+	    
+	    parameters 	(list Parameters
+		(object Parameter "anQuery"
+		    type       	"IQueryStatement&"))
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596374)
+	(object Operation "ligar"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	"conecta ao banco ou prepara-se para servir. dispara execessao."
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	910153638)
+	(object Operation "desligar"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	910153639)
+	(object Operation "aloqueENV"
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Implementation"
+	    uid        	910153640)
+	(object Operation "aloqueDBC"
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Implementation"
+	    uid        	910153641)
+	(object Operation "conectar"
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Implementation"
+	    uid        	910153642)
+	(object Operation "freeHandles"
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Implementation"
+	    uid        	910153643)
+	(object Operation "aloqueStatementUmaLinha"
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Implementation"
+	    uid        	910153640))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "DSN"
+	    attributes 	(list Attribute_Set)
+	    documentation 	"Data Source Name"
+	    type       	"IString"
+	    exportControl 	"Public"
+	    Containment 	"By Value")
+	(object ClassAttribute "hConnection"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    documentation 	"SQL handle DataBase Connection."
+	    type       	"SQLHDBC"
+	    Containment 	"By Value")
+	(object ClassAttribute "hEnvironment"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    documentation 	"SQL Handle Environment."
+	    type       	"SQLHENV"
+	    Containment 	"By Value")
+	(object ClassAttribute "hStatement"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    documentation 	
+|SQL Handle Statement para operações de uma linha.
+	    
+	    type       	"SQLHSTMT"
+	    Containment 	"By Value")
+	(object ClassAttribute "IshConnection"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    type       	"bool"
+	    initv      	"false"
+	    Containment 	"By Value")
+	(object ClassAttribute "IshEnvironment"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    type       	"bool"
+	    initv      	"false"
+	    Containment 	"By Value")
+	(object ClassAttribute "IsConectado"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    type       	"bool"
+	    initv      	"false"
+	    Containment 	"By Value")
+	(object ClassAttribute "IshStatement"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    type       	"bool"
+	    initv      	"false"
+	    Containment 	"By Value")
+	(object ClassAttribute "nVersaoODBC"
+	    documentation 	
+|Versão de ODBC suportado pelo Driver em uso.
+	    
+	    type       	"int"
+	    initv      	"0"
+	    Containment 	"By Value")
+	(object ClassAttribute "IsCursorRolavelSuportado"
+	    documentation 	
+|Indica se o driver em uso suporta Cursor Rolavel.
+|Se não suportar vamos ter que prover ação compativel com navegação ou disparar excessão ou warning.
+	    
+	    type       	"bool"
+	    Containment 	"By Value")))
+
+(object Class "IDataStoreOracleActivex"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\idtstrrc.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\idtstrrc.cpp"))
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"IDataStore"))
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    supplier   	"IQueryStatement")
+	(object Uses_Relationship
+	    supplier   	"IModifyStatement")
+	(object Uses_Relationship
+	    supplier   	"IStatement"
+	    friend     	TRUE))
+    operations 	(list Operations
+	(object Operation "execute"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "bool ok;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return ok;")))
+	    documentation 	
+|deve afetar somente 1 linha, senão é merda.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "setenca"
+		    type       	"IModifyStatement&"))
+	    result     	"bool"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596370)
+	(object Operation "execute"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return ok;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "bool ok;")))
+	    parameters 	(list Parameters
+		(object Parameter "anQuery"
+		    type       	"IQueryStatement&"))
+	    result     	"bool"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596371)
+	(object Operation "requisitaDados"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    parameters 	(list Parameters
+		(object Parameter "theQuery"
+		    type       	"IQueryStatement&")
+		(object Parameter "tipo"
+		    type       	"IDirecaoFetch"
+		    initv      	"proximo"))
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	
+|utiliza o lowLayerSlot :
+|1. checa se não é 0
+|2. checa o estado do Statement
+|3. obtem os dados de canal do lowLayerSlot que são dependentes da implementação.
+|4. copia os dados do canal para o theValues no IQuery
+|5. se não há dados (eof/bof) ajusta isFim do Query para true. não muda os dados.
+		)
+	    opExportControl 	"Public"
+	    uid        	908596372)
+	(object Operation "PegueDados"
+	    documentation 	"Transfere os dados vindos do Banco Dados Oracle para o objeto temporario."
+	    parameters 	(list Parameters
+		(object Parameter "pDyn"
+		    type       	"ODynaset*")
+		(object Parameter "theQuery"
+		    type       	"IQueryStatement&"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Protected"
+	    uid        	923520300)
+	(object Operation "isFim"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "bool Final;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return Final;")))
+	    documentation 	
+|retorna true se a operação de moveCursor encontra o inicio ou fim dos dados.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "theQuery"
+		    type       	"IQueryStatement&"))
+	    result     	"bool"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596373)
+	(object Operation "libereQuery"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	
+|libera alocações que estão guardadas no IQueryStatement.lowLayerSlot
+	    
+	    parameters 	(list Parameters
+		(object Parameter "anQuery"
+		    type       	"IQueryStatement&"))
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596374)
+	(object Operation "ligar"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	"conecta ao banco ou prepara-se para servir."
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	910153638)
+	(object Operation "desligar"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    result     	"IDataStore&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	910153639))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "nomeDb"
+	    documentation 	"nome do banco de dados a trabalhar (ou serviço)."
+	    type       	"IString"
+	    exportControl 	"Public"
+	    Containment 	"By Value")
+	(object ClassAttribute "dataBase"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    documentation 	"Instancia da classe ODatabase providenciada pela Oracle Co. para acesso ao banco de dados."
+	    type       	"ODatabase"
+	    Containment 	"By Value")))
+
+(object Class "IDeleteStatement"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\idltsttm.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\idltsttm.cpp"))
+    documentation 	
+|DELETE <tabela> 
+|WHERE [ CURRENT OF <cursorName> | where_clausula ]
+    
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"IModifyStatement"))
+    operations 	(list Operations
+	(object Operation "asSentencaSQL"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "IString Sentenca;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return Sentenca;")))
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596362)))
+
+(object Class "IDirecaoFetch"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"cg"
+	    name       	"ImplementationType"
+	    value      	(value Text 
+|enum {
+|primeiro,ultimo,
+|proximo,previo,
+|reavalia }
+	    ))
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\idrcftch.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\idrcftch.cpp"))
+    documentation 	
+|enum dos tipos de fetch
+|primeiro,ultimo
+|proximo,previo
+|reavalia
+    )
+
+(object Class "IErro"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\ierro.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\ierro.cpp"))
+    documentation 	"Simples classe que será arremesada em caso de erro. throw."
+    operations 	(list Operations
+	(object Operation "IErro"
+	    parameters 	(list Parameters
+		(object Parameter "texto"
+		    type       	"char*"))
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909032152))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "textError"
+	    type       	"char*"
+	    exportControl 	"Public")))
+
+(object Class "IEstadoColecao"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"cg"
+	    name       	"ImplementationType"
+	    value      	(value Text 
+|enum { nova,pronta,terminada,erro }
+|
+	    ))
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\istdclco.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\istdclco.cpp"))
+    documentation 	"enum : novo,pronto,terminado,erro")
+
+(object Class "IEstadoGenerico"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"cg"
+	    name       	"ImplementationType"
+	    value      	(value Text "enum{ gInicial,gInicializado,gInativo,gAtivo,gFinalizando}"))
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\istdgnrc.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\istdgnrc.cpp")))
+
+(object Class "IEstadoStatement"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"cg"
+	    name       	"ImplementationType"
+	    value      	(value Text 
+|enum { 
+|novo, 
+|incompleto, 
+|completo, 
+|executando, 
+|executado ,
+|falhou ,
+|terminado }
+|
+	    ))
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\istdsttm.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\istdsttm.cpp"))
+    documentation 	
+|enum { 
+|novo, incompleto, completo, executando, 
+|executado ,falhou ,terminado }
+|
+    )
+
+(object Class "IEventoNotificacao"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\ivntntfc.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\ivntntfc.cpp")
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateCopyConstructor"
+	    value      	("GenerateSet" 206))
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateDefaultConstructor"
+	    value      	("GenerateSet" 206)))
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"ReadOnly")
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    label      	"Notificador"
+	    supplier   	"INotificador"
+	    Containment 	"By Reference"
+	    supplier_cardinality 	(value cardinality "1")))
+    operations 	(list Operations
+	(object Operation "IEventoNotificacao"
+	    parameters 	(list Parameters
+		(object Parameter "notificador"
+		    type       	"INotificador&")
+		(object Parameter "evento"
+		    type       	"TypeEvento"
+		    initv      	"INotificador::evtDefault"))
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909098948)
+	(object Operation "IEventoNotificacao"
+	    parameters 	(list Parameters
+		(object Parameter "notificador"
+		    type       	"INotificador&"))
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909098949)
+	(object Operation "IEventoNotificacao"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909098950))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "evento"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"ReadOnly"))
+	    type       	"TypeEvento"
+	    exportControl 	"Public"))
+    statediagram 	(object State_Diagram ""
+	title      	""
+	zoom       	100
+	max_height 	28350
+	max_width  	21600
+	origin_x   	0
+	origin_y   	0
+	items      	(list diagram_item_list)))
+
+(object Class "IInsertStatement"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\insrtstt.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\insrtstt.cpp"))
+    documentation 	"INSERT INTO <tabela>  (nomeColuna),...  VALUES (exp,...) "
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"IModifyStatement"))
+    operations 	(list Operations
+	(object Operation "asSentencaSQL"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "IString sentenca;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return sentenca;")))
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596361)))
+
+(object Class "IKnowType"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"cg"
+	    name       	"ImplementationType"
+	    value      	(value Text 
+|enum 
+| { IsDouble,
+|   IsFloat,
+|   IsInt,
+|   IsShortInt,
+|   IsChar,
+|   IsCharArray,
+|   IsTimestamp,
+|   IsStringBlob,
+|   IsStringVar,
+|   IsStringFix,
+|   IsUnknow,
+|   // ponteiros
+|   IsDoublePointer,
+|   IsFloatPointer,
+|   IsIntPointer,
+|   IsShortIntPointer,
+|   IsCharPointer,
+|   IsCharArrayPointer,
+|   IsTimestampPointer,
+|   IsStringBlobPointer,
+|   IsStringVarPointer,
+|   IsStringFixPointer,
+|   IsUnknowPointer }
+|
+	    ))
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\iknwtype.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\iknwtype.cpp"))
+    documentation 	
+|ISTO É UM ENUM DOS TIPOS CONHECIDOS.
+|Existe uma brecha que é IsUnknow e IsUnknowPointe
+    )
+
+(object Class "IMapAtrColuna"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\imptrcln.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\imptrcln.cpp"))
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    label      	"tipoMembro"
+	    supplier   	"IKnowType"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "1"))
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    documentation 	"deve ser preenchido pelo broker"
+	    label      	"tipoColuna"
+	    supplier   	"IKnowType"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "1")))
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    supplier   	"IPersistente"))
+    operations 	(list Operations
+	(object Operation "asString"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "IString conteudo;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return conteudo;")))
+	    documentation 	
+|retorna o conteudo do membro como char* transformado, 
+|exemplo : membro é 100.00 devolve '100.00' 
+	    
+	    parameters 	(list Parameters
+		(object Parameter "anPersist"
+		    type       	"IPersistente&"))
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596383)
+	(object Operation "setValue"
+	    documentation 	
+|copia dado ao membro de anPersist. copyLen indica comprimento do dado / numero de bytes a serem copiados até o maximo do tamanho do membro. converte de acordo com o tipoMembro x tipoColuna. se for do tipo IUnknow então copia byte a byte até copyLen ou tamanho. 
+|Se copyLen for 0 então copia de acordo com o tipoMembro/tamanho. usualmente conclui que é tipo de tamanho fixo (string terminada com \0).
+	    
+	    parameters 	(list Parameters
+		(object Parameter "anPersist"
+		    type       	"IPersistente&")
+		(object Parameter "dado"
+		    type       	"char*")
+		(object Parameter "copyLen"
+		    type       	"int"
+		    initv      	"0"))
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596384)
+	(object Operation "asPuro"
+	    documentation 	
+|retorna o conteudo do membro como char* puro, nao transfoma é apenas `cast`
+|talvez seja usado pelo propria AsString quando verificar que tipo é um tipo blob.
+|o que tornará a copia muito custosa e não necessita de conversao.
+|
+	    
+	    parameters 	(list Parameters
+		(object Parameter "anPersist"
+		    type       	"IPersistente&"))
+	    result     	"char const*"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596385))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "nomeMembro"
+	    type       	"IString"
+	    exportControl 	"Public"
+	    Containment 	"By Value")
+	(object ClassAttribute "offSet"
+	    attributes 	(list Attribute_Set)
+	    type       	"unsigned int"
+	    exportControl 	"Public")
+	(object ClassAttribute "tamanho"
+	    type       	"unsigned int"
+	    exportControl 	"Public")
+	(object ClassAttribute "varSizeMax"
+	    type       	"unsigned int"
+	    initv      	"0"
+	    exportControl 	"Public")
+	(object ClassAttribute "nomeColuna"
+	    documentation 	"se houver definicao no MapClass.Ini, obtem dele, caso contrario é igual ao nome do membro."
+	    type       	"IString"
+	    exportControl 	"Public")
+	(object ClassAttribute "isProxy"
+	    type       	"bool"
+	    initv      	"false"
+	    exportControl 	"Public")))
+
+(object Class "IMapClassTable"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\impclsst.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\impclsst.cpp"))
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateSetOperation"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GetSetByReference"
+		    value      	TRUE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    label      	"ListaAtributos"
+	    supplier   	"IMapAtrColuna"
+	    Containment 	"By Reference"
+	    supplier_cardinality 	(value cardinality "n"))
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GetIsConst"
+		    value      	FALSE))
+	    documentation 	
+|guarda um datastore especifico para a classe mapeada.
+|não pode ser nulo se o estado do objeto estiver isComplete
+|deve ser sempre igual ao IPersistenteBroker::DefaultDataStore()
+	    
+	    label      	"DataStore"
+	    supplier   	"IDataStore"
+	    Containment 	"By Reference"
+	    supplier_cardinality 	(value cardinality "1")))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "nomeClasse"
+	    type       	"IString"
+	    exportControl 	"Public")
+	(object ClassAttribute "nomeTabela"
+	    type       	"IString"
+	    exportControl 	"Public")
+	(object ClassAttribute "isComplete"
+	    documentation 	"se torna true quando as informaçoes complementares estiverem preenchidas (nome da tabela e tipo das colunas)"
+	    type       	"bool"
+	    initv      	"false"
+	    exportControl 	"Public")))
+
+(object Class "IModifyStatement"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\imdfystt.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\imdfystt.cpp"))
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    documentation 	"exigido por Delete e Update e ignorado por Insert"
+	    label      	"ID"
+	    supplier   	"IPersistID"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "1")))
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"IStatement"))
+    operations 	(list Operations
+	(object Operation "addColunaValor"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	"adiciona coluna,valor nas respectivas listas, é apenas um facilitador já que usará o AddColuna herdado e acessará o theValues[]."
+	    parameters 	(list Parameters
+		(object Parameter "coluna"
+		    type       	"IString&")
+		(object Parameter "valor"
+		    type       	"IString&"))
+	    result     	"IModifyStatement&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596356)
+	(object Operation "getParteWhereID"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "IString PWID;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return PWID;")))
+	    documentation 	
+|retorna algo similar a "WHERE ID=345234534" é o id do objeto sendo manipulado.
+	    
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Protected"
+	    uid        	908596357)))
+
+(object Class "INotificador"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\intfcdor.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\intfcdor.cpp")
+	(object Attribute
+	    tool       	"cg"
+	    name       	"cg_style"
+	    value      	"default"))
+    documentation 	
+|Classe que visa manter relações de notificação simples entre objetos.
+|Temos o Cliente e o Servidor, ambos descendendo de INotifyProtocol
+|Protocolo:
+|Cliente (->) Servidor.enableNotifyEventsFor( Cliente );
+|Servidor on Event : Servidor.notifyObservers( INotifyEvent );
+|Cliente.onReceiveNotifyEvent( INotifyEvent );
+|Cliente (->) Servidor.disableNotifyEventsFor( Cliente );
+    
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateGetOperation"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateSetOperation"
+		    value      	FALSE))
+	    label      	"Observadores"
+	    supplier   	"IObservador"
+	    Containment 	"By Reference"
+	    supplier_cardinality 	(value cardinality "0..n")))
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    supplier   	"IEventoNotificacao"))
+    operations 	(list Operations
+	(object Operation "ligaNotificarObservadores"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    result     	"INotificador&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	907215654)
+	(object Operation "desligaNotificarObservadores"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    result     	"INotificador&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	907215655)
+	(object Operation "NotificarEventosPara"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    parameters 	(list Parameters
+		(object Parameter "Observador"
+		    type       	"IObservador&"))
+	    result     	"INotificador&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	907215656)
+	(object Operation "notificarObservadores"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    parameters 	(list Parameters
+		(object Parameter "evento"
+		    type       	"IEventoNotificacao&"))
+	    result     	"INotificador&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	907215657)
+	(object Operation "PararNotificarEventosPara"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    parameters 	(list Parameters
+		(object Parameter "Observador"
+		    type       	"IObservador&"))
+	    result     	"INotificador&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908414770))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "notificarObservadores"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateGetOperation"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateSetOperation"
+		    value      	FALSE))
+	    documentation 	
+|estado de notificação de observadores on/off
+	    
+	    type       	"bool"
+	    initv      	"true")
+	(object ClassAttribute "nomeClasse"
+	    attributes 	(list Attribute_Set)
+	    documentation 	"pode ser sobrescrito com o nome da subclasse."
+	    type       	"IString"
+	    initv      	
+|"INotificado
+	    
+	    exportControl 	"Public")
+	(object ClassAttribute "evtDefault"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"TipoEvento"))
+	    type       	"TypeEvento"
+	    initv      	
+|"INotificador::Default"
+	    
+	    exportControl 	"Public"
+	    Containment 	"By Value"
+	    static     	TRUE)))
+
+(object Class "INotificadorObservador"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\intfcdrb.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\intfcdrb.cpp"))
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"INotificador")
+	(object Inheritance_Relationship
+	    supplier   	"IObservador")))
+
+(object Class "IObservador"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\ibsrvdor.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\ibsrvdor.cpp"))
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set)
+	    supplier   	"IEventoNotificacao"))
+    operations 	(list Operations
+	(object Operation "quandoEventoNotificacao"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    parameters 	(list Parameters
+		(object Parameter "evento"
+		    type       	"IEventoNotificacao&"))
+	    result     	"IObservador&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	907215653)))
+
+(object Class "IOperComparacao"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"cg"
+	    name       	"ImplementationType"
+	    value      	(value Text 
+|enum {
+|maior,
+|menor,
+|maiorOuIgual,
+|menorOuIgual,
+|igual,
+|diferente,
+|similar,
+|entre,
+|dentro }
+|
+	    ))
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\iprcmprc.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\iprcmprc.cpp"))
+    documentation 	
+|enum {  
+|maior,menor,maiorOuIgual,menorOuIgual,igual,diferente,similar,
+|entre,dentro }
+    )
+
+(object Class "IOperLogicoPrecedencia"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"cg"
+	    name       	"ImplementationType"
+	    value      	(value Text 
+|enum {
+|AND,
+|OR 
+|}
+	    ))
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\iprlgcpr.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\iprlgcpr.cpp"))
+    documentation 	"enum {AND,OR,AbreParentesis,FechaParentesis}")
+
+(object Class "IOrdem"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateDefaultConstructor"
+	    value      	("GenerateSet" 206))
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\iordem.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\iordem.cpp"))
+    documentation 	
+|necessita de tradução
+    
+    operations 	(list Operations
+	(object Operation "IOrdem"
+	    parameters 	(list Parameters
+		(object Parameter "atributo"
+		    type       	"IString&")
+		(object Parameter "isAsc"
+		    type       	"bool"
+		    initv      	"true"))
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596358))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "atributo"
+	    type       	"IString"
+	    exportControl 	"Public")
+	(object ClassAttribute "isAsc"
+	    type       	"bool"
+	    initv      	"true"
+	    exportControl 	"Public")
+	(object ClassAttribute "coluna"
+	    type       	"IString"
+	    exportControl 	"Public")))
+
+(object Parameterized_Class "IAssociacao"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\iassccao.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\iassccao.cpp")
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateDefaultConstructor"
+	    value      	("GenerateSet" 206))
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateCopyConstructor"
+	    value      	("GenerateSet" 206))
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateDestructor"
+	    value      	FALSE))
+    documentation 	
+|Faz a associacao entre dois IPersistentes, é um tipo de IColecaoPersistenteBase, porem restrita, necessita conhecer o ASSOCIADO, pois vai cria-los, do ASSOCIANDO somente precisa conhecer IPersistente que possui o ID.
+|ASSOCIANDO.ID X ASSOCIADO.ID 
+|Necessita da tabela de associacao que sempre sera constituida de duas colunas IDAssociado,IDAssociando
+|sua clausula SQL sera sempre
+|SELECT IDAssociado FROM <tabela> WHERE IDAssociando = ASSOCIANDO.ID 
+|VAMOS TER QUE TRABALHAR COM BUFFERIZAÇÃO DE OBJETOS, COISA QUE A COLEÇÃO NORMAL, NÃO VAI TER.
+    
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"IColecaoPersistenteBase"))
+    operations 	(list Operations
+	(object Operation "IAssociacao"
+	    documentation 	
+|construtor unico. deve apresentar-se como observadora do persistente.
+|Dono.NotificarEventosPara( *this );
+|adiciona um criterio em si propria :
+|"ID in ( Select AgregadoID from Broker::TabelaRelacao where AgregandoID = <Dono.ID> )"
+|
+	    
+	    parameters 	(list Parameters
+		(object Parameter "Dono"
+		    type       	"IPersistente&"))
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908414769)
+	(object Operation "~IAssociacao"
+	    documentation 	
+|Dono.PararNotificarEventosPara( *this );
+|
+	    
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596386))
+    parameters 	(list Parameters
+	(object Parameter "PersistenteSubClass"
+	    type       	"class")))
+
+(object Class "IPersistente"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\iprsstnt.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\iprsstnt.cpp")
+	(object Attribute
+	    tool       	"cg"
+	    name       	"DestructorKind"
+	    value      	("ThreeKindSet" 201)))
+    documentation 	
+|Esta classe faz operações de Insert, Delete, Update e Select pelo ID somente. Insert <campo1,...n> into <Tabela> values <valor1,...n>
+|Delete <Tabela> For ID == <ValorID>
+|Update <campo1,...n> into <Tabela> values <valor1,...n> For ID == <ValorID>
+|Select <campo1,...n> From <Tabela> For ID == <ValorID>
+|portanto a conexao com o meio de persistencia é transitória e consequentemente somente de uma operacao DML.
+    
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    documentation 	"Identificador unico generico"
+	    label      	"ID"
+	    supplier   	"IPersistID"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "1")))
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"INotificador"))
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    label      	
+|delega funções a 
+	    
+	    supplier   	"IBroker"
+	    supplier_cardinality 	(value cardinality "1")
+	    client_cardinality 	(value cardinality "n"))
+	(object Uses_Relationship
+	    label      	"é mapeado por"
+	    supplier   	"IClassMap"
+	    supplier_cardinality 	(value cardinality "1")
+	    client_cardinality 	(value cardinality "n")
+	    friend     	TRUE)
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    supplier   	"IKnowType")
+	(object Uses_Relationship
+	    supplier   	"IEventoNotificacao")
+	(object Uses_Relationship
+	    supplier   	"IMapClassTable"))
+    abstract   	TRUE
+    operations 	(list Operations
+	(object Operation "save"
+	    documentation 	"grava o estado do objeto."
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	906522273)
+	(object Operation "erase"
+	    documentation 	"apaga o objeto da base persistente. o que acontece com o objeto ?"
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	906522274)
+	(object Operation "getNomeClasse"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text 
+|return "Disparar Excessao";
+		    )))
+	    documentation 	"Retorna o nome da classe, que por default sera o nome da tabela. deve ser implementado pela subclasse, caso contrario dispara uma excessao."
+	    result     	"char*"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	906522275)
+	(object Operation "registraMembro"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	
+|adiciona um mapeamento de atributo x coluna, deve utilizar o IClassMap delegando a funcao de mapeamento. Caso não especifique o tipo, tipo será StringFixa de tamanho = tamanho.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "nomeMembro"
+		    type       	"char*")
+		(object Parameter "offSet"
+		    type       	"unsigned int")
+		(object Parameter "tamanho"
+		    type       	"unsigned int")
+		(object Parameter "tipoMembro"
+		    type       	"IKnowType"
+		    initv      	"IsStringFix")
+		(object Parameter "varSizeMax"
+		    type       	"unsigned int"
+		    initv      	"0")
+		(object Parameter "isProxy"
+		    type       	"bool"
+		    initv      	"false"))
+	    result     	"IPersistente&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Protected"
+	    uid        	908414768)
+	(object Operation "OnClassInfo"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 201)))
+	    documentation 	
+|Este metodo sera chamado para obtenção indireta das informações sobre membros, deve ser implementado pela subclasse, na implementação deverão ser feitas chamadas a RegistraMembro() para cada membro a ser persistido
+	    
+	    result     	"void"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908414767)
+	(object Operation "getCampoPorNome"
+	    documentation 	"retorna o conteudo de um campo "
+	    parameters 	(list Parameters
+		(object Parameter "campo"
+		    type       	"char*"))
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	"retorna uma string vazia se o campo nao existir")
+	    opExportControl 	"Public"
+	    uid        	958376567)
+	(object Operation "getCampoPorIndice"
+	    documentation 	"retorna conteudo de um campo pela posicao na lista de campos"
+	    parameters 	(list Parameters
+		(object Parameter "indice"
+		    type       	"int"))
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    semantics  	(object Semantic_Info
+		PDL        	"retorna string vazia se indice fora de faixa")
+	    opExportControl 	"Public"
+	    uid        	958376568)
+	(object Operation "quantosCampos"
+	    documentation 	"retorna o total de campos menos o IPersistId ( OUID )"
+	    result     	"int"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	958376569))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "isPersistido"
+	    documentation 	"true se objeto já foi persistido."
+	    type       	"bool"
+	    initv      	"false"
+	    exportControl 	"Public")
+	(object ClassAttribute "isProxy"
+	    documentation 	
+|true se o objeto foi retirado como "Proxy"
+	    
+	    type       	"bool"
+	    initv      	"false")
+	(object ClassAttribute "evtSalvando"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"TipoEvento"))
+	    type       	"TypeEvento"
+	    initv      	
+|"IPersistente::Salvando"
+	    
+	    exportControl 	"Public"
+	    Containment 	"By Value"
+	    static     	TRUE)))
+
+(object Class "IPersistID"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\iprsstid.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\iprsstid.cpp")
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateAssignmentOperation"
+	    value      	("GenerateSet" 199)))
+    documentation 	"Identificador unico dos objetos persistentes."
+    operations 	(list Operations
+	(object Operation "generate"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	"gera um id novo."
+	    result     	"IPersistID&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909013228)
+	(object Operation "asString"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return m_id;")))
+	    documentation 	
+|retorna o valor do id como string. pode ser algo como "12FC:3423A:FECD"
+	    
+	    result     	"char*"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596369)
+	(object Operation "setValue"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	
+|para operações de leitura de um persistente o set deve receber o valor do id persistido.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "valor"
+		    type       	"char*"))
+	    result     	"IPersistID&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	909013229)
+	(object Operation "RAP"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 203)))
+	    result     	"int"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Protected"
+	    uid        	924574177))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "id"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet"))
+	    type       	"IString")
+	(object ClassAttribute "sequencial"
+	    type       	"int"
+	    initv      	"0"
+	    Containment 	"By Value"
+	    static     	TRUE)
+	(object ClassAttribute "CRAE"
+	    documentation 	
+|Chave de Resolução de Ambiguidade Externa
+|valores válidos 0 a 128.
+	    
+	    type       	"int"
+	    initv      	"0"
+	    exportControl 	"Public"
+	    Containment 	"By Value"
+	    static     	TRUE)
+	(object ClassAttribute "RAP"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateGetOperation"
+		    value      	FALSE))
+	    documentation 	
+|Resolução de Ambiguidade em Processo
+|valores validos 0 a 32 
+	    
+	    type       	"int"
+	    initv      	"0"
+	    exportControl 	"Public"
+	    Containment 	"By Value"
+	    static     	TRUE)))
+
+(object Class "IQueryStatement"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\iqrysttm.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\iqrysttm.cpp"))
+    documentation 	
+|SELECT nomeColuna,... FROM <tabela> 
+|[ WHERE where_clausula ]
+|[ ORDER BY nomeColuna,... ]
+    
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"Ordered"
+		    value      	FALSE))
+	    supplier   	"IOrdem"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "n"))
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"Ordered"
+		    value      	FALSE))
+	    supplier   	"ICriterio"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "n")))
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"IStatement"))
+    operations 	(list Operations
+	(object Operation "asSentencaSQL"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "IString sentenca;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return sentenca;")))
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596354))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "lowLayerSlot"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"SemGetSet")
+		(object Attribute
+		    tool       	"cg"
+		    name       	"DataMemberVisibility"
+		    value      	("DataMemberVisibilitySet" 211)))
+	    documentation 	
+|slot para ser usado pela camada de mais baixo nível representada pelo IDataStore para guardar informações sobre o cursor/canal. poder ser desde um handle de OBCD até uma estrutura que registra tabela,registro,indice no caso de Xbase puro.
+	    
+	    type       	"void*"
+	    initv      	"NULL"
+	    exportControl 	"Public")
+	(object ClassAttribute "isFim"
+	    documentation 	
+|true se durante alguma movimentação o fim ou inicio das linhas é alcançado.
+	    
+	    type       	"bool"
+	    initv      	"false"
+	    exportControl 	"Public")
+	(object ClassAttribute "ValueID"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GetSetByReference"
+		    value      	TRUE))
+	    documentation 	
+|para transferencia do valor do ID 
+|tamanho do ID real. (gravado).
+	    
+	    type       	"IString"
+	    exportControl 	"Public"
+	    Containment 	"By Value")))
+
+(object Class "IStatement"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\isttment.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\isttment.cpp"))
+    documentation 	
+|Responsavel pela montagem de sentenças SQL
+|tabela, [ coluna = valor ], [insert|update|delete], id
+    
+    fields     	(list has_relationship_list
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GetSetByReference"
+		    value      	TRUE))
+	    documentation 	"acesso será pelo [] da classe IString"
+	    label      	"theColunas"
+	    supplier   	"ListaString"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "1"))
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GetSetByReference"
+		    value      	TRUE))
+	    documentation 	
+|usado tanto para escrita quando para leitura.
+|exemplo Insert / select  o acesso será feito pelo [] da classe IString.
+	    
+	    label      	"theValues"
+	    supplier   	"ListaString"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "1"))
+	(object Has_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    label      	"estado"
+	    supplier   	"IEstadoStatement"
+	    Containment 	"By Value"
+	    supplier_cardinality 	(value cardinality "1")))
+    used_nodes 	(list uses_relationship_list
+	(object Uses_Relationship
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ForwardReferenceOnly"
+		    value      	FALSE))
+	    supplier   	"IBroker"))
+    abstract   	TRUE
+    operations 	(list Operations
+	(object Operation "asSentencaSQL"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 202)))
+	    documentation 	"retorna a sentenca SQL completa."
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Protected"
+	    uid        	908596360)
+	(object Operation "addColuna"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"cg_style"
+		    value      	"RetThisComum"))
+	    documentation 	
+|adiciona o nome da coluna na lista theColunas, a ordem de adição é igual a ordem das colunas na sentença e equivale aos values na mesma ordem que são adicionados também neste metodo.
+	    
+	    parameters 	(list Parameters
+		(object Parameter "nome"
+		    type       	"IString&"))
+	    result     	"IStatement&"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596359))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "tabelaAlvo"
+	    type       	"IString"
+	    exportControl 	"Protected")
+	(object ClassAttribute "linhasCount"
+	    documentation 	
+|total de linhas afetadas/contadas pelo statement.
+|no caso do select é totalLinhas e no caso de outros é linhasAfetadas.
+	    
+	    type       	"int"
+	    initv      	"0"
+	    exportControl 	"Public")))
+
+(object Class "IString"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\istring.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeLine"
+	    value      	6)
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\istring.cpp")
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateEqualityOperations"
+	    value      	("GenerateSet" 199))
+	(object Attribute
+	    tool       	"cg"
+	    name       	"InlineEqualityOperations"
+	    value      	TRUE))
+    documentation 	
+|deve receber algumas incrementações para trabalhar com conteudo binario.
+    
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"IStringStruct"))
+    operations 	(list Operations
+	(object Operation "IString"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE))
+	    result     	"IString"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-50625475)
+	(object Operation "IString"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE))
+	    parameters 	(list Parameters
+		(object Parameter "pValue"
+		    type       	"char*"))
+	    result     	"IString"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-536215088)
+	(object Operation "IString"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE))
+	    parameters 	(list Parameters
+		(object Parameter "pValue"
+		    type       	"const char*"))
+	    result     	"IString"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-1417033423)
+	(object Operation "IString"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE))
+	    parameters 	(list Parameters
+		(object Parameter "pAddress"
+		    type       	"IString&"))
+	    result     	"IString"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	1920641525)
+	(object Operation "~IString"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE))
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-859289748)
+	(object Operation "operator char*"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE))
+	    result     	"char*"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-1432994116)
+	(object Operation "operator const char*"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE))
+	    result     	"const char*"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-117397525)
+	(object Operation "operator ="
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE))
+	    parameters 	(list Parameters
+		(object Parameter "pAddress"
+		    type       	"IString&"))
+	    result     	"IString&"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-1258484580)
+	(object Operation "operator ="
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE))
+	    parameters 	(list Parameters
+		(object Parameter "pValue"
+		    type       	"char*"))
+	    result     	"IString&"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	1107576337)
+	(object Operation "alocar"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE))
+	    parameters 	(list Parameters
+		(object Parameter "qtde"
+		    type       	"unsigned int"))
+	    result     	"void"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	171970257)
+	(object Operation "liberar"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE))
+	    result     	"void"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	1522153148)))
+
+(object Class "IStringStruct"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\istrngst.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeLine"
+	    value      	1)
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\istrngst.cpp")
+	(object Attribute
+	    tool       	"cg"
+	    name       	"ImplementationType"
+	    value      	(value Text 
+|struct 
+|{
+|  char* pBuffer;
+|}
+|
+	    )))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "pBuffer"
+	    type       	"char*"
+	    exportControl 	"Public"
+	    Containment 	"By Value")))
+
+(object Class "IUpdateStatement"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\ipdtsttm.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\ipdtsttm.cpp"))
+    documentation 	
+|UPDATE <tabela> SET (nomeColuna)=exp,... 
+|WHERE [ CURRENT OF <cursorName> | where_clausula ]
+    
+    superclasses 	(list inheritance_relationship_list
+	(object Inheritance_Relationship
+	    supplier   	"IModifyStatement"))
+    operations 	(list Operations
+	(object Operation "asSentencaSQL"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text "IString sentenca;"))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "return sentenca;")))
+	    result     	"IString"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	908596355)))
+
+(object Parameterized_Class "Lista"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\lista.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeLine"
+	    value      	13)
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\lista.cpp")
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateDefaultConstructor"
+	    value      	("GenerateSet" 206))
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateDestructor"
+	    value      	FALSE)
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateAssignmentOperation"
+	    value      	("GenerateSet" 206))
+	(object Attribute
+	    tool       	"cg"
+	    name       	"GenerateEqualityOperations"
+	    value      	("GenerateSet" 206)))
+    documentation 	
+|guarda somente referencias a objetos
+|nao foi feita para guardar objetos.
+|
+|
+|interfac
+    
+    operations 	(list Operations
+	(object Operation "Lista"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text ""))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "")))
+	    result     	"Lista"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	862049030)
+	(object Operation "~Lista"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text ""))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "")))
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-1198692719)
+	(object Operation "posicaoDe"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text ""))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "")))
+	    parameters 	(list Parameters
+		(object Parameter "objeto"
+		    type       	"T*"))
+	    result     	"int"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	1718740367)
+	(object Operation "operator []"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text ""))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "")))
+	    parameters 	(list Parameters
+		(object Parameter "i"
+		    type       	"int"))
+	    result     	"const class T&"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-1667248196)
+	(object Operation "adiciona"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text ""))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "")))
+	    parameters 	(list Parameters
+		(object Parameter "objeto"
+		    type       	"T*"))
+	    result     	"Lista&"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	155676183)
+	(object Operation "remove"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text ""))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "")))
+	    parameters 	(list Parameters
+		(object Parameter "i"
+		    type       	"int"))
+	    result     	"Lista&"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-320361808)
+	(object Operation "removeObjeto"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text ""))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "")))
+	    parameters 	(list Parameters
+		(object Parameter "objeto"
+		    type       	"T*"))
+	    result     	"Lista&"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-633266822)
+	(object Operation "troca"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text ""))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "")))
+	    parameters 	(list Parameters
+		(object Parameter "x"
+		    type       	"int")
+		(object Parameter "y"
+		    type       	"int"))
+	    result     	"Lista&"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-198713522)
+	(object Operation "ordena"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text ""))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "")))
+	    parameters 	(list Parameters
+		(object Parameter "pf"
+		    type       	"int (*) (class T&, class T&)"))
+	    result     	"Lista&"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	-1880653081)
+	(object Operation "count"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationIsConst"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"OperationKind"
+		    value      	("OperationKindSet" 200))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"inline"
+		    value      	TRUE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"EntryCode"
+		    value      	(value Text ""))
+		(object Attribute
+		    tool       	"cg"
+		    name       	"ExitCode"
+		    value      	(value Text "")))
+	    result     	"int"
+	    protocol   	"C++"
+	    concurrency 	"Sequential"
+	    opExportControl 	"Public"
+	    uid        	1069825342))
+    class_attributes 	(list class_attribute_list
+	(object ClassAttribute "pp"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateGetOperation"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateSetOperation"
+		    value      	FALSE))
+	    type       	"void**"
+	    Containment 	"By Value")
+	(object ClassAttribute "mCount"
+	    attributes 	(list Attribute_Set
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateGetOperation"
+		    value      	FALSE)
+		(object Attribute
+		    tool       	"cg"
+		    name       	"GenerateSetOperation"
+		    value      	FALSE))
+	    type       	"int"
+	    Containment 	"By Value"))
+    parameters 	(list Parameters
+	(object Parameter "T"
+	    type       	"class")))
+
+(object Instantiated_Class "ListaString"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\lststrng.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\lststrng.cpp"))
+    instantiation_relationship 	(object Instantiation_Relationship
+	supplier   	"Lista")
+    parameters 	(list Parameters
+	(object Parameter "IString")))
+
+(object Class "TypeEvento"
+    attributes 	(list Attribute_Set
+	(object Attribute
+	    tool       	"cg"
+	    name       	"ImplementationType"
+	    value      	(value Text "char*"))
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"CodeFile"
+	    value      	"$Code\\typevnto.h")
+	(object Attribute
+	    tool       	"Traversal"
+	    name       	"BodyFile"
+	    value      	"$Code\\typevnto.cpp")))

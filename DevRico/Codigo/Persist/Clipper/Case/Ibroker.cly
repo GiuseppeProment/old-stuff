@@ -1,0 +1,458 @@
+/* --------- IMPLEMENTACAO ----------*/
+INIT PROCEDURE brokerInictForClipper
+   // for‡ar inicializa‡Æo de todas as classes da FrameWork
+   IBroker()
+   IPersistente()
+   Lista()
+   IClassMap()
+   IMapAtrColuna()
+   IMapClassTable()
+   IPersistID()
+   IObservador()
+   INotificador()
+   IErro()
+   IStatement()
+   IModifyStatement()
+   IInsertStatement()
+   IUpdateStatement()
+   IDeleteStatement()
+   IQueryStatement()
+   IDataStore()
+   IEventoNotificacao()
+   INativoDataStore()
+   ITabelaInfo()
+   IIndice()
+   IColunas()
+   IColecaoPersistenteBase()
+   IColecao()
+   ICursorClipper()
+   IAssociacao()
+   ICriterio()
+   /*
+   DEVEMOS CHECAR A DATA GRAVADA NO FIM DO EXECUTAVEL
+   NAO PODE RODAR COM DATA RETROATIVA
+   POIS ISSO INVALIDARIA A IDENTIDADE DOS ID'S QUE SAO BASEADOS
+   NA DATA/TEMPO DO SISTEMA
+   */
+   #stdout >>IBroker:brokerInictForClipper - checar data no exe
+   #stdout >>IBroker:brokerInictForClipper - o CRAE pode ser nStation()
+RETURN
+
+EXIT PROCEDURE brokerExitForClipper
+   // enviar mensagem para datastores
+   local i,listaDS,cLista
+   cLista := ""
+   listaDS := IBroker():ListaDataStore()
+   for i:=1 to listaDS:count()
+      if ( listaDS:subscript(i):EstaLigado()==.t. )
+         cLista += listaDS:subscript(i):nome() + ", "
+      endif
+   next
+   if ! empty(cLista)
+      outerr(chr(13)+chr(10))
+      outerr(replicate("=",79)+chr(13)+chr(10))
+      outerr("Aten‡Æo o programa esta deixando os seguintes DataStores ligados!:"+chr(13)+chr(10))
+      outerr(cLista)
+      outerr(chr(13)+chr(10))
+      outerr(replicate("=",79)+chr(13)+chr(10))
+      outerr(chr(13)+chr(10))
+   endif
+RETURN
+
+#include "IPersist.ch"
+
+CREATE CLASS IBroker
+EXPORT:
+   CLASS METHOD initClass
+EXPORT:
+   CLASS METHOD inicialize
+   //## Operation: addDataStore%908596375
+   // adiciona o datastore a lista e passa a ser seu dono.
+   // deve sempre haver um datastore default. seguira o
+   // seguinte critério :
+   // 1. se a listaDataStore estiver vazia quando de alguma
+   // operação que necessite dispara uma excessão.
+   // 1. se houver somente um DataStore, será automáticamente
+   // DEFAULT
+   // 2. se houver vários o primeiro que se chamar DEFAULT
+   // 3. se houver vários e nenhum se chamar DEFAULT, será o
+   // primeiro da lista
+   CLASS METHOD addDataStore
+   //## Operation: saveMe%907292337
+   //## Semantics:
+   // 1. se objeto.isPersistido : cria IUpdateStatement e
+   // chama setID do Statement
+   // 2. se ! objeto.isPersistido: cria IInsertStatement
+   // 3. pega o DataStore do IPersistente com o IMapClassTable
+   // 4. invoca DataStore.execute( IModifyStatement)
+   // 5. altera o estado do IPersistente se deu tudo certo
+   // para Persistido.
+   // 6. destroi IInsert ou IUpdate.
+   CLASS METHOD saveMe
+   //## Operation: deleteMe%908596376
+   //## Preconditions:
+   // somente se objeto.isPersistido
+   //## Semantics:
+   // 1. monta IDeleteStatement de ac. com isPersistido
+   // 2. pega o DataStore do IPersistente com o IMapClassTable
+   // 3. invoca DataStore.execute( IModifyStatement)
+   // 4. altera o estado do IPersistente se deu tudo certo
+   // para ! isPersistido.
+   // 5. destroi IDelete.
+   CLASS METHOD deleteMe
+   //## Operation: regDataStoreForClass%908596377
+   // registra o dataStore identificado pelo nome para a
+   // classe especificada.
+   // 0. chama apresentoPersistente em self
+   // 1. procura pelo dataStore em ListaDataStore
+   // 2. se nao achar dispara um erro IPersistenteErro
+   // 3. se achou pega uma referencia se chama
+   // IClassMap::setDataStoreFor
+   CLASS METHOD regDataStoreForClass
+   //## Operation: apresento%908596378
+   // serve para antecipar o reconhecimento das subclasses
+   // persistentes, faz o classmap ser inicializado com as
+   // informações do persistente.
+   CLASS METHOD apresento
+   //## Operation: newColecao%908596379
+   // reconhece a nova coleção e insere-a na lista de coleções
+   CLASS METHOD newColecao
+   CLASS METHOD newAssociacao
+   //## Operation: processeColecao%908596380
+   // solicita processamento da
+   // IColecaoPersistenteBase.theQuery ao
+   // IColecaoPersistenteBase.theDataStore e muda o estado da
+   // colecao.
+   CLASS METHOD processeColecao
+   //## Operation: libereColecao%908596381
+   // solicita processamento da
+   // IColecaoPersistenteBase.theQuery ao
+   // IColecaoPersistenteBase.theDataStore e muda o estado da
+   // colecao.
+   CLASS METHOD libereColecao
+   //## Operation: TabelaRelacao%908938911
+   // retorna o nome da tabela relacao obtido do ClassMap
+   CLASS METHOD TabelaRelacao
+   //## Operation: DefaultDataStore%909457534
+   // Retorna o DataStore Default.
+   CLASS METHOD DefaultDataStore
+   //## Operation: asDebug%909457535
+   // retorna informações para debug.
+   CLASS METHOD asDebug
+
+   CLASS METHOD nomeColunaID
+
+   //## Operation: criarBasePara%910406193
+   // cria a base de dados para o persistente especifico.
+   CLASS METHOD criarBasePara
+
+   CLASS METHOD ListaDataStore
+
+   CLASS METHOD setWarning
+   CLASS METHOD getWarning
+   CLASS METHOD getErro
+   CLASS METHOD IsWarning
+PROTECTED:
+HIDDEN:
+   //## Attribute: UsarDataStoreDefault
+   // usar o datastore default caso não seja especificado um.
+   CLASS METHOD UsarDataStoreDefault
+   CLASS METHOD setUsarDataStoreDefault
+   CLASS METHOD estado
+   CLASS METHOD setestado
+   CLASS METHOD ixDStoreDefault
+   CLASS METHOD setixDStoreDefault
+HIDDEN:                                          //## implementation
+   CLASS VAR m_ListaDataStore
+   //  nao pode nunca poderemos remover pois o clipper nao tem destrutor !!
+   // CLASS VAR m_theColecoes
+   CLASS VAR m_UsarDataStoreDefault
+   CLASS VAR m_estado
+   CLASS VAR m_ixDStoreDefault
+   CLASS VAR m_Warning
+   CLASS VAR HaveWarning
+   CLASS VAR m_Erro
+END CLASS
+// Class IBroker
+
+
+METHOD initClass(),()
+   ::m_ListaDataStore = Lista():new()
+   //  nao pode nunca poderemos remover pois o clipper nao tem destrutor !!
+   // ::m_theColecoes    = Lista():new()
+   ::m_UsarDataStoreDefault = .T.
+   ::m_estado = gInicial
+   ::m_ixDStoreDefault = -1
+   ::m_Warning := nil
+   ::HaveWarning := .f.
+   ::m_erro := IErro():new("erro nao especificado")
+RETURN self
+
+METHOD getErro()
+RETURN ::m_erro
+
+METHOD IsWarning()
+RETURN ::HaveWarning
+
+METHOD getWarning()
+   local xCopy := nil
+   if ::HaveWarning
+      xCopy := ::m_Warning
+      ::m_Warning := nil
+      ::HaveWarning := .f.
+   endif
+RETURN xCopy
+
+METHOD setWarning( oWarn )
+   ::m_Warning := oWarn
+   ::HaveWarning := .t.
+RETURN nil
+
+METHOD inicialize()
+   if ( ::estado() != gInicial )
+      THROW "IBroker:inicialize() duplicacao de chamada"
+   endif
+   // checar datastores
+   if ( ::m_ListaDataStore:count() == 0  )
+      THROW "IBroker:inicialize() Lista de DataStore esta vazia!"
+   endif
+   // separar datastore default
+   #stdout >>IBroker:inicialize() imp. rot. DS default...
+   ::setixDStoreDefault(1)
+   ::setestado(gInicializado)
+   IClassMap():inicialize()
+RETURN self
+
+METHOD addDataStore( dataStore)
+   //IDataStore& dataStore
+   if ( ::estado() != gInicial )
+      THROW "IBroker:addDataStore() nao pode ser chamado apos inicializacao"
+   endif
+   // adicionar na lista
+   ::m_ListaDataStore:adiciona( @dataStore )
+RETURN self
+
+METHOD saveMe( anPersist)
+   // IPersistente& anPersist
+   local mapa,anDataStore,theStatement,newID
+   //:-> pegar mapa
+   /*IMapClassTable&*/ mapa = IClassMap():getMapaFor( @anPersist )
+   /*IDataStore*/ anDataStore = mapa:DataStore()
+   //:-> decidir entre insert/update
+   if ( anPersist:isPersistido() == .T. )
+    /*IUpdateStatement*/
+      theStatement := IUpdateStatement():new()
+      theStatement:settabelaAlvo(mapa:nomeTabela())
+      theStatement:setID( anPersist:ID() )
+      //:-\ adicionar mapa
+      anDataStore:preenchaMapa(@anPersist,@theStatement,@mapa)
+
+      if ( anDataStore:execute( @theStatement ) )
+      endif
+   else
+      theStatement := IInsertStatement():new()
+      theStatement:settabelaAlvo( mapa:nomeTabela() )
+      //:-> solicitar geracao ID
+      //newID := IPersistID():new()
+      //newID:generate()
+      //anPersist:setID(newID)
+      anPersist:ID():generate()
+      theStatement:setID( anPersist:ID() )
+      //:-\ adicionar mapa
+      anDataStore:preenchaMapa(@anPersist,@theStatement,@mapa)
+
+      if ( anDataStore:execute( @theStatement ) )
+         anPersist:setisPersistido(.T.)
+      endif
+   endif
+   //## end IBroker:saveMe%907292337.body
+RETURN self
+
+METHOD deleteMe( anPersiste)
+   //IPersistente& anPersiste
+   local mapa,anDataStore,theStatement
+   //## begin IBroker:deleteMe%908596376.body preserve=yes
+   if ( anPersiste:isPersistido() == .T. )
+      /*IMapClassTable&*/ mapa = IClassMap():getMapaFor( @anPersiste )
+      /*IDataStore*/ anDataStore = mapa:DataStore()
+      theStatement := IDeleteStatement():new()
+      theStatement:settabelaAlvo(mapa:nomeTabela())
+      theStatement:setID( anPersiste:ID() )
+      if ( anDataStore:execute( @theStatement ) )
+         anPersiste:setisPersistido(.F.)
+      endif
+   else
+      THROW "IBroker:deleteMe objeto não persistido."
+   endif
+   //## end IBroker:deleteMe%908596376.body
+RETURN self
+
+
+METHOD regDataStoreForClass(anPersiste, dataStoreName)
+   //IPersistente& anPersiste, char* dataStoreName
+   local Posicao,i
+   //## begin IBroker:regDataStoreForClass%908596377.body preserve=yes
+   // var. aux
+   Posicao=-1
+   //
+   for i:=1 to ::m_ListaDataStore:count()
+      if (::m_ListaDataStore:subscript(i):nome()==dataStoreName)
+         Posicao=i
+         exit
+      endif
+   next
+   if ( Posicao==-1 )
+      THROW "IBroker:regDataStoreForClass DataStore nao existe."
+   endif
+   IClassMap():setDataStoreFor(@anPersiste, ::m_ListaDataStore:subscript(Posicao)  )
+   //## end IBroker:regDataStoreForClass%908596377.body
+RETURN self
+
+METHOD apresento( anPersistente)
+   //IPersistente& anPersistente
+   //## begin IBroker:apresento%908596378.body preserve=yes
+   // :-| ficou com funcao duvidosa pois o IClassMap:getMapaFor
+   //     j  cuida da apresenta‡Æo
+   IClassMap():getMapaFor( @anPersistente )
+   //## end IBroker:apresento%908596378.body
+RETURN self
+
+METHOD newColecao(anColecao)
+   //IColecaoPersistenteBase& anColecao
+   local Dummy,mapa,i,theQuery,buffer
+   //## begin IBroker:newColecao%908596379.body preserve=yes
+   // apresentar
+   Dummy = anColecao:createDummy( ) /*IPersistente*/
+   mapa = IClassMap():getMapaFor( Dummy )/*IMapClassTable&*/
+
+   // inserir na lista
+   //  nao pode nunca poderemos remover pois o clipper nao tem destrutor !!
+   // ::m_theColecoes:adiciona( @anColecao )
+   // criar o query
+   theQuery= anColecao:theQuery() /*IQueryStatement & */
+   // dizer tabela
+   theQuery:settabelaAlvo(mapa:nomeTabela())
+   anColecao:settheDataStore( mapa:DataStore() )
+   anColecao:setMapa(mapa)
+
+   mapa:DataStore():preenchaMapa(Dummy,theQuery,mapa)
+
+   anColecao:releaseDummy( Dummy )
+
+   #stdout >>IBroker:newColecao - falta traducao dos criterios
+
+   // tarefa de validacao dos Criterios e Ordens deferida para Colecao
+   theQuery:setListaOrdem( anColecao:ListaOrdem() )
+   theQuery:setListaCriterio( anColecao:ListaCriterio() )
+
+   //## end IBroker:newColecao%908596379.body
+RETURN self
+
+METHOD newAssociacao(anColecao,cTabela)
+   local Dummy,mapa,i,theQuery,buffer
+   Dummy = anColecao:createDummy( )
+   mapa = IClassMap():getMapaFor( Dummy )
+   // inserir na lista
+   //  nao pode nunca poderemos remover pois o clipper nao tem destrutor !!
+   //::m_theColecoes:adiciona( @anColecao )
+   // criar o query
+   theQuery= anColecao:theQuery()
+   // dizer tabela
+   theQuery:settabelaAlvo(mapa:nomeTabela())
+   anColecao:settheDataStore( mapa:DataStore() )
+   anColecao:setMapa(mapa)
+
+   mapa:DataStore():preenchaMapa(Dummy,theQuery,mapa)
+
+   // informar o dataStore que se trata de uma associacao
+   mapa:DataStore():prepareAssociacao( theQuery,anColecao:GetDono(),cTabela )
+
+   anColecao:releaseDummy( Dummy )
+
+   #stdout >>IBroker:newAssociacao - falta traducao dos criterios
+
+   // tarefa de validacao dos Criterios e Ordens deferida para Colecao
+   theQuery:setListaOrdem( anColecao:ListaOrdem() )
+   theQuery:setListaCriterio( anColecao:ListaCriterio() )
+RETURN self
+
+
+
+METHOD processeColecao(anColecao)
+   //IColecaoPersistenteBase& anColecao
+   //## begin IBroker:processeColecao%908596380.body preserve=yes
+   anColecao:theDataStore():execute( anColecao:theQuery() )
+   //## end IBroker:processeColecao%908596380.body
+RETURN self
+
+METHOD libereColecao(anColecao)
+   //IColecaoPersistenteBase& anColecao
+   //## begin IBroker:libereColecao%908596381.body preserve=yes
+   anColecao:theDataStore():libereQuery( anColecao:theQuery() )
+   //## end IBroker:libereColecao%908596381.body
+RETURN self
+
+METHOD TabelaRelacao()
+RETURN IClassMap():TabelaRelacao()
+
+METHOD DefaultDataStore()
+   //## begin IBroker:DefaultDataStore%909457534.body preserve=yes
+   if ( ::estado() != gInicializado  )
+      THROW "IBroker:DefaultDataStore() Broker nao inicializado!"
+   endif
+
+   if ( ::m_UsarDataStoreDefault != .T. )
+      THROW "IBroker:DefaultDataStore() UsarDataStoreDefault Nao Habilitado"
+   endif
+
+RETURN ::m_ListaDataStore:subscript(::m_ixDStoreDefault)
+//## end IBroker:DefaultDataStore%909457534.body
+
+METHOD asDebug()
+   //## begin IBroker:asDebug%909457535.body preserve=yes
+   local /*IString*/ cRet
+   cRet = "**Informações de Debug**"
+   cRet+=IClassMap():asDebug()
+RETURN cRet
+//## end IBroker:asDebug%909457535.body
+
+METHOD nomeColunaID()
+RETURN IClassMap():ColunaId()
+
+METHOD criarBasePara(anPersistente)
+   //IPersistente& anPersistente
+RETURN nil
+
+//## Get and Set Operations for Has Relationships (implementation)
+
+METHOD ListaDataStore()
+RETURN ::m_ListaDataStore
+
+
+//## Get and Set Operations for Class Attributes (implementation)
+
+METHOD UsarDataStoreDefault()
+RETURN ::m_UsarDataStoreDefault
+
+METHOD setUsarDataStoreDefault(value)
+   //const bool value
+   ::m_UsarDataStoreDefault = value
+RETURN nil
+
+METHOD estado()
+RETURN ::m_estado
+
+METHOD setestado(value)
+   //const IEstadoGenerico value
+   ::m_estado = value
+RETURN nil
+
+METHOD ixDStoreDefault()
+RETURN ::m_ixDStoreDefault
+
+METHOD setixDStoreDefault(value)
+   //const int value
+   ::m_ixDStoreDefault = value
+RETURN nil
+
+

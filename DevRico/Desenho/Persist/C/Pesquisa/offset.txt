@@ -1,0 +1,320 @@
+
+C++ lets you determine the offset of data members into an object.  An expression such as:
+
+   int ((char*)&Instance.Member - (char*)&Instance);
+
+can be used in C++ to determine how far into an instance Instance the member Member is located. This syntax is also
+supported in SOM.  However, the result of the expression may not be identical for subclasses.  Given:
+
+  class Base : public SOMObject { public: int i; } B;
+  class Derived : public Base { /* ... */ } D;
+  #define MyOffset(Obj,Member) int((char*)&Obj.Member - (char*)&Obj)
+
+the equality MyOffset(B,i) == MyOffset(D,i) may or may not hold, depending on how SOM determines the data
+reordering scheme for each class.
+
+The offsets of data members into an object are contiguous within each access-specifier (public, protected or private),
+and are assigned to each block in the order of declaration.
+
+-------------------------------------------------------------------------------------------------------------------------
+
+
+Method resolution is the process of obtaining a pointer to the procedure that implements a particular method for a particular
+object at run time.  The method is then invoked subsequently by calling that procedure, passing the method's intended receiver,
+the Environment pointer (if needed), the context argument (if needed), and the method's other arguments, if any. C and
+C++ programmers may wish to obtain a pointer to a method's procedure for efficient repeated invocations.
+
+Obtaining a pointer to a method's procedure is achieved in one of two ways, depending on whether the method is to be resolved
+using offset resolution or name-lookup resolution. Obtaining a method's procedure pointer via offset resolution is faster, but
+it requires that the name of the class that introduces the method and the name of the method be known at compile time.  It also
+requires that the method be defined as part of that class's interface in the IDL specification of the class. (See the topic "Method
+Resolution" in Chapter 4, "SOM IDL and the SOM Compiler" for more information on offset and name-lookup method resolution.)
+
+-------------------------------------------------------------------------------------------------------------------------
+
+Method resolution is the step of determining which procedure to execute in response to a method invocation. For example,
+consider this scenario:
+
+      Class "Dog" introduces a method "bark", and
+
+      A subclass of "Dog", called "BigDog", overrides "bark", and
+
+      A client program creates an instance of either "Dog" or "BigDog" (depending on some run-time criteria) and invokes method
+      "bark" on that instance.
+
+ Method resolution is the process of determining, at run time, which method procedure to execute in response to the method
+ invocation (either the method procedure for "bark" defined by "Dog", or the method procedure for "bark" defined by "BigDog").
+ This determination depends on whether the receiver of the method (the object on which it is invoked) is an instance of "Dog" or
+ "BigDog" (or perhaps depending on some other criteria).
+
+ SOM allows class implementors and client programs considerable flexibility in deciding how SOM performs method resolution. In
+ particular, SOM supports three mechanisms for method resolution, described in order of increased flexibility and increased
+ computational cost: offset resolution, name-lookup resolution, and dispatch-function resolution.
+-------------------------------------------------------------------------------------------------------------------------
+
+When using SOM's C and C++ language bindings, offset resolution is the default way of resolving methods, because it is the
+fastest. For those familiar with C++, it is roughly equivalent to the C++ "virtual function" concept.
+
+Although offset resolution is the fastest technique for method resolution, it is also the most constrained. Specifically, using offset
+resolution requires these constraints:
+
+      The name of the method to be invoked must be known at compile time,
+
+      The name of the class that introduces the method must be known at compile time (although not necessarily by the
+      programmer), and
+
+      The method to be invoked must be part of the introducing class's static (IDL) interface definition.
+
+ To perform offset method resolution, SOM first obtains a method token from a global data structure associated with the class
+ that introduced the method. This data structure is called the ClassData structure. It includes a method token for each method the
+ class introduces. The method token is then used as an "index" into the receiver's method table, to access the appropriate
+ method procedure. Because it is known at compile time which class introduces the method and where in that class's ClassData
+ structure the method's token is stored, offset resolution is quite efficient. The cost of offset method resolution is currently about
+ twice the cost of calling a C function using a pointer loaded with the function address.
+
+ An object's method table is a table of pointers to the procedures that implement the methods that the object supports. This table
+ is constructed by the object's class and is shared among the class instances. The method table built by class (for its instances)
+ is referred to as the class's instance method table. This is useful terminology, since, in SOM, a class is itself an object with a
+ method table (created by its metaclass) used to support method calls on the class.
+
+ Usually, offset method resolution is sufficient; however, in some cases, the more flexible name-lookup resolution is required.
+-------------------------------------------------------------------------------------------------------------------------
+
+icnrcol.hpp
+
+The IContainerColumn class provides the container with the ability to display a details
+view.
+
+When using the details view, you must create an IContainerColumn object for each column
+in the details view.  Use IContainerControl::addColumn to add the column objects to the
+container.
+
+This class provides functions to add, delete, and hide columns in a container control. It
+also defines the characteristics of the column header (text or icon) and the position of the
+data in the column record.
+
+The data in the object and the data displayed in the column are connected. For a user to
+have a details view, derive a class from IContainerObject and extend it with the additional
+fields to display in the columns of the container. You must ensure the column object has
+the following information:
+
+ o The exact offset of the data in the object
+ o The type of the data in the object
+ The column object must have the correct information because it handles the drawing of
+ this data. If the column object does not have the correct information, the behavior of the
+ column is undefined.
+
+ The default implementation of a container column has the following:
+
+ o A heading containing centered, read-only text
+ o A horizontal separator under the heading
+ o A vertical separator between columns
+ o String data that is noneditable, left-justified, and centered vertically
+
+ Note:    You can add an IContainerColumn object to one container only.
+
+
+ Windows Information
+
+ The native Windows containers (that is, containers constructed without the pmCompatible
+ style) have the following restrictions for columns:
+
+ o Vertical column separators are not supported.
+
+ o Horizontal column separators are required.
+
+ o Heading styles and alignment are defined by DataStyle.
+
+ o Headings must be text and are read-only.
+
+ o Split bar is not supported.
+
+ o Only the first column may have an icon.
+
+ o The first column is required.  It must be the icon and text that is defined in the
+   IContainerObject and displayed in the nondetails views.  This column is initially sized to
+   a zero width and is made nonzero if a column that is constructed with
+   DataSource=isIcon or DataSource=isIconViewText is added.  Regardless of where you
+   attempt to add these columns, they will be at the beginning.
+
+ o The required column is the only column that displays selection emphasis.  If this column
+   has a zero width, then no selection emphasis will be displayed.
+
+ o The required column's heading is defined by the heading text of the column constructed
+   with DataSource=isIconViewText if it is inserted.
+
+ Motif Information
+
+ The container widget automatically creates the leftmost column for details view. This
+ column contains the icon and text of the corresponding IContainerObject. If you attempt to
+ add columns to a container that represents the icon or text for an IContainerObject, the
+ columns are ignored. However, if you add a column representing the text for an
+ IContainerObject, the automatically created leftmost column uses the headingText set for
+ that column.
+
+ IContainerControl::ColumnCursor ignores the automatically created leftmost column.
+-------------------------------------------------------------------------------------------------------------------------
+
+You can construct and destruct objects of this class.
+
+Overload 1
+
+public:
+IContainerColumn( DataSource objectDataType,
+                  const HeadingStyle& title = defaultHeadingStyle ( ),
+                  const DataStyle& data = defaultDataStyle ( ) );
+
+Construct an IContainerColumn object by providing a type of data that is part of
+IContainerObject (as opposed to the user portion of the object) and, optionally, the styles
+to use for the heading and data.
+
+Platform Support
+
++--------------------------------------+
+|WINDOWS     |PM          |MOTIF       |
+|------------+------------+------------|
+|Yes         |Yes         |Yes         |
++--------------------------------------+
+
+Windows: The native Windows containers (that is, containers constructed without the
+pmCompatible style) require that the first column be the icon text pair that is present in
+the other views.  Because of this, regardless of where you attempt to insert a column
+constructed with this constructor, it will be placed at the beginning.  If you insert more
+than one of the same type, then the second one will be invalid and not visible.
+
+Overload 2
+
+public:
+IContainerColumn( unsigned long dataOffset,
+                  const HeadingStyle& title = defaultHeadingStyle ( ),
+                  const DataStyle& data = defaultDataStyle ( ) );
+
+Construct an IContainerColumn object by providing the offset of the object data to be
+displayed in the column and, optionally, the styles to use for the heading and data.
+
+Platform Support
+
++--------------------------------------+
+|WINDOWS     |PM          |MOTIF       |
+|------------+------------+------------|
+|Yes         |Yes         |Yes         |
++--------------------------------------+
+
+Overload 3
+
+public:
+IContainerColumn(const IContainerColumn& column);
+
+Construct an IContainerColumn object by copying from an existing container column.
+
+Platform Support
+
++--------------------------------------+
+|WINDOWS     |PM          |MOTIF       |
+|------------+------------+------------|
+|Yes         |Yes         |Yes         |
++--------------------------------------+
+
+======================================================================
+
+Identifies where the data is located in a container object for this column.
+
+The data in the object and the data displayed in the column are connected. For a user to
+have a details view, you must derive a class from IContainerObject and extend it with the
+additional "fields" to display in the columns of the container. You must ensure the column
+object has the following information:
+
+ o The exact offset of the data in the object
+ o The type of the data in the object
+ The column object must have the correct information because it handles the drawing of
+ this data. If the column object does not have the correct information, the behavior of the
+ column is undefined.
+
+ public:
+ virtual IContainerColumn&
+   setDataOffset( unsigned long dataOffset );
+
+ Platform Support
+
+ +--------------------------------------+
+ |WINDOWS     |PM          |MOTIF       |
+ |------------+------------+------------|
+ |Yes         |Yes         |Yes         |
+ +--------------------------------------+
+
+
+======================================================================
+
+The IContainerColumn class defines the information that is displayed for a given object when the container is in the details view.
+Only the items that you added with no parent display in the details view. You can use this class to set text in the heading of the
+columns, add horizontal and vertical separators by column, and align the column contents.
+
+One way to create an instance of an IContainerColumn is for you to provide the offset of the object data to be displayed in the
+column and, optionally, the styles to be used for the heading and data.
+
+The following shows the syntax for the IContainerColumn constructor:
+
+IContainerColumn     ( unsigned long       dataOffset,
+                       const HeadingStyle& title = defaultHeadingStyle(),
+                       const DataStyle&    data = defaultDataStyle());
+
+To create an instance of a container column, use the following statements:
+
+colIcon = new IContainerColumn (IContainerColumn::isIcon);
+colName = new IContainerColumn (IContainerColumn::isIconViewText);
+colCode = new IContainerColumn (offsetof(Department, strCode));
+colAddress = new IContainerColumn (offsetof(Department, strAddress));
+
+In the previous example, colIcon, colName, colCode, and colAddress are defined as members of an IFrameWindow. The
+statements look like this:
+
+private:                                 //Define private information
+  IContainerControl * cnrCtl;
+  Department *dept1, *dept2, *dept3, *dept4, *dept5, *dept6 ;
+  IContainerColumn *colIcon, *colName, *colCode, *colAddress;
+  IMenuBar       * menuBar;
+
+After creating the container columns, you can add heading text to them using the following statements:
+
+colIcon->setHeadingText("Icon");
+colName->setHeadingText("Department Name");
+colCode->setHeadingText("Code");
+colAddress->setHeadingText("Address");
+
+PM Notes:  When using the CUA container you can use showSeparators to add a vertical separator next to a column or a
+horizontal separator under the heading text. The default adds both. To create only one of the separators, specify it in the member
+function statement. The following statements show examples of how to create separators:
+
+  //Only Horizontal Separator
+colIcon->showSeparators(IContainerColumn::horizontalSeparator);
+  //Only Vertical Separator
+colName->showSeparators(IContainerColumn::verticalSeparator);
+colCode->showSeparators(); //both separator by default
+colAddress->showSeparators(); //both separator by default
+
+After you create the container columns, add them into the container using the following statements:
+
+cnrCtl->addColumn(colIcon);
+cnrCtl->addColumn(colName);
+cnrCtl->addColumn(colCode);
+cnrCtl->addColumn(colAddress);
+
+The following figure is an example of a details view of a container.
+
+
+Example of the Details View
+
+PM Notes:  When using the CUA container control, you can use the following code statement to put a split bar in the details
+view by specifying the last column to be viewed in the left window and the location of the split bar in pixels.
+
+cnrCtl->setDetailsViewSplit(colName, 350);
+
+Windows Notes:  Separators and split bars are ignored in the native Windows list view and tree view containers.  These
+options are supported by the CUA control on both the Windows and OS/2 operating systems. The native control, however,
+provides dynamic sizing of all columns.
+
+======================================================================
+
+======================================================================
+
+======================================================================

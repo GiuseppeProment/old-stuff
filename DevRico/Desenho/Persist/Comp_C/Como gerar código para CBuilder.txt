@@ -1,0 +1,102 @@
+1. Inicie com o template CBuilder.mdl e veja o Apendice A ao final.
+2. Crie a classe componente ( meuComponente )
+3. herde meuComponente de IComponent ou TComponent ou outra
+4. no "Module Diagram" crie o module body e module spec com o mesmo nome meuComponente
+5. associe a classe ao module spec
+6. Crie o método construtor exigido pela VCL classe( TComponent* ) ou classe( IComponent*) se herdou de IComponent
+7. No module spec meuComponente em declarations digite:
+	#pragma option push
+	#pragma option -pr
+	#define class class PACKAGE	
+8. No module body em declarations digite: (observe que o ident. do namespace deve ser em minusculo, senão o componente não é registrado pela IDE.
+	#pragma option push
+	#pragma option -pr
+	#pragma package(smart_init)
+	static inline void ValidCtrCheck(meuComponente *)
+	{
+	  new meuComponente(NULL);
+	}
+	//-------------------------------------------------------
+	namespace meucomponente <<###ATENÇÃO TEM QUE SER MINUSCULO##
+	{
+	  void __fastcall PACKAGE Register()
+	  {
+	     TComponentClass classes[1] = {__classid(meuComponente)};
+	     RegisterComponents("Nome da paleta", classes, 0);
+	  }
+	}
+	//-------------------------------------------------------
+9. Selecione module spec, F4 attach a propriedade CBuilder3
+10. Selecione module body, F4 attach a propriedade CBuilder3
+11. Selecione nada (modelo) F4 attach a propriedade CBuilder3
+12. Selecione nada (modelo) F4 e mude a propriedade Directory para o caminho onde gerar o código, use um simbolo virtual se quiser ( preceda com $ ).
+13. Gere o codigo como indicado no APENDICE A se o nome da classe for maior que 8 caso contrario apenas selecione a classe e gere o codigo (ctrl-g)
+14. Abra o Header ( .h )
+15. Na posição protegida insira:
+   // Additional Public Declarations
+     //## begin meuComponente.public preserve=yes
+ __published:
+     //## end meuComponente.public
+    Neste local devem ser digitados as propriedades (__property)
+16. Na posição protegida insira:
+    // Additional Implementation Declarations
+      //## begin meuComponente.implementation preserve=yes
+#undef class
+#pragma option pop
+      //## end meuComponente.implementation
+17. Salve o arquivo e não o apague, mesmo se regerar o código.
+18. Abra o Body ( .cpp )
+19. Na posição protegida insira:
+//## begin module.includes preserve=yes
+#pragma hdrstop
+//## end module.includes
+20. Na seguinte posição protegida do construtor que você criou insira a inicialização da super classe:
+  //## begin meuComponente::meuComponente%959306791.initialization preserve=yes
+  :IComponent( Owner ) [ou outra]
+  //## end meuComponente::meuComponente%959306791.initialization
+21. Na posição protegida insira ( tá no final )
+  // Additional Declarations
+  //## begin meuComponente.declarations preserve=yes
+  #pragma option pop
+  //## end meuComponente.declarations
+
+==============
+Apendice A
+==============
+
+"Como trabalhar com nomes longos na rose 3.0"
+
+O C++Builder e outros ambientes modernos trabalham com nomes longos, no caso daquele é obrigatorio que o nome do componente seja igual ao nome da unidade de tradução.
+resolva o problema da seguinte forma :
+
+Nome_do_componente  nome_curto 
+IComponenteExemplo  ICompo~1
+
+1. Selecione o module spec F4 click item em FileName e digite ICompo~1
+2. Selecione o module body F4 click item em FileName e digite ICompo~1
+3. Gere o codigo, serão gerados ICompo~1.h e ICompo~1.cpp ( visto como curto e longo)
+4. renomei ICompo~1.h para x e depois para IComponenteExemplo.h
+5. renomei ICompo~1.cpp para x e depois para IComponenteExemplo.cpp
+6. okey, nunca apague os fontes, deixe a rose mante-los.
+7. no lugar dos passos 4 e 5 pode ser usado o bat RENLONGO <NomeCurto> <nomeLongo>
+
+
+==============
+Apendice B
+==============
+
+"Templates e mudança na convenção de chamada"
+
+Usei templates e varios erros ocorreram, como "type mismatch" e similares, porque de alguma forma o tempo que o template é incluido e o tempo que a classe template é construida são muito diferentes e mudando-se a convenção de chamada através da opção geral (#pragma option -p?) faz com que a declaração contrarie a definição na convenção de chamada. 
+Okey, tive que fazer o seguinte:
+1. quando for template e houver a mínima possibilidade de trocar a convenção dinamicamente(?!...) explicitamente determine a convenção de chamada de todas as operações da classe template, inclusive construtor, destrutor e IMPORTANTE "ponteiros para funçoes" que por acaso sejam usados.
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,189 @@
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+
+// IColecaoPersistenteBase
+
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IAssociacao; Parameterized Class
+//	Faz a associacao entre dois IPersistentes, È um tipo de
+//	IColecaoPersistenteBase, porem restrita, necessita
+//	conhecer o ASSOCIADO, pois vai cria-los, do ASSOCIANDO
+//	somente precisa conhecer IPersistente que possui o ID.
+//	ASSOCIANDO.ID X ASSOCIADO.ID
+//	Necessita da tabela de associacao que sempre sera
+//	constituida de duas colunas IDAssociado,IDAssociando
+//	sua clausula SQL sera sempre
+//	SELECT IDAssociado FROM <tabela> WHERE IDAssociando =
+//	ASSOCIANDO.ID
+//	VAMOS TER QUE TRABALHAR COM BUFFERIZA«√O DE OBJETOS,
+//	COISA QUE A COLE«√O NORMAL, N√O VAI TER.
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+
+
+CREATE CLASS IAssociacao INHERIT IColecaoPersistenteBase  //## Inherits: <unnamed>
+    //## Constructors (specified)
+      //## Operation: IAssociacao%908414769
+      //	construtor unico. deve apresentar-se como observadora do
+      //	persistente.
+      //	Dono.NotificarEventosPara( *this );
+      //	adiciona um criterio em si propria :
+      //	"ID in ( Select AgregadoID from Broker::TabelaRelacao
+      //	where AgregandoID = <Dono.ID> )"
+PROTECTED:
+      METHOD init
+EXPORT:
+      METHOD quandoEventoNotificacao
+
+      CLASS METHOD initClass
+      //## Operation: createDummy%908340282
+      //	retorna um objeto IPersistente por valor, vazio. apenas
+      //	para reconhecimento adiantado do mesmo (mapeamento). O
+      //	IPersistente necessita possuir um construtor default,
+      //	sem nenhum processamento.
+      //## Semantics:
+      //	talvez crie-se um construtor especial no IPersistente
+      //	com um parametro escondido para evitar que o construtor
+      //	seja modificado pelas subclasses.
+      //IPersistente* createDummy();
+      //MESSAGE createDummy IS new TO PersistenteSubClass
+      METHOD createDummy
+      //## Operation: createDummy%908340282
+      //	retorna um objeto IPersistente por valor, vazio. apenas
+      //	para reconhecimento adiantado do mesmo (mapeamento). O
+      //	IPersistente necessita possuir um construtor default,
+      //	sem nenhum processamento.
+      //## Semantics:
+      //	talvez crie-se um construtor especial no IPersistente
+      //	com um parametro escondido para evitar que o construtor
+      //	seja modificado pelas subclasses.
+      //IPersistente* createDummy();
+      //MESSAGE createDummy IS new TO PersistenteSubClass
+      //## Operation: releaseDummy%910837610
+      //void releaseDummy(IPersistente* pNulo);
+      MESSAGE releaseDummy IS NULL
+      //## Operation: ObjectPointer%908407234
+      //PersistenteSubClass* ObjectPointer();
+      METHOD Object
+      //## Operation: ObjectCopy%908340294
+      //	devolve uma cÛpia do objeto apontado pelo ponteiro de
+      //	objetos. vai ter que ser implementado pelas classes
+      //	template.
+      METHOD ObjectCopy
+      //## Operation: crieInstancia%908340292
+      //	cria um objeto do tipo mantido pela coleÁ„o e guarda-o
+      //	no ponteiro InstanciaCorrente. que ser· deletado a cada
+      //	nova chamada de crieInstancia e se a coleÁ„o for
+      //	destruida. Inicie com NULL.
+      //IPersistente& crieInstancia();
+      METHOD crieInstancia
+    // Additional Public Declarations
+      //## begin IColecao.public preserve=yes
+      //## end IColecao.public
+      METHOD getDono
+EXPORT:
+   METHOD add                                    // adiciona 1 objeto
+   METHOD remove                                 // remove objeto
+   METHOD erase                                  // remove e apaga objeto
+HIDDEN:
+   VAR PersistenteSubClass // subclasse de IPersistente (nao Ç objeto)
+   VAR Dono
+   VAR Dependencia
+   VAR Cardinalidade
+END CLASS
+// Parameterized Class IAssociacao
+
+
+METHOD initClass(),()
+RETURN self
+
+METHOD init( cTabela,Dono,ClasseAgregada,Dependencia,Cardinalidade ),()
+   if Dependencia == NIL
+      Dependencia := eFraca
+   endif
+   if Cardinalidade == NIL
+      Cardinalidade := eMuitos
+   endif
+   if Valtype(cTabela) != "C"
+      THROW "IAssociacao:new nome da tabela invalido"
+   endif
+   ::PersistenteSubClass:= ClasseAgregada
+   ::Dono               := Dono
+   ::Dependencia        := Dependencia
+   ::Cardinalidade      := Cardinalidade
+   ::m_InstanciaCorrente:= ::PersistenteSubClass:new()
+   IBroker():newAssociacao(self,cTabela)
+   Dono:NotificarEventosPara( self )
+RETURN self
+
+METHOD quandoEventoNotificacao(evento)
+   // se evento for IPersistente:evtApagado
+   // se a dependencia for forte
+   // instanciar cada um dos objetos agregandos
+   // e self:erase(objeto) para cada um
+   comente "qdEvtNotify: "+evento:evento()
+   if evento:evento() == IPersistente():evtApagado()
+      if ::Dependencia == eForte
+         ::goPrimeiro()
+         do while ( ::isFim() != .t. )
+            ::erase( ::Object() )
+            ::goProximo()
+         enddo
+      endif
+   endif
+RETURN self
+
+METHOD add( objetoPersistente )
+   // adicionar 1 objeto a colecao
+   // leva a inserir um registro na tabela relacao (operacao proprietaria)
+   // nao fica sendo o corrente
+   // pre_requisitos: Objeto Persistente deve estar persistido
+   //                 sen∆o dispara excessao
+   if ! ( objetoPersistente:class == ::PersistenteSubClass )
+      THROW "IAssociacao:add -> objeto recebido n∆o Ç da classe Agregada"
+   endif
+   if ! objetoPersistente:isPersistido()
+      THROW "IAssociacao:add -> objeto recebido n∆o esta persistido;persista-o antes de adicionar a coleá∆o"
+   endif
+
+   ::m_theDataStore:addToRelacao( ::m_theQuery, objetoPersistente )
+
+RETURN nil
+
+METHOD remove( objetoPersistente )
+   if ! ( objetoPersistente:class == ::PersistenteSubClass )
+      THROW "IAssociacao:remove -> objeto recebido n∆o Ç da classe Agregada"
+   endif
+   if ! objetoPersistente:isPersistido()
+      THROW "IAssociacao:remove -> objeto recebido n∆o esta persistido; remoá∆o sem nexo"
+   endif
+RETURN ::m_theDataStore:removeFromRelacao( ::m_theQuery, objetoPersistente )
+
+METHOD erase( objetoPersistente )
+   local lret := ::remove(objetoPersistente)
+   if lret
+      objetoPersistente:erase()
+   endif
+RETURN lret
+
+METHOD getDono
+RETURN ::Dono
+
+METHOD createDummy
+RETURN ::PersistenteSubClass():new()
+
+METHOD Object()
+RETURN ::m_InstanciaCorrente
+
+METHOD ObjectCopy()
+RETURN ::m_InstanciaCorrente:copy()
+
+METHOD crieInstancia()
+RETURN ::m_instanciaCorrente

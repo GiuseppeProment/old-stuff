@@ -1,0 +1,22 @@
+#include "IPersist.ch"
+
+CREATE CLASS IObservador
+PROTECTED:
+   METHOD init
+EXPORT:
+   CLASS METHOD initClass
+EXPORT:
+   METHOD quandoEventoNotificacao
+END CLASS
+// Class IObservador
+
+METHOD init(),()
+RETURN self
+
+METHOD initClass(),()
+RETURN self
+
+//IObservador& IObservador::quandoEventoNotificacao(IEventoNotificacao& evento)
+METHOD quandoEventoNotificacao(evento)
+RETURN self
+

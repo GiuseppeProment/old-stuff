@@ -1,0 +1,64 @@
+û Interface ok
+ý Implementacao ok
+------------------
+ûý
+-xIBROKER.CLY   IBroker
+-xIPRSSTNT.CLY  IPersistente
+-xLISTA.CLY     Lista
+-xICLSSMAP.CLY  IClassMap
+-xIMPTRCLN.cly  IMapAtrColuna
+-xIMPCLSST.cly  IMapClassTable
+-xIPRSSTID.CLY  IPersistID
+-xIBSRVDOR.CLY  IObservador
+-xINTFCDOR.CLY  INotificador
+-xIErro.cly     IErro
+
+
+
+trocar
+operator=  por  assign
+operator+= por  sum
+operator-= por  subtract
+operator[] por  subscript
+
+   // Construtores
+PROTECTED:
+   METHOD init
+EXPORT:
+   CLASS METHOD initClass
+
+* Os enum serao implementados como defines
+
+#include "IPersist.ch"
+
+û Interface ok
+ý Implementacao ok
+------------------
+ûý
+--ISTTMENT  IStatement
+--IMDFYSTT  IModifyStatement
+--INSRTSTT  IInsertStatement
+--IPDTSTTM  IUpdateStatement
+--IDLTSTTM  IDeleteStatement
+--IQRYSTTM  IQueryStatement
+--IDTSTORE  IDataStore
+--IVNTNTFC  IEventoNotificacao
+            INativoDataStore
+            ITabelaInfo
+            IIndice
+            IColunas
+
+******** COLECOES ********
+
+û Interface ok
+ý Implementacao ok
+------------------
+ûý
+--ICLCPRSS IColecaoPersistenteBase
+--ICOLECAO IColecao
+--IASSCCAO IAssociacao
+
+
+IBSRVDOR.CLY  IObservador
+INTFCDOR.CLY  INotificador
+

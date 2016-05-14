@@ -1,0 +1,372 @@
+//## begin module.cm preserve=no
+//   %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IClassMap; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\iclssmap.h
+
+
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+//## end module.includes
+#include "IPersist.ch"
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IClassMap
+// O mapeamento classe x tabela e membro x coluna pode ser
+// default pelos nomes de classe e membro ou caso exista o
+// arquivo mapClass.Ini, o mesmo sera lido pois tera as
+// correspondentes relacoes. o DataStore especifico de cada
+// classe não é guardado no INI
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+//## Uses: <unnamed>; IKnowType { -> }
+//## Uses: <unnamed>; IPersistente { -> F}
+//## Uses: <unnamed>; IDataStore { -> F}
+//## Uses: <unnamed>; IBroker { -> }
+
+CREATE CLASS IClassMap
+   //## begin IClassMap.initialDeclarations preserve=yes
+   //## end IClassMap.initialDeclarations
+   // Construtores
+EXPORT:
+   CLASS METHOD initClass
+
+EXPORT:
+   // no caso de não especificar o tipo, tipo será StringFixa
+   // de tamanho = tamanho.
+   CLASS METHOD registraMembroClasse
+   // inicialização.
+   CLASS METHOD inicialize
+   CLASS METHOD asDebug
+   //## Get and Set Operations for Class Attributes (generated)
+   //## Attribute: ColunaId
+   // nome da coluna chave primaria que existira em todas
+   // tabelas.
+   CLASS METHOD ColunaId
+   CLASS METHOD setColunaId
+   // Additional Public Declarations
+   //## begin IClassMap.public preserve=yes
+   //## end IClassMap.public
+   CLASS METHOD getMapaFor
+   //## Operation: setDataStoreFor%908596387
+   // atualiza o meDatastore para uma subclasse de
+   // IPersistente.
+   CLASS METHOD setDataStoreFor
+   //## Get and Set Operations for Class Attributes (generated)
+   //## Attribute: TabelaRelacao
+   CLASS METHOD TabelaRelacao
+   CLASS METHOD setTabelaRelacao
+PROTECTED:
+   // Additional PROTECTED Declarations
+   //## begin IClassMap.PROTECTED preserve=yes
+   //## end IClassMap.PROTECTED
+HIDDEN:
+   //## Other Operations (specified)
+   //## Operation: getMapaFor%907292334
+   //## Operation: searchClassName%907292335
+   // procura na lista de IMapClassTable pelo objeto igual ao
+   // nome e retorna o indice.
+   // retorna -1 se nao achou
+   CLASS METHOD SearchClassName
+   //## Operation: insertClassInfoOf%907292336
+   // chamado quando search() retorna -1 para um objeto
+   // anPersist.
+   // chama self.resolveMapa ao final
+   //## Semantics:
+   // chama o OnClassInfo no anPersist.
+   CLASS METHOD insertClassInfoOf
+   //## Operation: resolveMapa%908596388
+   // resolve nome da tabela, colunas e tipos e torna estado
+   // do mapa isComplete .T..
+   // processa as informações do MapClass.ini
+   CLASS METHOD resolveMapa
+   //## Get and Set Operations for Has Relationships (generated)
+   //## Documentation IClassMap::mapaCorrente.has
+   // somente para trabalho durante operacoes internas,
+   // normalmente esta com NULL.
+   CLASS METHOD mapaCorrente
+   CLASS METHOD setmapaCorrente
+   // Additional HIDDEN Declarations
+   //## begin IClassMap.HIDDEN preserve=yes
+   //## end IClassMap.HIDDEN
+HIDDEN:                                          //## implementation
+   // Data Members for Has Relationships
+   //## Documentation IClassMap::ListaMapClassTable.has
+   //## begin IClassMap::ListaMapClassTable.has preserve=no  HIDDEN: CLASS VAR IMapClassTable { -> nRFO}
+   CLASS VAR m_ListaMapClassTable
+   //## end IClassMap::ListaMapClassTable.has
+   //## begin IClassMap::mapaCorrente.has preserve=no  HIDDEN: CLASS VAR IMapClassTable { -> 1RFO}
+   CLASS VAR m_mapaCorrente
+   //## end IClassMap::mapaCorrente.has
+   // Data Members for Class Attributes
+   //## begin IClassMap::TabelaRelacao.attr preserve=no  HIDDEN: CLASS VAR IString {V} "Relacao"
+   CLASS VAR m_TabelaRelacao
+   //## end IClassMap::TabelaRelacao.attr
+   //## begin IClassMap::ColunaId.attr preserve=no  EXPORT: CLASS VAR IString {V} "ID"
+   CLASS VAR m_ColunaId
+   //## end IClassMap::ColunaId.attr
+   // Additional Implementation Declarations
+   //## begin IClassMap.implementation preserve=yes
+   //## end IClassMap.implementation
+   //## begin IClassMap.friends preserve=no
+   //## end IClassMap.friends
+END CLASS
+
+/* ------------ IMPLEMENTACAO --------------- */
+
+// Class IClassMap
+METHOD initClass(),()
+   ::m_mapaCorrente := nil
+   ::m_ListaMapClassTable = Lista():new()
+   ::m_TabelaRelacao = "MXM"
+   ::m_ColunaId = "ID"
+RETURN SELF
+
+METHOD registraMembroClasse(anPersistente, nomeMembro, offset, tamanho, tipoMembro, varSizeMax, isProxy)
+   //IPersistente& anPersistente, char* nomeMembro, unsigned int offset, unsigned int tamanho, IKnowType tipoMembro, unsigned int varSizeMax, bool isProxy
+   local pItem
+   //IMapAtrColuna
+   pItem := IMapAtrColuna():new()
+   pItem:settipoMembro(tipoMembro  )
+   pItem:setnomeMembro(nomeMembro  )
+   #stdout >>IClassMap::registraMembroClasse nomeColuna = nomeMembro
+   pItem:setnomeColuna(nomeMembro  )
+
+   pItem:setoffSet(offset          )
+
+   // tamanho nao pode ser sizeof para IsString___
+   // deve ser varSizeMax ou se nao especificar
+   // deve ser um default (50)
+   if (tipoMembro==IsStringVar.or.tipoMembro==IsStringFix)
+      if (varSizeMax != 0)
+         pItem:settamanho( varSizeMax )
+         pItem:setvarSizeMax(varSizeMax  )
+      else
+         pItem:settamanho( 50 )
+         pItem:setvarSizeMax( 50  )
+      endif
+   else
+      pItem:settamanho(tamanho        )
+      pItem:setvarSizeMax(varSizeMax  )
+   endif
+   pItem:setisProxy(isProxy        )
+   //pItem:setnomeColuna(            )
+   //pItem:settipoColuna(            )
+   ::m_mapaCorrente:ListaAtributos():adiciona( pItem )
+   //## end IClassMap::registraMembroClasse%907292333.body
+RETURN self
+
+METHOD getMapaFor(anPersist)
+   //IPersistente &anPersist
+   local NomeClasse,posicao
+   //## begin IClassMap::getMapaFor%907292334.body preserve=yes
+   NomeClasse := anPersist:getNomeClasse()
+   posicao := ::searchClassName( NomeClasse )
+   if ( posicao==-1 )
+      ::insertClassInfoOf(anPersist)
+      // procura novamente
+      posicao := ::searchClassName( NomeClasse )
+   endif
+   if ( posicao==-1 )
+      THROW "IClassMap::getMapaFor() nao conseguiu localizar/inserir mapa"
+   endif
+   // posicao valida prosseguir
+RETURN ::m_ListaMapClassTable:subscript(posicao)
+
+
+METHOD searchClassName(nomeClasse)
+   //int IClassMap::searchClassName(char* nomeClasse)
+   local Posicao,i
+   //## begin IClassMap::searchClassName%907292335.body preserve=yes
+   Posicao := -1
+   for i=1 to ::m_ListaMapClassTable:count()
+      if ( (::m_ListaMapClassTable:subscript(i):nomeClasse()==nomeClasse)==.T. )
+         Posicao=i
+         exit
+      endif
+   next
+RETURN Posicao
+
+METHOD insertClassInfoOf(anPersist)
+   //void IClassMap::insertClassInfoOf(IPersistente& anPersist)
+   //## begin IClassMap::insertClassInfoOf%907292336.body preserve=yes
+   // inserir nova classe e chamar OnClassInfo
+   ::m_mapaCorrente := IMapClassTable():new()
+   ::m_mapaCorrente:setnomeClasse( anPersist:getNomeClasse() )
+   anPersist:OnClassInfo()
+   ::resolveMapa()
+   ::m_ListaMapClassTable:adiciona( ::m_mapaCorrente )
+   ::m_mapaCorrente = nil
+   //## end IClassMap::insertClassInfoOf%907292336.body
+RETURN nil
+
+METHOD resolveMapa()
+   //## begin IClassMap::resolveMapa%908596388.body preserve=yes
+   //---- resolver somente para m_mapaCorrente
+   // resolver o DataStore, use default
+   if ( ::m_mapaCorrente:DataStore() == nil )
+      ::m_mapaCorrente:setDataStore(  IBroker():DefaultDataStore()   )
+   endif
+   ::m_mapaCorrente:setnomeTabela( ::m_mapaCorrente:nomeClasse() )
+   #stdout >>IClassMap::resolveMapa Coluna e Tipo implementar
+   //## end IClassMap::resolveMapa%908596388.body
+RETURN nil
+
+METHOD setDataStoreFor(anPersiste, anDataStore)
+   //setDataStoreFor(IPersistente& anPersiste, IDataStore& anDataStore)
+   //## begin IClassMap::setDataStoreFor%908596387.body preserve=yes
+   local mapa
+   mapa = ::getMapaFor(anPersiste)
+   mapa:setDataStore( anDataStore )
+   //## end IClassMap::setDataStoreFor%908596387.body
+RETURN nil
+
+METHOD inicialize()
+   //## begin IClassMap::inicialize%909189394.body preserve=yes
+   ::m_mapaCorrente := nil
+   //## end IClassMap::inicialize%909189394.body
+RETURN nil
+
+METHOD asDebug()
+   //IString IClassMap::asDebug()
+   local cRet,i,p,ii
+   //## begin IClassMap::asDebug%909716769.body preserve=yes
+   for i=1 to ::m_ListaMapClassTable:count()
+      p = ::m_ListaMapClassTable:subscript(i)
+      cRet += "Classe:"
+      cRet += p:nomeClasse()
+      cRet += "\n"
+      for ii=1 to p:ListaAtributos():count()
+         cRet += p:ListaAtributos():subscript(ii):nomeMembro()
+         cRet += "\t"
+         cRet += str( p:ListaAtributos():subscript(ii):offSet() )
+         cRet += "\t"
+         cRet += str( p:ListaAtributos():subscript(ii):tamanho() )
+         cRet += "\n"
+      next
+   next
+RETURN cRet
+//## end IClassMap::asDebug%909716769.body
+
+
+//## Get and Set Operations for Has Relationships (implementation)
+
+METHOD mapaCorrente()
+   //IMapClassTable * IClassMap::mapaCorrente()
+   //## begin IClassMap::mapaCorrente%.get preserve=no
+RETURN ::m_mapaCorrente
+//## end IClassMap::mapaCorrente%.get
+
+//void IClassMap::setmapaCorrente(IMapClassTable *const  value)
+METHOD setmapaCorrente(value)
+   //## begin IClassMap::setmapaCorrente%.set preserve=no
+   ::m_mapaCorrente := value
+   //## end IClassMap::setmapaCorrente%.set
+RETURN nil
+//## Get and Set Operations for Class Attributes (implementation)
+
+METHOD TabelaRelacao()
+   //IString IClassMap::TabelaRelacao()
+   //## begin IClassMap::TabelaRelacao%.get preserve=no
+RETURN ::m_TabelaRelacao
+//## end IClassMap::TabelaRelacao%.get
+
+METHOD setTabelaRelacao(value)
+//void IClassMap::setTabelaRelacao(const IString value)
+  //## begin IClassMap::setTabelaRelacao%.set preserve=no
+  ::m_TabelaRelacao := value
+  //## end IClassMap::setTabelaRelacao%.set
+RETURN nil
+
+METHOD ColunaId()
+   //IString IClassMap::ColunaId()
+   //## begin IClassMap::ColunaId%.get preserve=no
+RETURN ::m_ColunaId
+//## end IClassMap::ColunaId%.get
+
+METHOD setColunaId(value)
+   //void IClassMap::setColunaId(const IString value)
+   //## begin IClassMap::setColunaId%.set preserve=no
+   ::m_ColunaId := value
+   //## end IClassMap::setColunaId%.set
+RETURN nil
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,49 @@
+û Interface ok
+ý Implementacao ok
+------------------
+ûý
+- IBROKER.CLY   IBroker
+- IPRSSTNT.CLY  IPersistente
+--INTFCDOR.CLY  INotificador ok
+- IPRSSTID.CLY  IPersistID
+-*IBSRVDOR.CLY  IObservador ( juntada)
+--IVNTNTFC      IEventoNotificacao (juntada)
+  LISTA.CLY     Lista
+  ICLSSMAP.CLY  IClassMap
+  IMPTRCLN.cly  IMapAtrColuna
+  IMPCLSST.cly  IMapClassTable
+  IErro.cly     IErro
+
+
+û Interface ok
+ý Implementacao ok
+------------------
+ûý
+  ISTTMENT  IStatement
+  IMDFYSTT  IModifyStatement
+  INSRTSTT  IInsertStatement
+  IPDTSTTM  IUpdateStatement
+  IDLTSTTM  IDeleteStatement
+  IQRYSTTM  IQueryStatement
+  IDTSTORE  IDataStore
+
+******** COLECOES ********
+
+û Interface ok
+ý Implementacao ok
+------------------
+ûý
+  ICLCPRSS IColecaoPersistenteBase
+  ICOLECAO IColecao
+  IASSCCAO IAssociacao
+
+constructor Create; overload; virtual;
+constructor Create(const right:tipo ); overload; virtual;
+destructor Destroy;override;
+
+* sobrecarga de operadores nao disponivel em pascal
+* trocar
+operator=  por  assign
+operator+= por  sum
+operator-= por  subtract
+operator[] por  subscript

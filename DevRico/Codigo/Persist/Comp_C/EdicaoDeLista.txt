@@ -1,0 +1,14 @@
+
+Edição da Lista
+
+
+Armazenagem dos atributos escolhidos para exibição
+**************************************************
+
+1. armazenar no IBLista:
+  indice do atributo,
+  descrição,
+  tamanho e
+  número da imagem default.
+2. na construção ou inicialização
+

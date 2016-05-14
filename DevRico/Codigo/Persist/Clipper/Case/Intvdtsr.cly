@@ -1,0 +1,930 @@
+#include "IPersist.ch"
+// INTERFACE-------------------------------------
+CREATE CLASS INativoDataStore INHERIT IDataStore
+PROTECTED:
+   METHOD init
+EXPORT:
+   CLASS METHOD initClass
+EXPORT:
+   METHOD preenchaMapa
+   METHOD prepareAssociacao
+   METHOD addToRelacao
+   METHOD removeFromRelacao
+   METHOD execute                                // interface comum inicio
+   METHOD requisitaDados
+   METHOD isFim
+   METHOD libereQuery
+   METHOD ligar
+   METHOD desligar                               // interface comum final
+   METHOD EstaLigado
+
+   METHOD setRddDriver
+   METHOD setCaminho
+   METHOD setCompartilhado
+   METHOD setLockDelay
+   METHOD setLockTentativas
+   METHOD setOpenDelay
+   METHOD setOpenTentativas
+   METHOD setCriarIndicesTmp
+HIDDEN:
+   VAR OpenDelay      TYPE integer
+   VAR OpenTentativas TYPE integer
+   VAR LockDelay       TYPE integer
+   VAR LockTentativas  TYPE integer
+   VAR Caminho         TYPE Character            // caminho para tabelas
+   VAR RddDriver       TYPE Character            // driver de RDD
+   VAR IsCompartilhado TYPE Logical              // Compartilhamento bool
+   VAR TabInfo         CLASS Lista               // lista ITabelaInfo
+   VAR IsLigado        TYPE Logical
+   VAR TmpIndexOn      TYPE Logical              // .t.  se pode criar indices tmp
+   METHOD LinkTable                              // inicializa canal/tabela
+   METHOD loadIndex                              // carga de index (interno)
+   METHOD openTableLowLevel
+   METHOD lockAction
+   METHOD unLockAction
+   METHOD executeModify
+   METHOD executeQuery
+   METHOD SelectByID                             // selecao padrao por ID
+   METHOD RelSelectByID                          // selecao para relacao com ID's
+   METHOD ProcCriterio
+   METHOD SelEPMI_ExpressaoPuraMandatoriaIndexavel
+   METHOD SelORCF_OperadorRelacionalConjuntoFinito
+   METHOD SelORM_OperadorRelacionalMagnitude
+   METHOD SelComIndiceAdequado
+   METHOD IsRelQuantitativoCrescente
+   METHOD IsRelConjuntoFinito
+   METHOD IsRelMagnitudeCrescente
+   METHOD ForCbMount                             // monta codeblock para for
+   METHOD WhileCbMount                           // monta codeblock para while
+ENDCLASS
+
+// IMPLEMENTA€ÇO----------------------------------
+
+METHOD init(),()
+   ::Caminho         := ""
+   ::IsCompartilhado := .t.
+   ::TabInfo         := Lista():new()
+   ::LockDelay       := 1
+   ::LockTentativas  := 0                        // para sempre
+   ::OpenDelay       := 1
+   ::OpenTentativas  := 0                        // para sempre
+   ::IsLigado        := .f.
+   ::TmpIndexOn      := .f.
+RETURN self
+
+METHOD initClass(),()
+RETURN self
+
+METHOD setCriarIndicesTmp(value)
+   ::TmpIndexOn := .t.
+RETURN nil
+
+METHOD EstaLigado()
+RETURN ::IsLigado
+
+METHOD setOpenDelay(iDelay)
+   if iDelay != nil .and. iDelay > 0
+      ::OpenDelay := iDelay
+   else
+      THROW "INativoDataStore:setOpenDelay ;delay deve ser > 0"
+   endif
+RETURN self
+
+METHOD setOpenTentativas(iNumero)
+   if iNumero != nil .and. iNumero >= 0
+      ::OpenTentativas := iNumero
+   else
+      THROW "INativoDataStore:setLockTentativas ;LockTentativas deve ser >= 0"
+   endif
+RETURN self
+
+METHOD setLockDelay(iDelay)
+   if iDelay != nil .and. iDelay > 0
+      ::LockDelay := iDelay
+   else
+      THROW "INativoDataStore:setLockDelay ;"+;
+         "delay deve ser > 0"
+   endif
+RETURN self
+
+METHOD setLockTentativas(iNumero)
+   if iNumero != nil .and. iNumero >= 0
+      ::LockTentativas := iNumero
+   else
+      THROW "INativoDataStore:setLockTentativas ;"+;
+         "LockTentativas deve ser >= 0"
+   endif
+RETURN self
+
+METHOD setRddDriver(cDrive)
+   local z,ii,i
+   if ascan(RDDList(),cDrive) != 0               // verificar se ‚ valido
+      ::RddDriver := cDrive
+   else
+      z := RddList()
+      ii := ""
+      for i := 1 to len(z)
+         ii += z[i] + ";"
+      next
+      THROW "INativoDataStore:setRddDriver ;"+;
+         "driver invalido (nao linkeditado);"+;
+         "lista de rdd's linkeditados neste exe:;"+ii
+
+   endif
+RETURN self
+
+METHOD setCaminho(cCaminho)
+   ::Caminho := cCaminho
+   #stdout >>INativoDataStore:setCaminho Checar a Validade do Caminho
+RETURN self
+
+METHOD setCompartilhado(IsCompartilhado)
+   ::IsCompartilhado := IsCompartilhado
+RETURN self
+
+METHOD LinkTable( cTabela )
+   // inicializa‡Æo do canal
+   Local oTabInfo,i,oIndice
+   oTabInfo := ITabelaInfo():new()
+   oTabInfo:tabela       := cTabela
+   ::openTableLowLevel( oTabInfo )
+   oTabInfo:IsInUse     := .t.
+   ::loadIndex( oTabInfo )
+   ::TabInfo:adiciona(oTabInfo)
+RETURN  oTabInfo
+
+METHOD openTableLowLevel( oTabInfo )
+   Local lForever,nCount,nWait,lSucesso
+   // tentar abrir arquivo
+   // verificar se existe (jumento)
+   if ! File(::Caminho+oTabInfo:tabela+".dbf")
+      THROW "Tabela "+::Caminho+oTabInfo:tabela+" necessaria;"+;
+         "nao foi encontrada"
+   endif
+   oTabInfo:PrivateAlias := "Z"+substr(allTrim(oTabInfo:tabela),1,9)
+   nWait := ::OpenTentativas
+   lForever := (nWait == 0)
+   lSucesso := .f.
+   While (lForever .or. nWait > 0)
+      DbUseArea(.t.,::RddDriver,::Caminho+oTabInfo:tabela,oTabInfo:PrivateAlias,::IsCompartilhado,.f.)
+      If ! NetErr()
+         lSucesso := .t.
+         exit
+      Endif
+      Inkey( ::OpenDelay )
+      nWait--
+   End
+   if ! lSucesso
+      THROW "A Tabela "+oTabInfo:tabela+"esta bloqueada por outro processo;"+;
+         "nao posso abri-la no momemto"
+   endif
+
+   oTabInfo:numeroAarea := Select(oTabInfo:PrivateAlias)
+   // preencher Colunas (Lista de IColunas)
+   aeval((oTabInfo:PrivateAlias)->(dbStruct()),;
+      {|field,x| ;
+      x:=oTabInfo:Colunas:adiciona(IColunas():new()),;
+      x:Nome    := field[1],;
+      x:Tipo    := field[2],;
+      x:Tamanho := field[3],;
+      x:Decimais:= field[4];
+      })
+RETURN nil
+
+METHOD loadIndex( oTabInfo )
+   // indice obrigatorio tagName = PrimKey  , numero = 1
+   local oIndice,cIndexExp,cArea,i,z,n,x
+   i := 0
+   cArea := oTabInfo:PrivateAlias
+   Do While !Empty( OrdKey(++i) )
+      oIndice := oTabInfo:Indices:adiciona( IIndice():new() )
+      oIndice:TagNumero := i
+      oIndice:TagNome   := (cArea)->( OrdName(i) )
+      //  desmontar validar ?
+      oIndice:expressao := (cArea)->( OrdKey(i) )
+      oIndice:colunas := {}
+      cIndexExp := Upper( oIndice:expressao )
+      for z := 1 to oTabInfo:Colunas:count()
+         if (n := At( oTabInfo:Colunas:subscript(z):nome, cIndexExp )) != 0
+            aadd( oIndice:colunas, oTabInfo:Colunas:subscript(z):nome )
+            cIndexExp := Stuff(cIndexExp,n,len(oTabInfo:Colunas:subscript(z):nome ),"")
+         endif
+      next
+      // cIndexExp ‚ a sobra depois de retirados os campos validos
+      // validar indice para busca
+      // funcoes validas STR e DTOS
+      // se tiver alguma outra invalide
+      oIndice:Valido := .t.
+      cIndexExp := Upper(cIndexExp)
+      // retirar "STR e DTOS"
+      cIndexExp := strtran(cIndexExp,"STR")
+      cIndexExp := strtran(cIndexExp,"DTOS")
+      // se existir algum caracter de 65(A) a 90(Z) torna-se invalido para busca (vide IColecao)
+      for x := 1 to len(cIndexExp)
+         if substr(cIndexExp,x,1) < 'Z' .and. substr(cIndexExp,x,1) > 'A'
+            oIndice:Valido := .f.
+            exit
+         endif
+      next
+   EndDo
+   // verificar se o indice 1 e'campo ID obrigatorio
+   if oTabInfo:Indices:count()!=0
+      if len( oTabInfo:Indices:subscript(1):colunas ) == 1
+         if oTabInfo:Indices:subscript(1):colunas[1] != IBroker():nomeColunaID()
+            THROW "Tabela '"+oTabInfo:tabela+"' nÆo possui chave primaria indexada "+IBroker():nomeColunaID()+;
+               "deve possuir pelo menos o primeiro indice pela chave campo "+IBroker():nomeColunaID()
+         endif
+      else
+         THROW "Tabela '"+oTabInfo:tabela+"' ; "+;
+            "a chave primaria esta composta, isto nao ‚ permitido; "+;
+            "deve ser pelo campo obrigatorio "+IBroker():nomeColunaID()
+      endif
+   else
+      THROW "Tabela '"+oTabInfo:tabela+"' nÆo possui chave primaria indexada "+IBroker():nomeColunaID()+;
+         "deve possuir pelo menos o primeiro indice pela chave campo "+IBroker():nomeColunaID()
+   endif
+   // selecionar
+   oTabInfo:IndiceAtivo := oTabInfo:Indices:subscript(1)
+   ( oTabInfo:PrivateAlias )->( OrdSetFocus( oTabInfo:IndiceAtivo:tagNumero ) )
+RETURN nil
+
+//bool IDataStore::execute(IQueryStatement& setenca) ou
+//bool IDataStore::execute(IModifyStatement& setenca)
+METHOD execute(sentenca)
+   local ok,oTabInfo,i,cNomeTabela
+   cNomeTabela := sentenca:tabelaAlvo()
+   ok := .f.
+
+   // checar se o DataStore esta ligado
+   if ! ::IsLigado
+      THROW "InativoDataStore - solicita‡Æo de servi‡o apos desligamento"
+   endif
+
+
+   // obter ITabelaInfo
+   for i := 1 to ::TabInfo:count()
+      if ::TabInfo:subscript(i):tabela == cNomeTabela
+         oTabInfo := ::TabInfo:subscript(i)
+         exit
+      endif
+   next
+   if oTabInfo == nil
+      // tabela nao preparada
+      // preparar ambiente do canal (tabela)
+      oTabInfo := ::LinkTable( sentenca:tabelaAlvo() )
+   endif
+   // ‚ Query ou Modify
+   do case
+      case sentenca:isKindOf( IQueryStatement())
+         ok := ::executeQuery(sentenca,oTabInfo)
+      case sentenca:isKindOf( IModifyStatement())
+         ok := ::executeModify(sentenca,oTabInfo)
+      otherwise
+         THROW "INativoDataStore:execute(sentenca) ;"+;
+            "objeto sentenca de classe invalida ;"+;
+            "deve ser tipo IQueryStatement ou ;"+;
+            "IModifyStatement."
+   endcase
+   comente sentenca:asSentencaSQL()
+RETURN ok
+
+METHOD executeModify(sentenca,oTabInfo)
+   local i,ok,cOldArea
+   cOldArea := select(oTabInfo:PrivateAlias)
+   do case
+      case sentenca:isKindOf( IInsertStatement())
+         ::lockAction(oTabInfo,ADD_LINE)
+         for i := 1 to sentenca:theColunas():count()
+            ( oTabInfo:PrivateAlias )->;
+               (fieldPut( ;
+               fieldPos( sentenca:theColunas():subscript(i) ),;
+               sentenca:m_lowLayerSlot:buffer[i] ))
+
+         next
+         // ID fixo
+         ( oTabInfo:PrivateAlias )->(fieldPut( fieldPos(IBroker():nomeColunaID()), sentenca:ID():asDado() ))
+         ::unLockAction(oTabInfo)
+         ok := .t.
+      case sentenca:isKindOf( IUpdateStatement() )
+         // posicionar registro
+         if ( ok := ::SelectByID( oTabInfo, sentenca:ID() ) )
+            ::lockAction(oTabInfo,LOCK_LINE)
+            #stdout >>INativoDataStore:executeModify - falta checagem do TimeStamp
+            for i := 1 to sentenca:theColunas():count()
+               ( oTabInfo:PrivateAlias )->;
+                  (fieldPut( ;
+                  fieldPos( sentenca:theColunas():subscript(i) ),;
+                  sentenca:m_lowLayerSlot:buffer[i] ))
+            next
+            ::unLockAction(oTabInfo)
+         else
+            // ? o que fazer se nao achou
+            // retornar erro ?
+            // throw ?
+            #stdout >>INativoDataStore:executeModify - o que fazer se nao encontra mais o objeto???
+         endif
+      case sentenca:isKindOf( IDeleteStatement())
+         // posicionar registro
+         if ( ok := ::SelectByID( oTabInfo, sentenca:ID() ) )
+            #stdout >>INativoDataStore:executeModify - falta checagem do TimeStamp
+            ::lockAction(oTabInfo,LOCK_LINE)
+            (oTabInfo:PrivateAlias)->(dbDelete())
+            ::unLockAction(oTabInfo)
+         else
+            // ? o que fazer se nao achou
+            // retornar erro ?
+            // throw ?
+         endif
+   endcase
+   select(cOldArea)
+RETURN ok
+
+METHOD RelSelectByID( oTabInfo, oDonoID, oAgregadoID )
+   local ok := .t.
+   if oTabInfo:IndiceAtivo:tagNumero != 2
+      oTabInfo:IndiceAtivo := oTabInfo:Indices:subscript(2)
+      ( oTabInfo:PrivateAlias )->( OrdSetFocus( oTabInfo:IndiceAtivo:tagNumero ) )
+   endif
+   ok := ( oTabInfo:PrivateAlias )->(dbSeek( oDonoID:asDado()+oAgregadoID:asDado() ))
+   // o que fazer se nÆo achou ?
+RETURN ok
+
+METHOD SelectByID( oTabInfo, oID )
+   local ok := .t.
+   if oTabInfo:IndiceAtivo:tagNumero != 1
+      oTabInfo:IndiceAtivo := oTabInfo:Indices:subscript(1)
+      ( oTabInfo:PrivateAlias )->( OrdSetFocus( oTabInfo:IndiceAtivo:tagNumero ) )
+   endif
+   ok := ( oTabInfo:PrivateAlias )->(dbSeek( oID:asDado() ))
+   // o que fazer se nÆo achou ?
+RETURN ok
+
+METHOD lockAction(oTabInfo,eAcao)
+   Local lForever,nCount,nWait,lSucesso
+   nWait := ::LockTentativas
+   lForever := (nWait == 0)
+   lSucesso := .f.
+   While (lForever .or. nWait > 0 ) .and. lSucesso == .f.
+      do case
+         case eAcao == ADD_LINE
+            (oTabInfo:PrivateAlias)->(dbAppend())
+            lSucesso := ! NetErr()
+         case eAcao == LOCK_LINE
+            lSucesso := (oTabInfo:PrivateAlias)->(rLock())
+         case eAcao == LOCK_TABLE
+            lSucesso := (oTabInfo:PrivateAlias)->(fLock())
+         otherwise
+      endcase
+      if ! lSucesso
+         Inkey( ::LockDelay )
+      endif
+      nWait--
+   End
+   if ! lSucesso
+      THROW "A Tabela "+oTabInfo:tabela+"esta bloqueada por outro processo;"+;
+         "nao posso altera-la no momemto"
+   endif
+RETURN nil
+//
+METHOD UnLockAction(oTabInfo)
+   #stdout >>INativoDataStore:lockAction - commit seguido de unlock para integridade de dados
+   (oTabInfo:PrivateAlias)->(dbCommit(),dbUnlock())
+RETURN nil
+
+
+//bool IDataStore::isFim(IQueryStatement& theQuery)
+METHOD isFim(theQuery)
+   local Final
+   Final:=.f.
+RETURN Final
+
+
+//IDataStore& IDataStore::ligar()
+METHOD ligar()
+   // checar dados essenciais
+   if ::Caminho  != nil .and. ::RddDriver != nil
+      if ::IsLigado
+         THROW "INativoDataStore:ligar - DataStore nÆo foi desligado !!!"
+      else
+         ::IsLigado := .t.
+      endif
+   else
+      THROW "INativoDataStore:ligar - caminho ou driver indefinido"
+   endif
+RETURN self
+
+//IDataStore& IDataStore::desligar()
+METHOD desligar()
+   local i
+   for i := 1 to ::TabInfo:count()
+      ( ::TabInfo:subscript(i):PrivateAlias )->( dbCloseArea() )
+      ::TabInfo:subscript(i):IsInUse := .f.
+   next
+   ::IsLigado := .f.
+RETURN self
+
+METHOD preenchaMapa(anPersist, anStatement, mapa )
+   local i
+   /* pode vir um IModify ou IQuery(c/ persist vazio) */
+   /* */
+   ::super:preenchaMapa(anPersist, anStatement, mapa)
+   anStatement:m_lowLayerSlot := ICursorClipper():new()
+   for i:=1 to mapa:ListaAtributos():count()
+      aadd( anStatement:m_lowLayerSlot:buffer,mapa:ListaAtributos():subscript(i):asPuro(anPersist) )
+   next
+RETURN self
+
+METHOD addToRelacao( theQuery, objetoPersistente )
+   local Cursor :=theQuery:m_lowLayerSlot
+   // verificar se j  existe o objeto
+   // Tabela de relacao add_line
+   // field 'ID' = Dono:ID():asDado()
+   // field(2)   = objetoPersistente():ID():asDado()
+   if ::RelSelectByID( Cursor:oRelTabInfo, Cursor:DonoRelacao:ID(), objetoPersistente:ID())
+      IBroker():setWarning(;
+         IWarning():new(self,;
+         "Objeto classe "+objetoPersistente:ClassName()+;
+         ";agregado de classe"+Cursor:DonoRelacao:ClassName()+;
+         ";j  existe como agregado",;
+         WC_AGREGADO_JA_EXISTE;
+         ))
+   else
+      ::lockAction(Cursor:oRelTabInfo,ADD_LINE)
+
+      // ID do agregando
+      ( cursor:oRelTabInfo:PrivateAlias )->;
+         (fieldPut(fieldPos(IBroker():nomeColunaID()), Cursor:DonoRelacao:ID():asDado()))
+
+      // ID do agregado
+      ( cursor:oRelTabInfo:PrivateAlias )->;
+         (fieldPut(2, objetoPersistente:ID():asDado() ))
+
+      ::unLockAction(cursor:oTabInfo)
+   endif
+RETURN self
+
+METHOD removeFromRelacao( theQuery, objetoPersistente )
+   local Cursor :=theQuery:m_lowLayerSlot
+   local lret
+   // localizar objeto
+   if ::RelSelectByID( Cursor:oRelTabInfo, Cursor:DonoRelacao:ID(), objetoPersistente:ID())
+      lret := .t.
+      ::lockAction(Cursor:oRelTabInfo,LOCK_LINE)
+      (Cursor:oRelTabInfo:PrivateAlias)->(dbDelete())
+      ::unLockAction(Cursor:oRelTabInfo)
+   else
+      lRet := .f.
+   endif
+RETURN lRet
+
+METHOD prepareAssociacao(anStatement,PersistenteDono,cTabela)
+   local i,Cursor := anStatement:m_lowLayerSlot
+   local myerr
+   Cursor:IsRelacao := .t.
+   // deve ser o dono pois pode nao existir ID ainda
+   Cursor:DonoRelacao  := PersistenteDono
+   // vai ser processado mais tarde
+   Cursor:recnoTabRelacao := 0
+   // abrir tabelaRelacao
+   // obter ITabelaInfo
+   for i := 1 to ::TabInfo:count()
+      if ::TabInfo:subscript(i):tabela == cTabela
+         Cursor:oRelTabInfo := ::TabInfo:subscript(i)
+         exit
+      endif
+   next
+   if Cursor:oRelTabInfo == Nil                  // tabela nao preparada
+      // preparar ambiente do canal (tabela)
+      Cursor:oRelTabInfo := ::LinkTable( cTabela )
+      // verificar  o indice 2 existe
+      if Cursor:oRelTabInfo:Indices:count() == 2
+         if  len(Cursor:oRelTabInfo:Indices:subscript(2):colunas) == 2
+            if Cursor:oRelTabInfo:Indices:subscript(2):colunas[1] == IBroker():nomeColunaID() .and. ;
+                  Cursor:oRelTabInfo:Indices:subscript(2):colunas[2] == "AGREGADO"
+            else
+               THROW "Tabela obrigatoria de rela‡Æo;em desacordo com a especifica‡Æo"
+            endif
+         else
+            THROW "Tabela obrigatoria de rela‡Æo;em desacordo com a especifica‡Æo"
+         endif
+      else
+         THROW "Tabela obrigatoria de rela‡Æo;em desacordo com a especifica‡Æo"
+      endif
+   endif
+RETURN self
+
+
+//IDataStore& IDataStore::requisitaDados(IQueryStatement& theQuery, IDirecaoFetch tipoFetch)
+METHOD requisitaDados(theQuery,tipoFetch,anPersiste,mapa)
+   local i,xValue
+   local cursor := theQuery:m_lowLayerSlot
+
+   // checar se o DataStore esta ligado
+   if ! ::IsLigado
+      THROW "InativoDataStore - solicita‡Æo de dados apos desligamento"
+   endif
+
+   do case
+      case tipoFetch == primeiro
+         cursor:top()
+      case tipoFetch == ultimo
+         cursor:Bottom()
+      case tipoFetch == proximo
+         cursor:skipNext()
+      case tipoFetch == previo
+         cursor:skipPrevious()
+      case tipoFetch == reavalia
+         cursor:refresh()
+      otherwise
+         THROW "INativoDataStore: IDirecaoFetch Invalida"
+   endcase
+
+   if ! ( theQuery:setisFim( cursor:isEof() .or. cursor:isBof() ) )
+      for i := 1 to mapa:ListaAtributos():count()
+         // pegar dado coluna
+         xValue := ( cursor:oTabInfo:PrivateAlias )->( fieldGet( fieldPos( mapa:ListaAtributos():subscript(i):nomeColuna() ) ))
+         // colocar no theQuery(j  preenchido)
+         // theQuery:theValues():repoe(i,xValue) $$$ NAO PRECISA $$$
+         // colocar no anPersiste
+         // ordem de query:colunas deve ser = mapa:listaAtributos senao d  merda
+         mapa:ListaAtributos():subscript(i):;
+            setPuro( anPersiste, xValue )
+      next
+      // ID tratado a parte
+      anPersiste:setID(;
+         IPersistID():new():setValue( ;
+         ( cursor:oTabInfo:PrivateAlias )->(fieldGet( fieldPos(IBroker():nomeColunaID()));
+         ) );
+         )
+      anPersiste:setisPersistido( .t. )
+   endif
+RETURN self
+
+//IDataStore& IDataStore::libereQuery(IQueryStatement& anQuery)
+METHOD libereQuery(anQuery)
+   // ???????
+RETURN self
+
+
+// PROJETO PARA ACESSO NATIVO EM CLIPPER
+/*
+
+DML
+ÚÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÂÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ¿
+³abertura     ³movimentacao ³  alteracao    ³outras nativas  ³
+ÃÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÅÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ´
+³dbUseArea()  ³bof()        ³  dbAppend()   ³dbSelectar()    ³
+³dbCloseArea()³eof()        ³  dbCommit()   ³->              ³
+³             ³dbGoTo()     ³  dbCommitall()³                ³
+³             ³dbGoBottom() ³  dbDelete()   ³                ³
+³             ³dbGoTop()    ³  dbUnLock()   ³                ³
+³             ³dbSeek()     ³  dbUnLockAll()³                ³
+³             ³found()      ³  rlock()      ³                ³
+³             ³dbSkip()     ³  flock()      ³                ³
+³             ³             ³  FieldPos()   ³                ³
+³             ³             ³  FieldGet()   ³                ³
+³             ³             ³  FieldPut()   ³                ³
+³             ³             ³               ³                ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÁÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ
+
+   Necessitamos abrir o arquivo, posicionar indice necessario e efetuar a
+operacao DML (insert/update/delete)
+
+toda a parte nativa do projeto deve ser encapsulada por esta classe
+(INativoDataStore).
+
+para controlar o fechamento de arquivos, o metodo desliga() deve ser utilizado.
+
+necessitamos para abrir o arquivo :
+.lockDelay
+.lockTentativas
+.caminho
+tabela
+.RDD driver
+.compartilhamento
+PrivateAlias (uso interno)
+
+apor abertura devemos registra-la fazendo um registro dos seguintes dados
+[]
+PrivateAlias (uso interno)
+numero_area
+tabela
+indices[]
+   tagNome
+   tagNumero
+   Colunas[]
+      nome
+IsInUse := .t.
+
+quando for chamado desliga()
+IsInUse := .f. , mas estrutura de informa‡Æo ‚ mantida e reutilizada
+numero_area := nil
+PrivateAlias:= nil
+
+Os seguintes dados podem ter registro previo, para na hora de efetuar abertura
+
+.caminho
+tabela
+.RDD driver
+.compartilhamento
+
+*/
+METHOD executeQuery(theQuery,oTabInfo)
+   local ok := .t.
+   local cursor := theQuery:m_lowLayerSlot
+   local oEleito    // Criterio indexavel
+   cursor:oTabInfo := oTabInfo
+   cursor:recnoAtual := 0
+   cursor:IndiceFiltro := oTabInfo:IndiceAtivo // ‚ default
+   if Cursor:IsRelacao
+      Cursor:recnoTabRelacao := 0
+      if cursor:DonoRelacao:isPersistido()
+         // devemos posicionar a tabela de relacao
+         if ! ::SelectByID( Cursor:oRelTabInfo, Cursor:DonoRelacao:ID() )
+            // nao possui objetos agregados
+            theQuery:setisFim(.t.)
+         endif
+      else
+         // nao possui objetos agregados
+         theQuery:setisFim(.t.)
+      endif
+   endif
+
+
+   // 1.selecionar o indice adequado de acordo com :
+   //  1. o criterio se houver
+   //  2. a ordem se houver
+   //  mandatorio ‚ a ordem o criterio ‚ filtro
+   //  A ordem requer indice obrigatoriamente se nao houver criar temporario e dispara excessao
+   //  O criterio pode ser filtro mas pode tambem ser obtido atraves
+   //  de um indice temporario que reuna ordem e for=criterio
+   //  A ordem e criterio estao dentro da sentenca, devem ser processadas
+   //  e as informa‡äes resultantes guardadas no cursor
+
+   COMENTE 'atencao processamento do criterio e ordem que estao no theQuery'
+
+   if theQuery:ListaCriterio():Count() != 0
+      oEleito := @:ProcCriterio(theQuery:ListaCriterio(),Cursor)
+   endif
+
+//6. Se selecionou a expressao indexavel guarde o indice                ³
+//   6.1 separe a expressao para cbWHILE                                ³
+//7. construa bloco cbFOR                                               ³
+//8. construa blocos cbGoTop,cbGoBottom                                 ³
+// o indice esta no cursor (indiceFiltro)
+   if oEleito != nil
+      @:WhileCbMount(oEleito,Cursor)
+   endif
+   @:ForCbMount(theQuery,Cursor)
+RETURN ok
+
+METHOD WhileCbMount(;
+      oEleito,;                                  // ICriterio
+      Cursor)                                    // ICursorClipper
+   local cbWhile,cbGoTop,cbGoBottom
+   // montar cbWhile,cbGoTop,cbGoBottom (exige indice)
+   // indice j  posicionado no Cursor
+
+0000000000000000001
+   //  cbGotop -> seek
+   I_NextVal(dado,lenMax,)
+   operadores permitidos
+   >,>=,==,entre(>n1,<n2)
+   tipo C
+       para == direto
+       para >= direto + softseek
+       para > usa-se o dado[ou last] += chr(255)  + softseek
+   tipo N
+       para == direto
+       para >= direto + softseek
+       para > usa-se o dado+unidade_minima  + softseek (max = 19,15)
+   tipo D dtos()
+       para == dtos(direto)
+       para >= dtos(direto) + softseek
+       para > usa-se o dtos(dado+1)  + softseek
+   tipo L
+      automaticamente excluido (clipper nao indexa logicos)
+
+   NAO - Modo de busca com traducao da expressao do indice (?)
+
+   cbGoTop := arquivo->(dbSeek( cChave,lSoftSeek ))
+
+   @@@@@ PAREI AQUI @@@@@
+
+   //  cbGoBottom -> seek ou nao
+
+   o unico operador que permite gobottom ‚ ==
+   tipo C
+       usa-se o dado[ou last] += chr(255)  + softseek
+   tipo N
+       usa-se o dado+unidade_minima  + softseek
+   tipo D dtos()
+       usa-se o dtos(dado+1)  + softseek
+
+   //  cbWhile -> condicao
+   // simples ‚ igual ao for somente para obj oEleito
+   cbWhile := @:asSentencaSQLforClipper(oEleito)
+   // compilar
+   if !empty(cbWhile)
+      Cursor:cbWhile := &("{||"+cbWhile+"}")
+   endif
+RETURN nil
+
+METHOD ForCbMount(theQuery,Cursor)
+   local i,cbFor,oCriterio
+   // montar cbFor (nao precisa de indice) todos os criterios
+   // cbFor -> condicao
+   // criacao total da expressao for
+   // inserir . para AND e OR (conectores para caso clipper)
+   cbFor := ""
+   for i  := 1 to theQuery:ListaCriterio():Count()
+      oCriterio := theQuery:ListaCriterio():subscript(i)
+      cbFor += @:asSentencaSQLforClipper(oCriterio)
+   next
+   // compilar
+   if !empty(cbFor)
+      Cursor:cbFor := &("{||"+cbFor+"}")
+   endif
+RETURN nil
+
+METHOD asSentencaSQLforClipper(oCriterio)
+   local sentenca,cAspas
+   if oCriterio:isConector()
+      sentenca := "."+oCriterio:asSentencaSQL()+"."
+   else
+      // converter operadores que nao existem para o clipper
+      /*ENTREINCLUSIVO / ENTRE
+        ENTREEXCLUSIVO
+        SIMILAR
+        DENTRO        */
+      do case
+         case oCriterio:comparador() == ENTREINCLUSIVO
+            cAspas := iif(oCriterio:isArgPrecisaAspas(),"'","")
+            // decompor em dois x>=v1.and.x<=v2
+            sentenca := ;
+               oCriterio:coluna()+">="+cAspas+I_anyToStr(oCriterio:argumento())+cAspas
+            sentenca += ;
+               ".and."
+            sentenca += ;
+               oCriterio:coluna()+"<="+cAspas+I_anyToStr(oCriterio:SegArgumento())+cAspas
+         case oCriterio:comparador() == ENTREEXCLUSIVO
+            THROW "INativoDataStore comparador ENTREEXCLUSIVO ;ainda nao suportado"
+         case oCriterio:comparador() == SIMILAR
+            THROW "INativoDataStore comparador SIMILAR ;ainda nao suportado"
+         case oCriterio:comparador() == DENTRO
+            THROW "INativoDataStore comparador DENTRO;ainda nao suportado"
+         otherwise
+            sentenca := oCriterio:asSentencaSQL()
+      endcase
+   endif
+RETURN sentenca
+                                                                                 /*
+ÚÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ¿
+³   esta l¢gica ‚ muito complicada                                     ³
+³   tenho d£vidas quanto ao seu funcionamento                          ³
+ÃÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍÍ´
+³1. eleger expressoes < Expressao Pura Mandat¢ria > => Conj-A          ³
+³2. do conjunto Conj-A eleger as < Expressao Pura Mandat¢ria Indexavel>³
+³   => Conj-B                                                          ³
+³3. eleger do Conj-B expressoes que empreguem                          ³
+³   <Operador Relacional de Conjunto Finito> => Conj-C                 ³
+³4. do Conj-C selecionar a primeira que possua_indice_adequado         ³
+³5. Se nao selecionou nada :                                           ³
+³   5.1. eleger do Conj-B expressoes que empreguem                     ³
+³        <Operador Relacional de Magnitude> => Conj-D                  ³
+³   5.2. do Conj-D selecionar a primeira que possua_indice_adequado    ³
+³                                                                      ³
+³6. Se selecionou a expressao indexavel guarde o indice                ³
+³   6.1 separe a expressao para cbWHILE                                ³
+³7. construa bloco cbFOR                                               ³
+³8. construa blocos cbGoTop,cbGoBottom                                 ³
+³                                                                      ³
+³9. Processar Ordem ->                                                 ³
+ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÙ        */
+
+METHOD ProcCriterio( ListaCriterio, Cursor )
+   local oConj_B,oConj_C,oConj_D         // Classe Lista
+   local oEleito                                 // Classe ICriterio
+   // 1.
+   // 2.
+   oConj_B := ::SelEPMI_ExpressaoPuraMandatoriaIndexavel( ListaCriterio )
+   // 3.
+   oConj_C := ::SelORCF_OperadorRelacionalConjuntoFinito( oConj_B )
+   // 4.
+   oEleito := ::SelComIndiceAdequado( oConj_C,Cursor ) // indice sera ajustado em Cursor
+   // 5.
+   if oEleito == nil
+      oConj_D := ::SelORM_OperadorRelacionalMagnitude( oConj_B )
+      oEleito := ::SelComIndiceAdequado( oConj_D,Cursor ) // indice sera ajustado em Cursor
+   endif
+RETURN oEleito
+
+METHOD SelEPMI_ExpressaoPuraMandatoriaIndexavel( oLista )
+   local oListaSel := Lista():new()
+   local n
+   // deve ter um and precedendo se nao for unica
+   if oLista:Count()==1
+      // automaticamente eleita
+      if ::IsRelQuantitativoCrescente( oLista:subscript(1):comparador() )
+         oListaSel:adiciona(oLista:subscript(1))
+      endif
+   else
+      for n := 1 to oLista:Count()
+         if n==1
+            if oLista:subscript(2):comparador()==AND .and. ;
+                  ::IsRelQuantitativoCrescente( oLista:subscript(n):comparador() )
+               oListaSel:adiciona(oLista:subscript(n))
+            endif
+         elseif ISIMPAR(n)                           // expressao ‚ sempre impar
+            if oLista:subscript(n-1):comparador()==AND .and. ;
+                  ::IsRelQuantitativoCrescente( oLista:subscript(n):comparador() )
+               oListaSel:adiciona(oLista:subscript(n))
+            endif
+         endif
+      next
+   endif
+RETURN oListaSel                                 // Lista
+
+METHOD SelORCF_OperadorRelacionalConjuntoFinito( oLista )
+   local oListaSel := Lista():new()
+   local i
+   for i := 1 to oLista:Count()
+      if ::IsRelConjuntoFinito( oLista:subscript(i):comparador() )
+         oListaSel:adiciona(oLista:subscript(i))
+      endif
+   next
+RETURN oListaSel                                 // Lista
+
+METHOD SelORM_OperadorRelacionalMagnitude( oLista )
+   local oListaSel := Lista():new()
+   local i
+   for i := 1 to oLista:Count()
+      if ::IsRelMagnitudeCrescente( oLista:subscript(i):comparador() )
+         oListaSel:adiciona(oLista:subscript(i))
+      endif
+   next
+RETURN oListaSel                                 // Lista
+
+METHOD SelComIndiceAdequado( oLista, oCursor)
+   // ajustar o indice em oTabelaInfo
+   local oCriterio
+   local i,nSel
+   local atr
+   local aIndices := {}
+   // separar indices validos
+   for i := 1 to oCursor:oTabInfo:Indices:Count()
+      if oCursor:oTabInfo:Indices:subscript(i):Valido
+         aadd(aIndices,oCursor:oTabInfo:Indices:subscript(i))
+      endif
+   next
+   // ordenar por numero de colunas componentes
+   aIndices := asort(aIndices,,,{|x,y| len(x:colunas) < len(y:colunas) })
+   for i := 1 to oLista:Count()
+       atr := upper( oLista:subscript(i):coluna() )
+       // procurar no indices
+       if (nSel := ascan(aIndices,{|x| upper(x:colunas[1])==atr  })) != 0
+          // achou. posicione e saia
+          // ‚ sempre por referencia nao ha problemas na operacao abaixo
+          oCursor:IndiceFiltro := aIndices[nSel]
+          oCriterio := oLista:subscript(i)
+          Exit
+       endif
+   next
+RETURN oCriterio                                 // ICriterio
+
+METHOD IsRelQuantitativoCrescente( eOperComparacao )
+   local aRelQt := ;
+      {MAIOR,MAIOROUIGUAL,IGUAL,ENTREEXCLUSIVO,ENTREINCLUSIVO}
+   local lRet := .f. ,n
+   for n := 1 to len(aRelQt)
+      if eOperComparacao == aRelQt[n]
+         lRet := .t.
+         exit
+      endif
+   next
+RETURN lRet
+
+METHOD IsRelMagnitudeCrescente( eOperComparacao )
+   local aRelQt := ;
+      {MAIOR,MAIOROUIGUAL}
+   local lRet := .f. ,n
+   for n := 1 to len(aRelQt)
+      if eOperComparacao == aRelQt[n]
+         lRet := .t.
+         exit
+      endif
+   next
+RETURN lRet
+
+METHOD IsRelConjuntoFinito( eOperComparacao )
+   local aRelQt := ;
+      {IGUAL,ENTREEXCLUSIVO,ENTREINCLUSIVO}
+   local lRet := .f. ,n
+   for n := 1 to len(aRelQt)
+      if eOperComparacao == aRelQt[n]
+         lRet := .t.
+         exit
+      endif
+   next
+RETURN lRet
+

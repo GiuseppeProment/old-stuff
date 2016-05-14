@@ -1,0 +1,2 @@
+IFrameWk - conjunto utilizado durante a elaboração da Framework I++
+CBuilder - especiais para gerar componentes p/ CBuilder

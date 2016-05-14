@@ -1,0 +1,192 @@
+#include "IPersist.ch"
+//## Class: ICriterio
+// Responsavel pela montagem do criterio de selecao
+// (clausula WHERE)
+// cada sentença é montada como :
+// SENTENÇA => <campoValido> <opRelacional>
+// [valorValido|<campoValido>]
+// SENTENÇA [AND|OR] SENTENÇA [AND|OR] ...
+//
+// Os críterios devem ser processados para trocar os
+// atributos pelos nomes_colunas reais.
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+//## Uses: <unnamed>; IOperComparacao { -> }
+//## Uses: <unnamed>; IOperLogicoPrecedencia { -> }
+
+CREATE CLASS ICriterio
+PROTECTED:
+   METHOD init
+EXPORT:
+   // se necessitar traducao monta coluna - comparador -
+   // argumento
+   // senão devolve fraseLivre diretamente.
+   //char* asSentencaSQL();
+   METHOD asSentencaSQL
+   //## Get and Set Operations for Class Attributes (generated)
+   //## Attribute: atributo
+   METHOD atributo
+   //## Attribute: comparador
+   METHOD comparador
+   //## Attribute: argumento
+   METHOD argumento
+   METHOD SegArgumento
+   //## Attribute: isArgPrecisaAspas
+   METHOD isConector
+   METHOD isArgPrecisaAspas
+   METHOD setisArgPrecisaAspas
+   //## Attribute: coluna
+   METHOD coluna
+   METHOD setcoluna
+HIDDEN:                                          //## implementation
+   VAR m_atributo                                //IString
+   VAR m_comparador                              //IOperComparacao
+   VAR m_argumento                               //IString
+   VAR m_2argumento                              //IString
+   // true se o atributo deve ser traduzido para o nome da
+   // coluna.
+   VAR m_isNecessitaTraducao                     //bool
+   VAR m_isArgPrecisaAspas                       //bool
+   VAR m_isConector                              //bool
+   VAR m_coluna                                  //IString
+   // uso interno
+   VAR m_fraseLivre                              //IString
+END CLASS
+// Class ICriterio
+
+METHOD init(arg1,arg2,arg3,arg4)
+/*
+a) atributo, IOperComparacao comparacao, char* argumento
+a1) atributo, IOperComparacao comparacao, argumento1, argumento2
+Xb) atributo, IOperComparacao comparacao, int argumento
+c) char* FraseLivre
+d) IOperLogicoPrecedencia conectorLogico
+*/
+   if pCount() >= 3
+      SE arg2>ENTREEXCLUSIVO THROW "ICriterio SIMILAR e DENTRO nao estao suportados no momento"
+   endif
+
+   if pCount() == 3                              // ‚ construtor a) e b)
+      // checar tipos
+      SE ValType(arg1)!="C" THROW "ICriterio:new - argumento 1 invalido (overload a)"
+      SE ValType(arg2)!="N"  THROW "ICriterio:new - argumento 2 invalido (overload a)"
+      SE arg2<MAIOR.or.arg2>DIFERENTE THROW "ICriterio:new - argumento 2 invalido (overload a)"
+      SE !(ValType(arg3) $ "CDLN")  THROW "ICriterio:new - argumento 3 invalido (overload a)"
+      SE ValType(arg3)!="C".AND. arg2==SIMILAR  THROW "ICriterio:new - argumento invalido para operador SIMILAR"
+      ::m_atributo := arg1
+      ::m_comparador := arg2
+      ::m_argumento := arg3
+      ::m_isNecessitaTraducao := .t.
+      ::m_isArgPrecisaAspas := ValType(arg3)=="C"  // apenas adianta
+      ::m_isConector := .f.
+   elseif pCount() == 4                          // ‚ construtor a1)
+      // checar tipos
+      SE ValType(arg1)!="C" THROW "ICriterio:new - argumento 1 invalido (overload a1)"
+      SE ValType(arg2)!="N" THROW "ICriterio:new - argumento 2 invalido (overload a1)"
+      SE arg2<ENTREINCLUSIVO .AND. arg2>ENTREEXCLUSIVO  THROW "ICriterio:new - argumento 2 invalido (overload a1)"
+      SE !(ValType(arg3) $ "CDN")  THROW "ICriterio:new - argumento 3 invalido (overload a1)"
+      SE !(ValType(arg4) $ "CDN")  THROW "ICriterio:new - argumento 4 invalido (overload a1)"
+      SE ValType(arg4)!=ValType(arg3)  THROW "ICriterio:new - operador ENTRE argumentos diferentes"
+      ::m_atributo := arg1
+      ::m_comparador := arg2
+      ::m_argumento := arg3
+      ::m_2argumento := arg4
+      ::m_isNecessitaTraducao := .t.
+      ::m_isArgPrecisaAspas := ValType(arg3)=="C"  // apenas adianta
+      ::m_isConector := .f.
+   elseif pCount() == 1                          // ‚ construtor c) e d)
+      if ValType(arg1) == "C"
+         ::m_comparador := NONE
+         ::m_fraseLivre := arg1
+         ::m_isNecessitaTraducao := .f.
+         ::m_isConector := .f.
+      elseif ValType(arg1) == "N"
+         ::m_isConector := .t.
+         ::m_comparador := arg1
+         if arg1 == AND
+            ::m_fraseLivre := "AND"
+            ::m_isNecessitaTraducao := .f.
+         elseif arg1 == OR
+            ::m_fraseLivre := "OR"
+            ::m_isNecessitaTraducao := .f.
+         else
+            THROW "ICriterio:new - argumento invalido (overload d)"
+         endif
+      endif
+   else                                          // erro
+      THROW "ICriterio:new - n§ argumentos invalidos"
+   endif
+   comente 'Somente Para Testes'
+   comente '::m_coluna := ::m_atributo'
+   ::m_coluna := ::m_atributo
+RETURN self
+
+METHOD asSentencaSQL()
+   local sentenca
+   local auxOper := {;
+      '>', ;                                     //MAIOR
+      '<', ;                                     //MENOR
+      '>=',;                                     //MAIOROUIGUAL
+      '<=',;                                     //MENOROUIGUAL
+      ' =',;                                     //IGUAL
+      '!=',;                                     //DIFERENTE
+      ' between ' ,;                             // ENTREINCLUSIVO / ENTRE
+      ' betweenExclusivo ' }                     // ENTREEXCLUSIVO
+   // logica
+   #define ASPAS iif(::m_isArgPrecisaAspas,"'","")
+   // se nao precisa traducao retorna fraselivre
+   if ! ::m_isNecessitaTraducao
+      sentenca := ::m_fraseLivre
+   else
+      // nome_coluna <operador> argumento[,argumento]
+      sentenca := ::m_coluna
+      sentenca += auxOper[::m_comparador-MAIOR+1]
+      sentenca += ASPAS+I_anyToStr(::m_argumento)+ASPAS
+      if ::m_comparador == ENTRE
+         sentenca += ","+ASPAS+I_anyToStr(::m_2argumento)+ASPAS
+      endif
+   endif
+   #undef ASPAS
+/*
+MAIOR           c > a
+MENOR           c < a
+MAIOROUIGUAL    c >= a
+MENOROUIGUAL    c <= a
+IGUAL           c == a
+DIFERENTE       c != a
+ENTRE           c between a1,a2
+*/
+RETURN sentenca
+
+//## Get and Set Operations for Class Attributes (implementation)
+METHOD atributo()
+RETURN ::m_atributo
+
+METHOD comparador()
+RETURN ::m_comparador
+
+METHOD argumento()
+RETURN ::m_argumento
+METHOD SegArgumento()
+RETURN ::m_2argumento
+
+METHOD isConector()
+RETURN ::m_isConector
+
+METHOD isArgPrecisaAspas()
+RETURN ::m_isArgPrecisaAspas
+
+METHOD setisArgPrecisaAspas(value)
+   ::m_isArgPrecisaAspas = value
+RETURN self
+
+METHOD coluna()
+RETURN ::m_coluna
+
+METHOD setcoluna(value)
+   ::m_coluna = value
+RETURN self
+

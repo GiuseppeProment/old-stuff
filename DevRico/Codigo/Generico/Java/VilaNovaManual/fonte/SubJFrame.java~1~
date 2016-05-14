@@ -1,0 +1,27 @@
+//Source file: C:/DevRico/Codigo/Generico/Java/VilaNovaManual/fonte/SubJFrame.java
+
+import javax.swing.JFrame;
+
+/**
+Responsabilidade
+*/
+public class SubJFrame extends JFrame 
+{
+   
+   public SubJFrame() 
+   {
+   }
+   
+   protected void finalize() throws Throwable 
+   {
+      super.finalize();
+   }
+   
+   /**
+   @roseuid 3C671F0E00A7
+   */
+   public String getName() throws Exception 
+   {
+   	return "porra nenhuma";
+   }
+}

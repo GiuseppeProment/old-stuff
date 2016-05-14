@@ -1,0 +1,10 @@
+create table <table_name> ( <column_name type([lenght|,prec,scale]) ,...)
+
+<table_name>
+   <column_name>
+      type
+      lenght
+      precisao
+      scale
+<index_name>
+   column_name [ASC|DESC]

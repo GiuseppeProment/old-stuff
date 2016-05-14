@@ -1,0 +1,205 @@
+//## begin module.cm preserve=no
+//   %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IDataStore; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\idtstore.h
+
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+//## end module.includes
+
+// IDirecaoFetch
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+#include "IPersist.ch"
+
+
+//## Class: IDataStore; Abstract
+// responsável pela implementação específica para cada tipo
+// de meio.
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+//## Uses: <unnamed>; friend IStatement { -> F}
+//## Uses: <unnamed>; IDirecaoFetch { -> }
+//## Uses: <unnamed>; IModifyStatement { -> F}
+//## Uses: <unnamed>; IQueryStatement { -> F}
+
+CREATE CLASS IDataStore
+PROTECTED:
+   METHOD init
+   //## begin IDataStore.initialDeclarations preserve=yes
+   //## end IDataStore.initialDeclarations
+
+EXPORT:
+   CLASS METHOD initClass
+   //## Other Operations (specified)
+   METHOD preenchaMapa
+   //## Operation: execute%908596370
+   // deve afetar somente 1 linha, senão é merda.
+   MESSAGE execute          IS DEFERRED
+   //## Operation: requisitaDados%908596372
+   //## Semantics:
+   // utiliza o lowLayerSlot :
+   // 1. checa se não é 0
+   // 2. checa o estado do Statement
+   // 3. obtem os dados de canal do lowLayerSlot que são
+   // dependentes da implementação.
+   // 4. copia os dados do canal para o theValues no IQuery
+   // 5. se não há dados (eof/bof) ajusta isFim do Query para
+   // true. não muda os dados.
+   MESSAGE requisitaDados   IS DEFERRED
+   //## Operation: isFim%908596373
+   // retorna true se a operação de moveCursor encontra o
+   // inicio ou fim dos dados.
+   MESSAGE libereQuery      IS DEFERRED
+   //## Operation: ligar%910153638
+   // conecta ao banco ou prepara-se para servir.
+   MESSAGE isFim            IS DEFERRED
+   //## Operation: libereQuery%908596374
+   // libera alocações que estão guardadas no
+   // IQueryStatement.lowLayerSlot
+   MESSAGE ligar            IS DEFERRED
+   //## Operation: desligar%910153639
+   MESSAGE desligar         IS DEFERRED
+   //## Get and Set Operations for Class Attributes (generated)
+   //## Attribute: nome
+   // nome da datastore.
+   METHOD nome
+   METHOD setnome
+   //## Attribute: usuario
+   METHOD usuario
+   METHOD setusuario
+   //## Attribute: senha
+   METHOD senha
+   METHOD setsenha
+   // Additional Public Declarations
+   //## begin IDataStore.public preserve=yes
+   //## end IDataStore.public
+HIDDEN:                                          //## implementation
+   // Data Members for Class Attributes
+
+   //## begin IDataStore::nome.attr preserve=no  public: IString {U} "DEFAULT"
+   VAR m_nome                                    //IString
+   //## end IDataStore::nome.attr
+
+   //## begin IDataStore::usuario.attr preserve=no  public: IString {V}
+   VAR m_usuario                                 //IString
+   //## end IDataStore::usuario.attr
+
+   //## begin IDataStore::senha.attr preserve=no  public: IString {V}
+   VAR m_senha                                   //IString
+   //## end IDataStore::senha.attr
+
+   // Additional Implementation Declarations
+   //## begin IDataStore.implementation preserve=yes
+   //## end IDataStore.implementation
+
+END CLASS
+
+// Class IDataStore
+
+
+METHOD init(),()
+   ::m_nome  := "DEFAULT"
+   ::m_usuario := nil
+   ::m_senha := nil
+RETURN self
+
+METHOD initClass(),()
+RETURN self
+
+
+/* OPERACOES DEFERIDAS
+//## Other Operations (implementation)
+//bool IDataStore::execute(IModifyStatement& setenca) ou
+//bool IDataStore::execute(IQueryStatement& setenca) ou
+METHOD execute(setenca)
+   local ok
+   ok=.t.
+RETURN ok
+//IDataStore& IDataStore::requisitaDados(IQueryStatement& theQuery, IDirecaoFetch tipo)
+METHOD requisitaDados(theQuery, tipo)
+RETURN self
+//bool IDataStore::isFim(IQueryStatement& theQuery)
+METHOD isFim(theQuery)
+   local Final
+   Final:=.f.
+RETURN Final
+//IDataStore& IDataStore::libereQuery(IQueryStatement& anQuery)
+METHOD libereQuery(anQuery)
+RETURN self
+//IDataStore& IDataStore::ligar()
+METHOD ligar()
+RETURN self
+//IDataStore& IDataStore::desligar()
+METHOD desligar()
+RETURN self
+*/
+//## Get and Set Operations for Class Attributes (implementation)
+
+//IString IDataStore::nome()
+METHOD nome()
+RETURN ::m_nome
+
+//void IDataStore::setnome(const IString value)
+METHOD setnome(value)
+   ::m_nome := value
+RETURN self
+
+//IString IDataStore::usuario()
+METHOD usuario()
+RETURN ::m_usuario
+
+//void IDataStore::setusuario(const IString value)
+METHOD setusuario(value)
+   ::m_usuario := value
+RETURN self
+
+//IString IDataStore::senha()
+METHOD senha()
+RETURN ::m_senha
+
+//void IDataStore::setsenha(const IString value)
+METHOD setsenha(value)
+   ::m_senha := value
+RETURN self
+
+METHOD preenchaMapa(anPersist, anStatement, mapa)
+   //IPersistente& anPersist, IModifyStatement& anStatement, IMapClassTable& mapa)
+   local i
+   //:-) ler as lista de IMapAtrColuna do mapa e inserir coluna e valor
+   //    no statement
+   #stdout >>IDataStore:preenchaMapa erro. nomeMembro nao e nomeColuna!
+   if anStatement:isKindOf( IModifyStatement() )
+      for i:=1 to mapa:ListaAtributos():count()
+         anStatement:addColunaValor(;
+            mapa:ListaAtributos():subscript(i):nomeMembro(),;
+            mapa:ListaAtributos():subscript(i):asString(anPersist) )
+
+         IASSERT(;
+            mapa:ListaAtributos():subscript(i):len(anPersist) <= ;
+            mapa:ListaAtributos():subscript(i):tamanho();
+            ,"valor de membro excede tamanho maximo declarado")
+
+      next
+   else
+      for i:=1 to mapa:ListaAtributos():count()
+         anStatement:addColuna(;
+            mapa:ListaAtributos():subscript(i):nomeMembro() )
+         anStatement:theValues():adiciona(" ")
+      next
+   endif
+RETURN self
+

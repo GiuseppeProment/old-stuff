@@ -1,0 +1,54 @@
+#include "oracl.h"
+#pragma comment(lib,"oraclm32")
+
+ODatabase odb;
+
+
+void CTesteDlg::OnConectar()
+{
+	CWaitCursor cWait;
+	ODynaset  odyn(odb, "select * from Jailton.Alunos where al_nome like '%GIUSEPPE%'");
+	char nome[50];
+
+	while (!odyn.IsEOF())
+	{
+			odyn.GetFieldValue("Al_nome", nome, 50);
+			m_Texto.AddString( nome );
+			odyn.MoveNext();
+			// qual a porra da funcao
+			// que processa mensagens ?
+
+	}
+}
+
+void CTesteDlg::OnSocria()
+{
+	// TODO: Add your control notification handler code here
+	CWaitCursor cWait;
+	OShutdown();
+}
+
+void CTesteDlg::OnStartup()
+{
+	// TODO: Add your control notification handler code here
+	CWaitCursor cWait;
+	OStartup();
+	// Construct a database, obtaining a database connection:
+	odb.Open("orl","gproment","quark");
+	// The Odatabase object (odb) allows you to connect to a database
+	// ("ExampleDB") along with other connection information, and so sets
+	// you up to execute SQL statements.
+}
+
+void CTesteDlg::OnContar()
+{
+	CWaitCursor cWait;
+	char buffer[30];
+	long numero;
+	ODynaset  odyn(odb, "select Count(*) from Jailton.Alunos");
+	m_Texto.ResetContent();
+	odyn.GetFieldValue(1,&numero);
+	m_Texto.AddString("Numero de Alunos=");
+	m_Texto.AddString( ltoa(numero,buffer,10) );
+}
+

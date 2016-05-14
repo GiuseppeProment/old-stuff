@@ -1,0 +1,291 @@
+//## begin module.cm preserve=no
+//	  %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IClassMap; Pseudo Package body
+//## Subsystem: <Top Level>
+//## Source file: c:\devrico\codigo\persist\c\case\iclssmap.cpp
+
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include <string.h>
+//## end module.includes
+
+// IDataStore
+#include "IDtStore.h"
+// IPersistente
+#include "IPrsstnt.h"
+// IClassMap
+#include "IClssMap.h"
+// IMapClassTable
+#include "IMpClssT.h"
+
+//## begin module.additionalDeclarations preserve=yes
+#pragma package(smart_init)
+//## end module.additionalDeclarations
+
+
+// Class IClassMap 
+
+//## begin IClassMap::ListaMapClassTable.has preserve=no  private: static IMapClassTable { -> nRFO}
+ListaPointer<IMapClassTable> IClassMap::m_ListaMapClassTable;
+//## end IClassMap::ListaMapClassTable.has
+
+//## begin IClassMap::mapaCorrente.has preserve=no  private: static IMapClassTable { -> 1RFO}
+IMapClassTable *IClassMap::m_mapaCorrente;
+//## end IClassMap::mapaCorrente.has
+
+//## begin IClassMap::TabelaRelacao.attr preserve=no  private: static IString {V} "Relacao"
+IString IClassMap::m_TabelaRelacao = "Relacao";
+//## end IClassMap::TabelaRelacao.attr
+
+//## begin IClassMap::ColunaId.attr preserve=no  public: static IString {V} "ID"
+IString IClassMap::m_ColunaId = "ID";
+//## end IClassMap::ColunaId.attr
+
+
+//## Other Operations (implementation)
+void IClassMap::registraMembroClasse(IPersistente& anPersistente, char* nomeMembro, unsigned int offset, unsigned int tamanho, IKnowType tipoMembro, unsigned int varSizeMax, bool isProxy)
+{
+  //## begin IClassMap::registraMembroClasse%907292333.body preserve=yes
+  IMapAtrColuna *pItem = new IMapAtrColuna();
+  pItem->settipoMembro(tipoMembro  );
+  pItem->setnomeMembro(nomeMembro  );
+  pItem->setoffSet(offset          );
+
+	// tamanho nao pode ser sizeof para IsString___
+	// deve ser varSizeMax ou se nao especificar
+	// deve ser um default (50)
+	if (tipoMembro==IsStringVar||tipoMembro==IsStringFix)
+	{
+		if (varSizeMax != 0)
+		{
+			pItem->settamanho( varSizeMax );
+			pItem->setvarSizeMax(varSizeMax  );
+		}else
+		{
+			pItem->settamanho( 50 );
+			pItem->setvarSizeMax( 50  );
+		}
+	}else
+	{
+		pItem->settamanho(tamanho        );
+		pItem->setvarSizeMax(varSizeMax  );
+	}
+
+
+
+  pItem->setisProxy(isProxy        );
+  //pItem->setnomeColuna(            );
+  //pItem->settipoColuna(            );
+  m_mapaCorrente->ListaAtributos().adiciona( pItem );
+  //## end IClassMap::registraMembroClasse%907292333.body
+}
+
+IMapClassTable& IClassMap::getMapaFor(IPersistente &anPersist)
+{
+  //## begin IClassMap::getMapaFor%907292334.body preserve=yes
+  char* NomeClasse = anPersist.getNomeClasse();
+  int posicao = searchClassName( NomeClasse );
+  if ( posicao==-1 )
+  {
+    insertClassInfoOf(anPersist);
+    // procura novamente
+    posicao = searchClassName( NomeClasse );
+  }
+  if ( posicao==-1 )
+  {
+    throw(
+      IErro("IClassMap::getMapaFor() nao conseguiu localizar/inserir mapa")
+      );
+  }
+  // posicao valida prosseguir
+  return * (m_ListaMapClassTable[posicao]);
+  //## end IClassMap::getMapaFor%907292334.body
+}
+
+IMapClassTable& IClassMap::getMapaFor(char* NomeClasse)
+{
+  //## begin IClassMap::getMapaFor%966048264.body preserve=yes
+  int posicao = searchClassName( NomeClasse );
+  if ( posicao==-1 )
+  {
+    throw(
+      IErro("IClassMap::getMapaFor() nao conseguiu localizar mapa, Classe n∆o registrada ainda.")
+      );
+  }
+  // posicao valida prosseguir
+  return * (m_ListaMapClassTable[posicao]);
+  //## end IClassMap::getMapaFor%966048264.body
+}
+
+int IClassMap::searchClassName(char* nomeClasse)
+{
+  int Posicao;
+
+  //## begin IClassMap::searchClassName%907292335.body preserve=yes
+  Posicao = -1;
+  for( int i=1; i<=m_ListaMapClassTable.count(); i++ )
+  {
+     // TESTE
+     IMapClassTable* p= m_ListaMapClassTable[i];
+     p->nomeClasse(); // <<<<<---- problema com IString(&d)
+     // TESTE
+
+     if ( (m_ListaMapClassTable[i]->nomeClasse()==nomeClasse)==true )
+     { Posicao=i;
+       break;
+     }
+  }
+  //## end IClassMap::searchClassName%907292335.body
+
+  return Posicao;
+}
+
+void IClassMap::insertClassInfoOf(IPersistente& anPersist)
+{
+  //## begin IClassMap::insertClassInfoOf%907292336.body preserve=yes
+  // inserir nova classe e chamar OnClassInfo
+  m_mapaCorrente = new IMapClassTable();
+  m_mapaCorrente->setnomeClasse( anPersist.getNomeClasse() );
+  m_ListaMapClassTable.adiciona( m_mapaCorrente );
+  anPersist.OnClassInfo();
+  resolveMapa();
+  m_mapaCorrente = NULL;
+  //## end IClassMap::insertClassInfoOf%907292336.body
+}
+
+void IClassMap::resolveMapa(void )
+{
+  //## begin IClassMap::resolveMapa%908596388.body preserve=yes
+  //---- resolver somente para m_mapaCorrente
+  // resolver o DataStore, use default
+  if ( m_mapaCorrente->DataStore() == NULL )
+  {
+	IDataStore &p = IBroker::DefaultDataStore();
+    m_mapaCorrente->setDataStore(  &p   );
+  }
+	m_mapaCorrente->setnomeTabela( m_mapaCorrente->nomeClasse() );
+  #pragma message(":-/ Implemente: IClassMap::resolveMapa Coluna e Tipo")
+  //## end IClassMap::resolveMapa%908596388.body
+}
+
+void IClassMap::setDataStoreFor(IPersistente& anPersiste, IDataStore& anDataStore)
+{
+  //## begin IClassMap::setDataStoreFor%908596387.body preserve=yes
+  IMapClassTable& mapa =  getMapaFor(anPersiste);
+  mapa.setDataStore( &anDataStore );
+  //## end IClassMap::setDataStoreFor%908596387.body
+}
+
+void IClassMap::inicialize()
+{
+  //## begin IClassMap::inicialize%909189394.body preserve=yes
+  IClassMap::m_ListaMapClassTable.setApagueObjetosNaSaida( true );
+  IClassMap::m_mapaCorrente = NULL;
+  //## end IClassMap::inicialize%909189394.body
+}
+
+IString IClassMap::asDebug()
+{
+  //## begin IClassMap::asDebug%909716769.body preserve=yes
+	// classe / tabela
+	// membro/offset/tamanho
+	IString cRet;
+  for( int i=1; i<=m_ListaMapClassTable.count(); i++ )
+  {
+		IMapClassTable *p = m_ListaMapClassTable[i];
+		cRet += "Classe:";
+		cRet += p->nomeClasse();
+		cRet += "\n";
+		for( int ii=1; ii<=p->ListaAtributos().count(); ii++ )
+		{
+			cRet += p->ListaAtributos()[ii]->nomeMembro() ;
+			cRet += "\t";
+			cRet += (int) p->ListaAtributos()[ii]->offSet() ;
+			cRet += "\t";
+			cRet += (int) p->ListaAtributos()[ii]->tamanho();
+			cRet += "\n";
+		}
+  }
+	return cRet;
+
+  //## end IClassMap::asDebug%909716769.body
+}
+
+void IClassMap::removeDataStore(IDataStore& dataStore)
+{
+  //## begin IClassMap::removeDataStore%958533755.body preserve=yes
+  // varre o m_ListaMapClassTable
+  for( int i=1; i<=m_ListaMapClassTable.count(); i++ )
+  {
+     // compara o DataStore guardado com o removido
+     // comparacao de endereco de ponteiro, pois o datastore Ç o mesmo
+     IMapClassTable* p= m_ListaMapClassTable[i];
+     if ( (p->DataStore()==&dataStore)==true )
+        // remove o n¢ de Mapeamento da lista
+        m_ListaMapClassTable.remove( i );
+  }
+  //## end IClassMap::removeDataStore%958533755.body
+}
+
+//## Get and Set Operations for Has Relationships (implementation)
+
+IMapClassTable * IClassMap::mapaCorrente()
+{
+  //## begin IClassMap::mapaCorrente%.get preserve=no
+  return m_mapaCorrente;
+  //## end IClassMap::mapaCorrente%.get
+}
+
+void IClassMap::setmapaCorrente(IMapClassTable *const  value)
+{
+  //## begin IClassMap::setmapaCorrente%.set preserve=no
+  m_mapaCorrente = value;
+  //## end IClassMap::setmapaCorrente%.set
+}
+
+//## Get and Set Operations for Class Attributes (implementation)
+
+IString IClassMap::TabelaRelacao()
+{
+  //## begin IClassMap::TabelaRelacao%.get preserve=no
+  return m_TabelaRelacao;
+  //## end IClassMap::TabelaRelacao%.get
+}
+
+void IClassMap::setTabelaRelacao(const IString value)
+{
+  //## begin IClassMap::setTabelaRelacao%.set preserve=no
+  m_TabelaRelacao = value;
+  //## end IClassMap::setTabelaRelacao%.set
+}
+
+IString IClassMap::ColunaId()
+{
+  //## begin IClassMap::ColunaId%.get preserve=no
+  return m_ColunaId;
+  //## end IClassMap::ColunaId%.get
+}
+
+void IClassMap::setColunaId(const IString value)
+{
+  //## begin IClassMap::setColunaId%.set preserve=no
+  m_ColunaId = value;
+  //## end IClassMap::setColunaId%.set
+}
+
+
+// Additional Declarations
+//## begin IClassMap.declarations preserve=yes
+//## end IClassMap.declarations
+
+
+
+

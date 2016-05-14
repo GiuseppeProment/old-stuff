@@ -1,0 +1,120 @@
+//## begin module.cm preserve=no
+//	  %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IColecao; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: e:\meusdo~1\projetos\persist\codigo\casecode\icolecao.h
+
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+
+// IColecaoPersistenteBase
+
+
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IColecao; Parameterized Class
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+
+CREATE CLASS IColecao INHERIT IColecaoPersistenteBase  //## Inherits: <unnamed>
+PROTECTED:
+   METHOD init
+EXPORT:
+   METHOD quandoEventoNotificacao
+
+   CLASS METHOD initClass
+    //## Other Operations (specified)
+      //## Operation: createDummy%908340282
+      //	retorna um objeto IPersistente por valor, vazio. apenas
+      //	para reconhecimento adiantado do mesmo (mapeamento). O
+      //	IPersistente necessita possuir um construtor default,
+      //	sem nenhum processamento.
+      //## Semantics:
+      //	talvez crie-se um construtor especial no IPersistente
+      //	com um parametro escondido para evitar que o construtor
+      //	seja modificado pelas subclasses.
+      //IPersistente* createDummy();
+      //MESSAGE createDummy IS new TO PersistenteSubClass
+      METHOD createDummy
+      //## Operation: releaseDummy%910837610
+      //void releaseDummy(IPersistente* pNulo);
+      MESSAGE releaseDummy IS NULL
+      //## Operation: ObjectPointer%908407234
+      //PersistenteSubClass* ObjectPointer();
+
+      METHOD Object
+
+      //## Operation: ObjectCopy%908340294
+      //	devolve uma cópia do objeto apontado pelo ponteiro de
+      //	objetos. vai ter que ser implementado pelas classes
+      //	template.
+      METHOD ObjectCopy
+      //## Operation: crieInstancia%908340292
+      //	cria um objeto do tipo mantido pela coleção e guarda-o
+      //	no ponteiro InstanciaCorrente. que será deletado a cada
+      //	nova chamada de crieInstancia e se a coleção for
+      //	destruida. Inicie com NULL.
+      //IPersistente& crieInstancia();
+      METHOD crieInstancia
+    // Additional Public Declarations
+      //## begin IColecao.public preserve=yes
+      //## end IColecao.public
+HIDDEN:
+   VAR PersistenteSubClass // subclasse de IPersistente (nao ‚ objeto)
+END CLASS
+// Parameterized Class IColecao
+
+
+METHOD initClass(),()
+RETURN self
+
+METHOD init( MetaObjeto ),()
+   ::PersistenteSubClass := MetaObjeto
+   ::m_InstanciaCorrente := ::PersistenteSubClass:new()
+   IBroker():newColecao(self)
+RETURN self
+
+METHOD quandoEventoNotificacao(evento)
+   // se evento for IPersistente:evtApagado
+   // se evento for IPersistente:evtSalvo
+   ::ReavaliePointer()
+RETURN self
+
+
+
+//IPersistente* IColecao<PersistenteSubClass>::createDummy()
+//METHOD createDummy()
+//RETURN ::PersistenteSubClass:new()
+
+//MESSAGE createDummy IS new TO PersistenteSubClass
+METHOD createDummy
+RETURN ::PersistenteSubClass():new()
+
+
+METHOD Object()
+RETURN ::m_InstanciaCorrente
+
+METHOD ObjectCopy()
+RETURN ::m_InstanciaCorrente:copy()
+
+//IPersistente& IColecao<PersistenteSubClass>::crieInstancia()
+METHOD crieInstancia()
+   //if (m_InstanciaCorrente != NULL) delete m_InstanciaCorrente;
+   //::m_InstanciaCorrente := ::PersistenteSubClass:new()
+RETURN ::m_instanciaCorrente
+

@@ -1,0 +1,257 @@
+#include "IPersist.ch"
+CREATE CLASS ICursorClipper
+PROTECTED:
+   METHOD init
+EXPORT:
+   VAR recnoAtual
+   VAR oTabInfo
+   VAR buffer                                    // buffer de transf. dados
+   VAR IsRelacao
+   VAR DonoRelacao                               // persistente Dono da relacao 1xN
+   VAR oRelTabInfo                               // canal da relacao
+   VAR recnoTabRelacao
+   // filtros
+   VAR cbGoTop
+   VAR cbGoBottom
+   VAR cbWhile
+   VAR cbFor
+   VAR IndiceFiltro                              // Classe IIndice
+   VAR eof
+   VAR bof
+EXPORT:
+   METHOD Top
+   METHOD Bottom
+   METHOD skipNext
+   METHOD skipPrevious
+   METHOD refresh
+   METHOD isEof
+   METHOD isBof
+HIDDEN:
+   METHOD BeginMove
+   METHOD EndMove
+   METHOD BeginRelationMove
+   METHOD EndRelationMove
+END CLASS
+
+// enum
+#DEFINE eEOF    1
+#DEFINE eBOF    2
+#DEFINE eAMBOS  3
+
+
+METHOD init()
+   ::buffer := {}
+   ::IsRelacao := .f.
+   ::cbGoTop       := {|| dbGoTop()    }         // pode receber softseek
+   ::cbGoBottom    := {|| dbGoBottom() }         // pode receber softseek
+   ::cbWhile       := {|| .t.  }
+   ::cbFor         := {|| .t.  }
+   ::IndiceFiltro  := nil
+   ::eof := .f.
+   ::bof := .f.
+RETURN self
+
+METHOD Top()
+   local alvoValido,IdColumn,IdDono
+   if ::IsRelacao
+      alvoValido := .f.
+      IdColumn := fieldPos(IBroker():nomeColunaID())
+      IdDono   := ::DonoRelacao:ID():asDado()
+      ::beginRelationMove()
+      if dbSeek( IdDono )
+         // localizacao do alvo
+         // pular nao encontrados ()
+         While fieldGet(idColumn) == idDono .and. !eof() .and. alvoValido==.f.
+            // validar alvo
+            alvoValido := ( ::oTabInfo:PrivateAlias )->;
+               (dbSeek((::oRelTabInfo:PrivateAlias)->(fieldGet(2)) ))
+            if ! alvoValido
+               DbSkip(+1)                        // Rel
+            endif
+         EndDo
+      endif
+      ::endRelationMove(eAMBOS,! alvoValido)
+   else
+      ::BeginMove()
+      eval(::cbGoTop)
+      while !eof() .and. eval(::cbWhile) .and. !eval(::cbFor)
+         dbSkip(+1)
+      enddo
+      ::EndMove(eAMBOS)
+   endif
+RETURN self
+
+METHOD Bottom()
+   local alvoValido,IdColumn,IdDono
+   if ::IsRelacao
+      alvoValido := .f.
+      IdColumn := fieldPos(IBroker():nomeColunaID())
+      IdDono   := ::DonoRelacao:ID():asDado()
+      // ir at‚ o final da relacao
+      ::beginRelationMove()
+      if dbSeek( IdDono )
+         // ir at‚ o final
+         While fieldGet(idColumn) == idDono .and. !eof()
+            DbSkip(+1)                           // Rel
+         EndDo
+         // localizacao do alvo
+         // pular nao encontrados ()
+         Repeat
+            DbSkip(-1)
+            // localiza alvo
+            alvoValido := ( ::oTabInfo:PrivateAlias )->;
+               (dbSeek((::oRelTabInfo:PrivateAlias)->(fieldGet(2)) ))
+         Until fieldGet(idColumn) != idDono .or. bof() .or. alvoValido
+      endif
+      ::endRelationMove(eAMBOS,! alvoValido)
+   else
+      ::BeginMove()
+      eval(::cbGoBottom)
+      while !bof() .and. eval(::cbWhile) .and. !eval(::cbFor)
+         dbSkip(-1)
+      enddo
+      ::EndMove( eAMBOS )
+   endif
+RETURN self
+
+METHOD skipNext()
+   local alvoValido,IdColumn,IdDono
+   if !::eof
+      if ::IsRelacao
+         alvoValido := .f.
+         IdColumn := fieldPos(IBroker():nomeColunaID())
+         IdDono   := ::DonoRelacao:ID():asDado()
+         ::beginRelationMove()
+         if (recNo()) != ::recnoTabRelacao
+            ( dbGoTo(::recnoTabRelacao) )
+         endif
+         Repeat
+             DbSkip(+1)
+             // localiza alvo
+             alvoValido := ( ::oTabInfo:PrivateAlias )->;
+                (dbSeek((::oRelTabInfo:PrivateAlias)->(fieldGet(2)) ))
+         Until fieldGet(idColumn) != idDono .or. eof() .or. alvoValido
+         ::endRelationMove(eEOF,! alvoValido)
+      else
+         ::BeginMove()
+         if (recNo()) != ::recnoAtual
+            ( dbGoTo(::recnoAtual) )
+         endif
+         Repeat
+            dbSkip(+1)
+         Until eof() .or. eval(::cbWhile)==.f. .or. eval(::cbFor)==.t.
+         ::EndMove( eEOF )
+      endif
+   endif
+RETURN self
+
+METHOD skipPrevious()
+   local alvoValido,IdColumn,IdDono
+   if ! ::bof
+      if ::IsRelacao
+         alvoValido := .f.
+         IdColumn := fieldPos(IBroker():nomeColunaID())
+         IdDono   := ::DonoRelacao:ID():asDado()
+         ::beginRelationMove()
+         if (recNo()) != ::recnoTabRelacao
+            ( dbGoTo(::recnoTabRelacao) )
+         endif
+         Repeat
+             DbSkip(-1)
+             // localiza alvo
+             alvoValido := ( ::oTabInfo:PrivateAlias )->;
+                (dbSeek((::oRelTabInfo:PrivateAlias)->(fieldGet(2)) ))
+         Until fieldGet(idColumn) != idDono .or. bof() .or. alvoValido
+         ::endRelationMove(eBOF,! alvoValido)
+      else
+         ::BeginMove()
+         if (recNo()) != ::recnoAtual
+            ( dbGoTo(::recnoAtual) )
+         endif
+         Repeat
+            dbSkip(-1)
+         Until bof() .or. eval(::cbWhile)==.f. .or. eval(::cbFor)==.t.
+         ::EndMove( eBOF )
+      endif
+   endif
+RETURN self
+
+METHOD refresh()
+   ::skipPrevious()
+   ::skipNext()
+RETURN self
+
+                                                                                /*
+±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±
+±²±±²    ±²   ±± ± ² ±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±
+±²±±² ±² ±² ± ±± ± ² ±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±
+±²±±²    ±² ± ±± ± ² ±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±
+±²±±² ±² ±²    ±   ² ±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±
+±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±±²±                        */
+METHOD BeginMove()
+   dbSelectar(::oTabInfo:PrivateAlias)
+   OrdSetFocus( ::IndiceFiltro:tagNumero )
+   ::oTabInfo:IndiceAtivo := ::IndiceFiltro
+   ::eof := ::bof := .f.
+RETURN self
+
+METHOD EndMove( tipo )
+   if eof() .or. bof() .or. ! eval(::cbWhile)
+      do case
+         case tipo == eAMBOS
+            ::eof := ::bof := .t.
+         case tipo == eBOF
+            ::bof := .t.
+         case tipo == eEOF
+            ::eof := .t.
+      endcase
+      ::recnoAtual:=0
+   else
+      ::recnoAtual:=recNo()
+   endif
+RETURN self
+
+METHOD BeginRelationMove()
+   dbSelectar(::oRelTabInfo:PrivateAlias)
+   if ::oTabInfo:IndiceAtivo:tagNumero != 1
+      ::oTabInfo:IndiceAtivo := ::oTabInfo:Indices:subscript(1)
+      ( ::oTabInfo:PrivateAlias )->( OrdSetFocus( ::oTabInfo:IndiceAtivo:tagNumero ) )
+   endif
+   ::eof := ::bof := .f.
+RETURN self
+
+METHOD EndRelationMove( tipo, VirtualEnd )
+   if eof() .or. bof() .or. VirtualEnd
+      do case
+         case tipo == eAMBOS
+            ::eof := ::bof := .t.
+         case tipo == eBOF
+            ::bof := .t.
+         case tipo == eEOF
+            ::eof := .t.
+      endcase
+      ::recnoTabRelacao:=0
+   else
+      ::recnoTabRelacao:=recNo()
+   endif
+RETURN self
+
+
+METHOD isEof()
+RETURN ::eof
+
+METHOD isBof()
+RETURN ::bof
+/*
+* PROJETO
+
+necessitamos armazenar informa‡oes sobre o cursor
+registro atual (pode nao ter mudado)
+informa‡oes da tabela (oTabInfo) (ITabelaInfo)
+o indice ativo deve estar na tabela
+// validar recno e indice
+o CodeBlock para criterio
+o order by deve ter indice ou cria-se um temporario se o TmpIndexOn estiver .t.
+   nesse caso adiciona-se no indice o criterio como for.
+*/
+

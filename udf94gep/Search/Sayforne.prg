@@ -1,0 +1,6 @@
+FUNCTION SayFornece(nFornece)
+	Local nOrder1 := Fornece->(IndexOrd())
+	Fornece->(DbSetOrder(1))
+	Fornece->(DbSeek(nFornece))
+	Fornece->(DbSetOrder(nOrder1))
+	Return If(Fornece->(Found()),Fornece->FnNome," NAO EXISTE ")

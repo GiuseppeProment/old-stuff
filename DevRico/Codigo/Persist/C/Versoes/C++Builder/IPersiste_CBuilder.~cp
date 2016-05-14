@@ -1,0 +1,62 @@
+//---------------------------------------------------------------------------
+#include <vcl\vcl.h>
+#pragma hdrstop
+//---------------------------------------------------------------------------
+//   Important note about DLL memory management:
+//
+//   If your DLL exports any functions that pass String objects (or structs/
+//   classes containing nested Strings) as parameter or function results,
+//   you will need to add the library BCBMM.LIB to both the DLL project and any
+//   EXE projects that use the DLL.  This will change the DLL and its calling
+//   EXE's to use the BCBMM.DLL as their memory manager.  In these cases,
+//   the file BCBMM.DLL should be deployed along with your DLL.
+//
+//   To avoid using BCBMM.DLL, pass string information using "char *" or
+//   ShortString parameters.
+//---------------------------------------------------------------------------
+
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Iassccao.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Iatrbuto.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Ibroker.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Ibsrvdor.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Iclcprss.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Iclssmap.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Icolecao.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Icritrio.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Idltsttm.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Idrcftch.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Idtstore.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Idtstrdb.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Idtstrrc.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Ierro.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Iknwtype.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Imdfystt.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Impclsst.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Imptrcln.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Insrtstt.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Intfcdor.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Intfcdrb.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Iordem.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Ipdtsttm.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Iprcmprc.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Iprlgcpr.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Iprsstid.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Iprsstnt.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Iqrysttm.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Istdclco.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Istdgnrc.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Istdsttm.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Istring.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Isttment.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Ivntntfc.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Lststrng.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\template.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Typevnto.cpp");
+USEUNIT("..\..\..\Projetos\PERSIST\codigo\CASECODE\Funcoes.cpp");
+USELIB("F:\Ferramentas\CBuilder4\Lib\bcbmm.lib");
+//---------------------------------------------------------------------------
+int WINAPI DllEntryPoint(HINSTANCE hinst, unsigned long reason, void*)
+{
+	return 1;
+}
+//---------------------------------------------------------------------------

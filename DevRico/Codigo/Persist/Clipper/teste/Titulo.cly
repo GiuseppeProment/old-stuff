@@ -1,0 +1,23 @@
+#include "IPersist.ch"
+CREATE CLASS Titulo INHERIT IPersistente
+EXPORT:
+   VAR numero
+   VAR data
+EXPORT:
+   METHOD init
+   METHOD getNomeClasse
+   METHOD OnClassInfo
+END CLASS
+
+METHOD OnClassInfo
+   ::registraMembro( "numero",1,4,IsInt)
+   ::registraMembro( "data",2,8,IsTimestamp)
+return self
+
+METHOD getNomeClasse
+return "Titulo"
+
+METHOD init(),()
+   ::numero   := 0
+   ::data := date()
+return self

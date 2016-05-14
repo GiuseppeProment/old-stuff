@@ -1,0 +1,260 @@
+# ---------------------------------------------------------------------------
+!if !$d(BCB)
+BCB = $(MAKEDIR)\..
+!endif
+
+# ---------------------------------------------------------------------------
+# IDE SECTION
+# ---------------------------------------------------------------------------
+# The following section of the project makefile is managed by the BCB IDE.
+# It is recommended to use the IDE to change any of the values in this
+# section.
+# ---------------------------------------------------------------------------
+
+VERSION = BCB.04.04
+# ---------------------------------------------------------------------------
+PROJECT = IComponentes.bpl
+OBJFILES = Tmp\IComponentes.obj Tmp\Idtstrdb.obj Tmp\Iqrysttm.obj Tmp\Iprsstid.obj \
+  Tmp\Funcoes.obj Tmp\Idtstrrc.obj Tmp\Insrtstt.obj Tmp\Ibroker.obj \
+  Tmp\Iprsstnt.obj Tmp\Imptrcln.obj Tmp\CORA_B.obj Tmp\Istring.obj \
+  Tmp\Isttment.obj Tmp\Iclcprss.obj Tmp\Iclssmap.obj Tmp\Icolecao.obj \
+  Tmp\Istdclco.obj Tmp\Iassccao.obj Tmp\Idltsttm.obj Tmp\Idtstore.obj \
+  Tmp\Ipdtsttm.obj Tmp\Imdfystt.obj Tmp\Impclsst.obj Tmp\Ierro.obj \
+  Tmp\Istdgnrc.obj Tmp\Lststrng.obj Tmp\Ibsrvdor.obj Tmp\Intfcdor.obj \
+  Tmp\Intfcdrb.obj Tmp\Ivntntfc.obj Tmp\Typevnto.obj Tmp\Idrcftch.obj \
+  Tmp\Iordem.obj Tmp\Istdsttm.obj Tmp\Icritrio.obj Tmp\Iatrbuto.obj \
+  Tmp\Iknwtype.obj Tmp\Iprcmprc.obj Tmp\Iprlgcpr.obj Tmp\IBObjeto.obj \
+  Tmp\IComponent.obj Tmp\IBColecao.obj Tmp\Modelo.obj Tmp\EditorLista.obj \
+  Tmp\TelaEditorLista.obj Tmp\TelaCreditos.obj Tmp\IBBroker.obj \
+  Tmp\IBDataStoreOracleActivex.obj Tmp\IBDataStoreODBC.obj Tmp\IBLista.obj
+RESFILES = IComponentes.res Paleta.res
+RESDEPEN = $(RESFILES) TelaEditorLista.dfm TelaCreditos.dfm
+LIBFILES =
+IDLFILES =
+IDLGENFILES =
+LIBRARIES = bcbsmp40.lib vcldbx40.lib vcldb40.lib vclx40.lib
+SPARELIBS = vcl40.lib vclx40.lib vcldb40.lib vcldbx40.lib bcbsmp40.lib
+PACKAGES = vcl40.bpi
+DEFFILE =
+# ---------------------------------------------------------------------------
+PATHCPP = .;..\C\CASE
+PATHPAS = .;
+PATHASM = .;
+PATHRC = .;
+DEBUGLIBPATH = $(BCB)\lib\debug
+RELEASELIBPATH = $(BCB)\lib\release
+USERDEFINES = $(SYSDEFINES);$(USERDEFINES);CBUILDER;GERAR_DLL
+SYSDEFINES = NO_STRICT;_RTLDLL;USEPACKAGES
+# ---------------------------------------------------------------------------
+CFLAG1 = -I..\..\..\..\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Projects\;..\C\CASE;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Inc\HPP \
+  -Od -w -Ve -r- -a8 -5 -k -y -v -vi- -D$(SYSDEFINES);$(USERDEFINES) -c -b- \
+  -w-par -w-inl -Vx -tWM -tWM
+CFLAG2 =
+CFLAG3 =
+IDLCFLAGS = -I..\..\..\..\CBuilder4\Projects -IF:\Ferramentas\CBuilder4\Projects \
+  -I"F:\Ferramentas\CBuilder4\Projects\" -I..\C\CASE -I$(BCB)\include \
+  -I$(BCB)\include\vcl -I..\..\..\Inc\HPP -src_suffixcpp -D$(SYSDEFINES) \
+  -D$(USERDEFINES) -DCBUILDER -DGERAR_DLL
+PFLAGS = -U..\..\..\..\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Lib\Release;F:\Ferramentas\CBuilder4\Lib\Release\;F:\Ferramentas\CBuilder4\Projects\;..\C\CASE;..\..\..\Inc\lib;$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) \
+  -I..\..\..\..\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Projects\;..\C\CASE;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Inc\HPP \
+  -N2Tmp -N0Tmp -D$(SYSDEFINES);$(USERDEFINES);CBUILDER;GERAR_DLL -$YD -$W -$O- \
+  -v -JPHNE -M -JPHNE
+RFLAGS = -i..\..\..\..\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Projects\;..\C\CASE;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Inc\HPP \
+  -D$(SYSDEFINES);$(USERDEFINES);CBUILDER;GERAR_DLL
+AFLAGS = /iF:\Ferramentas\CBuilder4\Projects\ /i..\C\CASE /i$(BCB)\include \
+  /i$(BCB)\include\vcl /i..\..\..\Inc\HPP /d$(SYSDEFINES) /d$(USERDEFINES) \
+  /dCBUILDER /dGERAR_DLL /mx /w2 /zd
+LFLAGS = -L..\..\..\..\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Lib\Release;F:\Ferramentas\CBuilder4\Lib\Release\;F:\Ferramentas\CBuilder4\Projects\;..\C\CASE;..\..\..\Inc\lib;$(BCB)\lib\obj;$(BCB)\lib;$(RELEASELIBPATH) \
+  -D"FrameWork I++ Giuseppe 1998 (c)" -aa -Tpp -m -Gl -Gi -v
+IFLAGS =
+# ---------------------------------------------------------------------------
+ALLOBJ = c0pkg32.obj Memmgr.Lib $(PACKAGES) sysinit.obj sysinit.obj $(OBJFILES)
+ALLRES = $(RESFILES)
+ALLLIB = $(LIBFILES) $(LIBRARIES) import32.lib cp32mti.lib
+# ---------------------------------------------------------------------------
+!ifdef IDEOPTIONS
+
+[Version Info]
+IncludeVerInfo=1
+AutoIncBuild=0
+MajorVer=1
+MinorVer=0
+Release=1
+Build=1
+Debug=0
+PreRelease=0
+Special=0
+Private=0
+DLL=0
+Locale=1046
+CodePage=1252
+
+[Version Info Keys]
+CompanyName=The Developer (c)
+FileDescription=Componentes da FrameWork I++
+FileVersion=1.0.1.1
+InternalName=
+LegalCopyright=Giuseppe E. Proment Jr. 2000 (c)
+LegalTrademarks=
+OriginalFilename=
+ProductName=FrameWork I++
+ProductVersion=1.0.0.0
+Comments=
+
+[HistoryLists\hlIncludePath]
+Count=9
+Item0=F:\Ferramentas\CBuilder4\Projects\;..\C\CASE;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Inc\HPP
+Item1=F:\Ferramentas\CBuilder4\Projects;..\comp_c;..\C\CASE;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Inc\HPP
+Item2=..\..\..\..\arquivos de programas\borland\cbuilder3\projects;..\C\CASE;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Inc\HPP
+Item3=..\C\CASE;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Inc\HPP
+Item4=;;;;;;F:\Ferramentas\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Projects\;..\C\CASE;$(BCB)\include;$(BCB)\include\vcl;..\..\..\Inc\HPP
+Item5=..\C\CASE;$(BCB)\include;$(BCB)\include\vcl;G:\DevRico\Inc\HPP
+Item6=..\PERSIST\codigo\CASECODE;$(BCB)\include;$(BCB)\include\vcl;..\..\IFrameWork\HPP
+Item7=$(BCB)\include;$(BCB)\include\vcl;E:\Meus documentos\IFrameWork\HPP
+Item8=$(BCB)\include;$(BCB)\include\vcl
+
+[HistoryLists\hlLibraryPath]
+Count=11
+Item0=F:\Ferramentas\CBuilder4\Lib\Release;F:\Ferramentas\CBuilder4\Lib\Release\;F:\Ferramentas\CBuilder4\Projects\;..\C\CASE;..\..\..\Inc\lib;$(BCB)\lib\obj;$(BCB)\lib
+Item1=..\comp_c;F:\Ferramentas\CBuilder4\Projects;..\C\CASE;..\..\..\Inc\lib;$(BCB)\lib\obj;$(BCB)\lib
+Item2=..\..\..\..\arquivos de programas\borland\cbuilder3\projects;F:\Ferramentas\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Projects\;..\C\CASE;..\..\..\Inc\lib;$(BCB)\lib\obj;$(BCB)\lib
+Item3=F:\Ferramentas\CBuilder4\Projects;F:\Ferramentas\CBuilder4\Projects\;..\C\CASE;..\..\..\Inc\lib;$(BCB)\lib\obj;$(BCB)\lib
+Item4=F:\Ferramentas\CBuilder4\Projects\;..\C\CASE;..\..\..\Inc\lib;$(BCB)\lib\obj;$(BCB)\lib
+Item5=..\C\CASE;..\..\..\Inc\lib;$(BCB)\lib\obj;$(BCB)\lib
+Item6=..\C\CASE;G:\DevRico\Inc\lib;$(BCB)\lib\obj;$(BCB)\lib
+Item7=..\PERSIST\codigo\CASECODE;..\..\IFrameWork\Import;$(BCB)\lib\obj;$(BCB)\lib
+Item8=..\PERSIST\codigo\CASECODE;$(BCB)\lib\obj;$(BCB)\lib;E:\Meus documentos\IFrameWork\Import
+Item9=..\PERSIST\codigo\CASECODE;$(BCB)\lib\obj;$(BCB)\lib
+Item10=$(BCB)\lib\obj;$(BCB)\lib
+
+[HistoryLists\hlDebugSourcePath]
+Count=1
+Item0=$(BCB)\source\vcl
+
+[HistoryLists\hlConditionals]
+Count=7
+Item0=$(SYSDEFINES);$(USERDEFINES);CBUILDER;GERAR_DLL
+Item1=CBUILDER;GERAR_DLL;_RTLDLL;USEPACKAGES
+Item2=BUILDER3;CBUILDER;GERAR_DLL;_RTLDLL;USEPACKAGES
+Item3=BUILDER3;CBUILDER;_RTLDLL;USEPACKAGES
+Item4=CBUILDER;_RTLDLL;USEPACKAGES
+Item5=CBUILDER;USEPACKAGES
+Item6=CBUILDER
+
+[HistoryLists\hlIntOutputDir]
+Count=3
+Item0=Tmp
+Item1=.\Tmp
+Item2=.
+
+[Debugging]
+DebugSourceDirs=$(BCB)\source\vcl
+
+[Parameters]
+RunParams=
+HostApplication=
+RemoteHost=
+RemotePath=
+RemoteDebug=0
+
+[Compiler]
+InMemoryExe=0
+ShowInfoMsgs=0
+
+[CORBA]
+AddServerUnit=1
+AddClientUnit=1
+PrecompiledHeaders=1
+
+!endif
+
+# ---------------------------------------------------------------------------
+# MAKE SECTION
+# ---------------------------------------------------------------------------
+# This section of the project file is not used by the BCB IDE.  It is for
+# the benefit of building from the command-line using the MAKE utility.
+# ---------------------------------------------------------------------------
+
+.autodepend
+# ---------------------------------------------------------------------------
+!if !$d(BCC32)
+BCC32 = bcc32
+!endif
+
+!if !$d(CPP32)
+CPP32 = cpp32
+!endif
+
+!if !$d(DCC32)
+DCC32 = dcc32
+!endif
+
+!if !$d(TASM32)
+TASM32 = tasm32
+!endif
+
+!if !$d(LINKER)
+LINKER = ilink32
+!endif
+
+!if !$d(BRCC32)
+BRCC32 = brcc32
+!endif
+
+!if !$d(IDL2CPP)
+IDL2CPP = idl2cpp
+!endif
+
+# ---------------------------------------------------------------------------
+!if $d(PATHCPP)
+.PATH.CPP = $(PATHCPP)
+.PATH.C   = $(PATHCPP)
+!endif
+
+!if $d(PATHPAS)
+.PATH.PAS = $(PATHPAS)
+!endif
+
+!if $d(PATHASM)
+.PATH.ASM = $(PATHASM)
+!endif
+
+!if $d(PATHRC)
+.PATH.RC  = $(PATHRC)
+!endif
+# ---------------------------------------------------------------------------
+$(PROJECT): $(IDLGENFILES) $(OBJFILES) $(RESDEPEN) $(DEFFILE)
+    $(BCB)\BIN\$(LINKER) @&&!
+    $(LFLAGS) +
+    $(ALLOBJ), +
+    $(PROJECT),, +
+    $(ALLLIB), +
+    $(DEFFILE), +
+    $(ALLRES)
+!
+# ---------------------------------------------------------------------------
+.pas.hpp:
+    $(BCB)\BIN\$(DCC32) $(PFLAGS) {$< }
+
+.pas.obj:
+    $(BCB)\BIN\$(DCC32) $(PFLAGS) {$< }
+
+.cpp.obj:
+    $(BCB)\BIN\$(BCC32) $(CFLAG1) -n$(@D) {$< }
+
+.c.obj:
+    $(BCB)\BIN\$(BCC32) $(CFLAG1) -n$(@D) {$< }
+
+.c.i:
+    $(BCB)\BIN\$(CPP32) $(CFLAG1) -n. {$< }
+
+.cpp.i:
+    $(BCB)\BIN\$(CPP32) $(CFLAG1) -n. {$< }
+
+.asm.obj:
+    $(BCB)\BIN\$(TASM32) $(AFLAGS) $<, $@
+
+.rc.res:
+    $(BCB)\BIN\$(BRCC32) $(RFLAGS) -fo$@ $<
+# ---------------------------------------------------------------------------
+

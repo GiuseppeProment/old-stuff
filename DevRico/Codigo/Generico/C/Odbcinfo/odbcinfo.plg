@@ -1,0 +1,50 @@
+--------------------Configuration: OdbcInfo - Win32 Release--------------------
+Begining build with project "G:\Developer\Odbcinfo\odbcinfo.dsp", at root.
+Active configuration is Win32 (x86) Application (based on Win32 (x86) Application)
+
+Project's tools are:
+			"32-bit C/C++ Compiler for 80x86" with flags "/nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /Fp".\Release/odbcinfo.pch" /Yu"stdafx.h" /Fo".\Release/" /Fd".\Release/" /FD /c "
+			"OLE Type Library Maker" with flags "/nologo /D "NDEBUG" /mktyplib203 /win32 "
+			"Win32 Resource Compiler" with flags "/l 0x409 /fo".\Release/OdbcInfo.res" /d "NDEBUG" "
+			"Browser Database Maker" with flags "/nologo /o".\Release/odbcinfo.bsc" "
+			"COFF Linker for 80x86" with flags "/nologo /subsystem:windows /incremental:no /pdb:".\Release/odbcinfo.pdb" /machine:I386 /out:".\Release/odbcinfo.exe" "
+			"Custom Build" with flags ""
+			"<Component 0xa>" with flags ""
+
+Creating command line "rc.exe /l 0x409 /fo".\Release/OdbcInfo.res" /d "NDEBUG" "G:\Developer\Odbcinfo\OdbcInfo.rc"" 
+Creating temp file "d:\TMP\RSP8254.TMP" with contents </nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /Fp".\Release/odbcinfo.pch" /Yu"stdafx.h" /Fo".\Release/" /Fd".\Release/" /FD /c 
+"G:\Developer\Odbcinfo\AboutDlg.cpp"
+"G:\Developer\Odbcinfo\catsets.cpp"
+"G:\Developer\Odbcinfo\DrvInfo.cpp"
+"G:\Developer\Odbcinfo\MySheet.cpp"
+"G:\Developer\Odbcinfo\OdbcInfo.cpp"
+>
+Creating command line "cl.exe @d:\TMP\RSP8254.TMP" 
+Creating temp file "d:\TMP\RSP8255.TMP" with contents </nologo /MT /W3 /GX /O2 /D "WIN32" /D "NDEBUG" /D "_WINDOWS" /D "_MBCS" /Fp".\Release/odbcinfo.pch" /Yc"stdafx.h" /Fo".\Release/" /Fd".\Release/" /FD /c 
+"G:\Developer\Odbcinfo\StdAfx.cpp"
+>
+Creating command line "cl.exe @d:\TMP\RSP8255.TMP" 
+Creating temp file "d:\TMP\RSP8256.TMP" with contents </nologo /subsystem:windows /incremental:no /pdb:".\Release/odbcinfo.pdb" /machine:I386 /out:".\Release/odbcinfo.exe" 
+.\Release\AboutDlg.obj
+.\Release\catsets.obj
+.\Release\DrvInfo.obj
+.\Release\MySheet.obj
+.\Release\OdbcInfo.obj
+.\Release\StdAfx.obj
+.\Release\OdbcInfo.res>
+Creating command line "link.exe @d:\TMP\RSP8256.TMP" 
+Compiling resources...
+Compiling...
+StdAfx.cpp
+Compiling...
+AboutDlg.cpp
+catsets.cpp
+DrvInfo.cpp
+MySheet.cpp
+OdbcInfo.cpp
+Generating Code...
+Linking...
+
+
+
+odbcinfo.exe - 0 error(s), 0 warning(s)

@@ -1,0 +1,2 @@
+A Coleção Base do IBColecao fica nula por causa da chamada em IBLista (loaded)
+??

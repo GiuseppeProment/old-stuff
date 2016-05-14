@@ -1,0 +1,100 @@
+* FrameWork de Persistencia
+   - Compiladores
+   Defina CBUILDER para compilar no Builder
+   Defina GERAR_DLL para uso em BPL ou DLL
+
+* Rose relat¢rio de classes
+   Para gerar o relat¢rio de classes, a propriedade Directory que indica
+   onde deve ser gerado o c¢digo fonte, n∆o funciona com Simbolos Virtuais
+   ex: $Code.
+
+* Rose gerando Componentes C++Builder
+   - mudando a convená∆o de chamada para __fastcall
+   O seguinte pragma pode ser usado para alterar a convená∆o p/ __fastcall :
+   #pragma option -pr
+   - o PACKAGE precisa aparecer depois do class, acho que teremos que
+   redefinir o class
+   #define class class PACKAGE
+   #undef class
+
+* Rose trabalhando com propriedades
+   Para n∆o esquecer mais:
+   Marcado Ç somente para o componente, sem marca s∆o todos
+   O conjunto de propriedade "default" sempre existe, se voce altera-lo
+   a alteraá∆o ser† somente no modelo corrente.
+   Use clone para clonar um conjunto dando outro nome e altera-lo.
+   Use Export para criar um .pty com os conjuntos que voce criou e o default
+   alterado ( se foi ).
+   Use add para adicionar um conjunto de propriedades
+   Use replace para repor o conjunto por um outro
+   Update ainda n∆o sei
+   ê seguro sempre exportar conjuntos importantes de propriedades
+   por exemplo :
+   conjunto para CBuilder
+   conjunto para VC
+   conjunto etc...
+   Porque se der merda, e vocà tiver o conjunto Ç s¢ fazer um replace.
+   isso porque o conjunto contÇm todas as propriedades para geraá∆o de
+   c¢digo.
+   *****************************************************
+    IMPORTANTE
+   *****************************************************
+   PRIMEIRO INICIE A ROSE, E DEPOIS ABRA O MODELO, SER FOR USADA
+   A ABERTURA A PARTIR DO MODELO PELA ASSOCIA«„O DO TIPO AO EXECUT¡VEL
+   A ROSE IGNORA AS PROPRIEDADES DO MODELO.
+   *****************************************************
+
+
+* Rose tentanto expandir a geraá∆o de c¢digo
+   queria colocar a convená∆o de chamada, por exemplo __cdecl, se alterarmos
+   o .pty acharmos operationKing, e inserirmos um __cdecl, Ç poss°vel sele-
+   ciona-lo para a operaá∆o, mas o gerador de c¢digo ignora-o.
+
+* Rose gerando codigo de nome longo
+  Veja documento  "Como gerar codigo para C++ Builder"
+
+* C++Builder X troca dinamica na convenÁ„o de chamada
+  Quando existe a declaraÁ„o de um membro template, quando ele È expandido ?,
+  isso È importante, porque se usarmos um pragma para alterar a convenÁ„o de chamada e o tempo 
+  da declaraÁ„o for diferente do tempo da definiÁ„o podemos ter um "type mismatch" porque 
+  a convenc„o de chamada foi alterada !. Estou tendo este problema agora. Tive que determinar  
+  explicitamente a convenc„o de chamada de tudo que tem haver com funÁ„o na classe template.
+  usei a default ( __cdecl ).
+
+* C++Builder X Templates de muito uso
+  Nesta vers„o do builder (3) temos 3 opÁıes de controle de templates no options C++ :
+  Smart: gera definiÁıes p˙blicas para todas as instancias de templates (instancias da classe 
+  modelo) e depois mistura ( merge) eliminando as duplicaÁıes. … o melhor meio e n„o d· dor de 
+  cabeÁa. Global: Igual a smart, mas n„o faz merge ( fica tudo duplicado, gera mensagens:
+  simbolo tal definido em A e em B). External: n„o gera nenhuma definiÁ„o, e vocÍ tera que 
+  fazer um mÛdulo somente com instanciaÁ„o explicita.
+
+* C++Builder X componentes - namespace
+  o nome do namespace deve ser sempre em minusculo, sen„o a ide n„o registra.
+
+
+* C++Builder x componentes - v·rias unidades de traduÁ„o
+  a partir da vers„o 4, se um componente usa uma unidade de traduÁ„o essa unidade deve conter o 
+  pragma package(smart_init), sen„o os sÌmbolos n„o s„o resolvidos em tempo de ligaÁao.
+  ainda n„o estudei profundamente esse pragma. mas esta presente em todas as unidades de traduÁ„o
+  de componentes.
+
+* FRAMEWORK ESQUEMA DE NOTIFICACAO
+  NUNCA SE DEVE ESQUECER DE PEDIR AO NOTIFICADOR PARA PARAR DE EMITIR NOTIFICACOES, NO CASO
+  DO OBJETO SER DESTRUIDO, PORQUE SEN√O, O NOTIFICADOR VAI ACIONAR O METODO DE NOTIFICACAO
+  DO OBSERVADOR, APOS SUA DESTRUI«√O, O QUE VAI CAUSAR PROBLEMAS SERIOS NO AMBIENTE (TERMINO
+  ANORMAL OU PIOR, COMPORTAMENTO ANORMAL ).
+
+* C++ heranÁa
+  Lembre-se quando uma classe for feita para encabeÁar uma hierarquia, o destrutor deve
+  sempre, ser VIRTUAL, ou problemas graves acontecem, no caso do C++ Builder, estranhamente
+  a funÁ„o de registro de componentes È invocada aparentemente na destruiÁ„o de componentes
+  que herdam de componente em que o destrutor n„o foi declarado como sendo virtual. Provavelmente
+  isto È devido ao fato de todos os componentes serem ponteiros. ( o que enfatiza o destrutor
+  virtual ). Esta declaraÁ„o ainda È duvidosa
+
+* Builder C++ (ESSE ê GRAVE) - CHAMA REGISTER DO ÈLTIMO COMPONENTE NA LISTA
+  Este erro muito estranho termina o programa com uma chamada a funá∆o 
+  register do £ltimo componente no programa principal do make. nem sempre do ˙ltimo
+  esse erro È derivado da posiÁ„o de algum componente no cpp principal, mudando
+  a posiÁ„o o problema desaparece.

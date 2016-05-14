@@ -1,0 +1,66 @@
+//## begin module.cm preserve=no
+//   %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IErro; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\ierro.h
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+
+
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IErro
+// Simples classe que será arremesada em caso de erro.
+// throw.
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+CREATE CLASS IErro
+PROTECTED:
+   METHOD init
+EXPORT:
+   //## Attribute: textError
+   METHOD textError
+   METHOD settextError
+PROTECTED:
+HIDDEN:
+   VAR m_textError
+END CLASS
+// Class IErro
+
+METHOD init(cTexto),()
+   ::settextError(cTexto)
+RETURN self
+
+METHOD textError()
+   local x
+
+   comente "atencao nada a comentar"
+
+RETURN ::m_textError
+
+METHOD settextError(cCharValue)
+   ::m_textError := ">>> IFrameWork Giuseppe (c) <<<;;" + cCharValue
+RETURN  self
+
+
+
+
+
+
+
+

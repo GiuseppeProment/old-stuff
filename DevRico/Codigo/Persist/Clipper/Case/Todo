@@ -1,0 +1,143 @@
+<<< Processamento de Criterios e Ordens >>>
+
+IBroker:NewAssociacao e NewColecao
+   Traduzir os nomes de atributos para nomes de colunas
+   na traducao checar se tudo esta correto
+   dados a checar
+   nome de atributo
+   tipo argumento compativel com atributo
+   comparacao valida
+   ligacao entre criterios correta
+   passar para o theQuery.
+
+<-- ate aqui ok
+
+INativoDataStore:ExecuteQuery
+   Fazer as preparacoes necessarias, validar, verificar indices construir
+   codeBlocks etc... tudo deve ser registrado no lowLayerSlot objeto
+   ICursorClipper, e deve facilitar ao maximo o trabalho no metodo
+   ::RequisitaDados.
+
+1. processamento dos criterios
+2. processamento das ordens
+
+<<< Criterios >>>>
+   Devem ser processados um a um
+   devem ser transformados em 2 codeBlock para avaliacao a cada registro
+   1 codeBlock WHILE
+   1 codeBlock FOR
+Indices
+   < somente 1 indice pode ser usado >
+
+   deve se procurar o indice que contenha o atributo usado no criterio
+   se existir o indice adequado o criterio ‚ colocado no codeBlock WHILE
+   senao ‚ colocado no codeBlock FOR
+   a. fazer softseek pelo 1.argumento
+
+   ** precedencia faltou ***
+
+   f1>10 and f2="XC"
+
+             *prec
+   f1>10      1
+   or         -
+   f2="XC"    2
+   and        -
+   f4<="AZ"   2
+
+
+   devemos fatorar a expressao at‚ chegar as exp puras que sobram
+
+      (Lnû c Lný) c Lnü
+          Lnx     c Lnü
+           ³         ÀÄÄÄÄÄPura
+           ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄComposta
+
+   As compostas sao FOR (nao tem jeito)
+
+   Para usar indice deve haver uma < Expressao Pura Mandat¢ria >
+
+   Quem ‚ a < Expressao Pura Mandat¢ria > ?
+
+    a expressao pura restante conectada por AND
+
+   No exemplo se c for
+
+      Lnx AND Lnü
+              ÀÄÄÄÄÄ ‚ mandat¢ria
+
+   No exemplo se c for
+
+      Lnx OR  Lnü
+              ÀÄÄÄÄÄ nÆo ‚ mandat¢ria
+
+      Lnû OR Lný AND Lnü
+      ÀÄÄÄÂÄÄÄÙ      ÀÄÄÄÄÄ ‚ mandat¢ria ----> candidata a while
+          ÀÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄÄ nao mandat¢rias--> for
+
+   alem de ser mandat¢ria a expressao deve ser do tipo que aceita
+   indice, isto ‚ definido pelo operador utilizado que ‚ um operador
+   relacional quantitativo crescente:
+
+   Operador      IDX     Ex                       TIPOS
+   MAIOR          S      f > 2    f>"manteiga"    CND  --> seek inicial
+   MENOR          -      f < col  f<"A"           CND
+   MAIOROUIGUAL   S      f  >= 4                  CND  --> seek inicial
+   MENOROUIGUAL   -      f  <= .5                 CND
+   IGUAL          S      f  = 43                  CNDL --> while direto
+   DIFERENTE      -      f != 5   f!="JACA"       CNDL
+   ENTREEXCLUSIVE S      f BETWEEN 54,100         CND  --> while direto
+   ENTREINCLUSIVE S      f BETWEEN 54,100         CND  --> while direto
+NS SIMILAR        -      f LIKE "???NA"           C
+NS DENTRO         -      f IN 32,100,303          CND
+
+   Agora teriamos <Expressoes Mandat¢rias Puras> <Indexaveis>
+   tendo-se v rias o criterio seria escolher a expressao
+   que provavelmente conteria o menor numero de elementos
+   e que defina um conjunto finito (s¢ o = e ENTRE fazem isso)
+
+   Tentamos selecionar a primeira expressao EMPI com operador
+   relacional de conjunto finito (=,ENTRE) da esquerda para direita
+   que possua indice adequado
+   Senao encontrarmos entao passamos as que definem pelo menos o
+   inicio do conjuto (MAIOR e MAIOROUIGUAL) Operador Relacional Magnitude
+
+   <outro requisito>
+   o atributo de uma <Expressao Mandat¢ria Pura Indexavel> nÆo
+   pode estar presente em qualquer outra expressao, isto tira a
+   expressao desta condicao
+
+   logica da busca do indice adequado:
+
+   o indice ‚ composto por
+
+   campo+campo+...
+     1     2
+
+   eventualmente
+
+   funcao(campo)+funcao(campo)+...
+           1              2
+
+    // funcoes validas DTOS e STR
+   DESCEND -> nao sera suportado em clipper
+   // outras funcoes devem invalidar o indice
+
+   Temos uma lista ordenada de campos no ITabelaInfo dentro do Cursor
+   no lowLayerSlot
+
+   ‚ s¢ procurar pelo atributo no 1. campo, dar preferencia pelos indices
+   simples e depois pelos compostos.
+   esse criterio deve ser separado e sera a condi‡Æo while
+
+   atencao para ordem:
+
+
+
+----------------------------------------------------------------------------
+
+INativoDataStore:requisitaDados
+   devemos levar em conta os filtros e/ou ordem preparados em ::executeQuery
+
+
+

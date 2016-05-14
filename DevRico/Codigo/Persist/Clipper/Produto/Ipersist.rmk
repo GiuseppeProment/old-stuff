@@ -1,0 +1,141 @@
+// Biblioteca Financeira para exporta‡ao
+// By Giuseppe 28/07/95
+
+FDEBUG    =
+FRASTREAR =
+
+#ifdef RASTREAR
+FRASTREAR = /diRASTREAR
+#endif
+
+#ifdef DEBUG
+FDEBUG = /diDEBUG
+#endif
+
+CLIPFLAG  = /b/n/w/m$(FRASTREAR)$(FDEBUG)
+NAODEBUGCLIPFLAG  = /n/w/m$(FRASTREAR)$(FDEBUG)
+
+
+L=\Docume~1\Projetos\Persis~1\Produto\\
+
+//##### BIBLIOTECA DE PERSISTENCIA #####
+
+E=.CLY
+
+D=\Docume~1\Projetos\Persis~1\Clipper\\
+
+.cly.obj:
+   clipper $(D)$*$E $(CLIPFLAG) /o$(D)
+$(D)IBROKER.OBJ    : $(D)IBROKER$E
+$(D)IBSRVDOR.OBJ   : $(D)IBSRVDOR$E
+$(D)ICLSSMAP.OBJ   : $(D)ICLSSMAP$E
+$(D)IERRO.OBJ      : $(D)IERRO$E
+$(D)IMDFYSTT.OBJ   : $(D)IMDFYSTT$E
+$(D)IMPCLSST.OBJ   : $(D)IMPCLSST$E
+$(D)IMPTRCLN.OBJ   : $(D)IMPTRCLN$E
+$(D)INSRTSTT.OBJ   : $(D)INSRTSTT$E
+$(D)INTFCDOR.OBJ   : $(D)INTFCDOR$E
+$(D)IPRSSTID.OBJ   : $(D)IPRSSTID$E
+$(D)IWARNING.OBJ   : $(D)IWARNING$E
+
+//  clipper $(D)$*$E $(NAODEBUGCLIPFLAG) /o$(D)
+
+.cly.obj:
+    clipper $(D)$*$E $(CLIPFLAG) /o$(D)
+$(D)LISTA.OBJ      : $(D)LISTA$E
+
+.cly.obj:
+   clipper $(D)$*$E $(CLIPFLAG) /o$(D)
+$(D)IPRSSTNT.OBJ   : $(D)IPRSSTNT$E
+$(D)ISTTMENT.OBJ   : $(D)ISTTMENT$E
+$(D)IQRYSTTM.OBJ   : $(D)IQRYSTTM$E
+$(D)IPDTSTTM.OBJ   : $(D)IPDTSTTM$E
+$(D)IDLTSTTM.OBJ   : $(D)IDLTSTTM$E
+$(D)IDTSTORE.OBJ   : $(D)IDTSTORE$E
+$(D)IVNTNTFC.OBJ   : $(D)IVNTNTFC$E
+$(D)INTVDTSR.OBJ   : $(D)INTVDTSR$E
+$(D)ITabInfo.OBJ   : $(D)ITabInfo$E
+$(D)ICLCPRSS.OBJ   : $(D)ICLCPRSS$E
+$(D)ICOLECAO.OBJ   : $(D)ICOLECAO$E
+$(D)ICURCLIP.OBJ   : $(D)ICURCLIP$E
+$(D)IASSCCAO.OBJ   : $(D)IASSCCAO$E
+$(D)ICritrio.OBJ   : $(D)ICritrio$E
+$(D)IOrdem.OBJ     : $(D)IOrdem$E
+//$(D).OBJ   : $(D)$E
+
+.prg.obj:
+   clipper $(D)$*.prg $(CLIPFLAG) /o$(D)
+$(D)Utility.OBJ    : $(D)Utility.PRG
+
+$(L)IPersist.lib :     $(D)IBROKER.obj
+   Tlib $(L)IPersist -+$(D)IBROKER.obj
+$(L)IPersist.lib :     $(D)IBSRVDOR.obj
+   Tlib $(L)IPersist -+$(D)IBSRVDOR.obj
+$(L)IPersist.lib :     $(D)ICLSSMAP.obj
+   Tlib $(L)IPersist -+$(D)ICLSSMAP.obj
+$(L)IPersist.lib :     $(D)IERRO.obj
+   Tlib $(L)IPersist -+$(D)IERRO.obj
+$(L)IPersist.lib :     $(D)IMDFYSTT.obj
+   Tlib $(L)IPersist -+$(D)IMDFYSTT.obj
+$(L)IPersist.lib :     $(D)IMPCLSST.obj
+   Tlib $(L)IPersist -+$(D)IMPCLSST.obj
+$(L)IPersist.lib :     $(D)IMPTRCLN.obj
+   Tlib $(L)IPersist -+$(D)IMPTRCLN.obj
+$(L)IPersist.lib :     $(D)INSRTSTT.obj
+   Tlib $(L)IPersist -+$(D)INSRTSTT.obj
+$(L)IPersist.lib :     $(D)INTFCDOR.obj
+   Tlib $(L)IPersist -+$(D)INTFCDOR.obj
+$(L)IPersist.lib :     $(D)IPRSSTID.obj
+   Tlib $(L)IPersist -+$(D)IPRSSTID.obj
+$(L)IPersist.lib :     $(D)IPRSSTNT.obj
+   Tlib $(L)IPersist -+$(D)IPRSSTNT.obj
+$(L)IPersist.lib :     $(D)ISTTMENT.obj
+   Tlib $(L)IPersist -+$(D)ISTTMENT.obj
+$(L)IPersist.lib :     $(D)LISTA.obj
+   Tlib $(L)IPersist -+$(D)LISTA.obj
+$(L)IPersist.lib :     $(D)IQRYSTTM.obj
+   Tlib $(L)IPersist -+$(D)IQRYSTTM.obj
+$(L)IPersist.lib :     $(D)IPDTSTTM.obj
+   Tlib $(L)IPersist -+$(D)IPDTSTTM.obj
+$(L)IPersist.lib :     $(D)IDLTSTTM.obj
+   Tlib $(L)IPersist -+$(D)IDLTSTTM.obj
+$(L)IPersist.lib :     $(D)IDTSTORE.obj
+   Tlib $(L)IPersist -+$(D)IDTSTORE.obj
+$(L)IPersist.lib :     $(D)IVNTNTFC.obj
+   Tlib $(L)IPersist -+$(D)IVNTNTFC.obj
+$(L)IPersist.lib :     $(D)INTVDTSR.obj
+   Tlib $(L)IPersist -+$(D)INTVDTSR.obj
+$(L)IPersist.lib :     $(D)ITabInfo.obj
+   Tlib $(L)IPersist -+$(D)ITabInfo.obj
+$(L)IPersist.lib :     $(D)ICLCPRSS.obj
+   Tlib $(L)IPersist -+$(D)ICLCPRSS.obj
+$(L)IPersist.lib :     $(D)ICOLECAO.obj
+   Tlib $(L)IPersist -+$(D)ICOLECAO.obj
+$(L)IPersist.lib :     $(D)ICURCLIP.obj
+   Tlib $(L)IPersist -+$(D)ICURCLIP.obj
+$(L)IPersist.lib :     $(D)IASSCCAO.obj
+   Tlib $(L)IPersist -+$(D)IASSCCAO.obj
+$(L)IPersist.lib :     $(D)Utility.obj
+   Tlib $(L)IPersist -+$(D)Utility.obj
+$(L)IPersist.lib :     $(D)IWarning.obj
+   Tlib $(L)IPersist -+$(D)IWarning.obj
+$(L)IPersist.lib :     $(D)ICritrio.obj
+   Tlib $(L)IPersist -+$(D)ICritrio.obj
+$(L)IPersist.lib :     $(D)IOrdem.obj
+   Tlib $(L)IPersist -+$(D)IOrdem.obj
+//$(L)IPersist.lib :     $(D).obj
+//   Tlib $(L)IPersist -+$(D).obj
+
+//##### FUNCOES ESPECIAIS EM "C" PARA PERSISTENCIA #####
+// nao toque, se nao sabe o que esta fazendo!
+
+D=\Docume~1\Projetos\Persis~1\C\\
+
+
+.c.obj:
+   \\DSV\DATA\LANGUAGE\TC\tcc  -c -1 -ml -u -f- -I\\DSV\DATA\LANGUAGE\TC\h -w- -n$(D)  $(D)$*
+
+$(D)Stamp.OBJ   : $(D)Stamp.c
+
+$(L)IPersist.lib :  $(D)Stamp.obj
+   Tlib $(L)IPersist -+$(D)Stamp.obj

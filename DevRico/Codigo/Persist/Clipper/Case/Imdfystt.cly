@@ -1,0 +1,105 @@
+//## begin module.cm preserve=no
+//	  %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IModifyStatement; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\imdfystt.h
+
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+
+// IStatement
+// IPersistID
+
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IModifyStatement
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+
+CREATE CLASS IModifyStatement INHERIT IStatement  //## Inherits: <unnamed>
+PROTECTED:
+   METHOD init
+EXPORT:
+    //## Other Operations (specified)
+      //## Operation: addColunaValor%908596356
+      //	adiciona coluna,valor nas respectivas listas, é apenas
+      //	um facilitador já que usará o AddColuna herdado e
+      //	acessará o theValues[].
+      METHOD addColunaValor
+    //## Get and Set Operations for Has Relationships (generated)
+      //## Documentation IModifyStatement::ID.has
+      //	exigido por Delete e Update e ignorado por Insert
+      METHOD ID
+      METHOD setID
+    // Additional Public Declarations
+      //## begin IModifyStatement.public preserve=yes
+      //## end IModifyStatement.public
+PROTECTED:
+    //## Other Operations (specified)
+      //## Operation: getParteWhereID%908596357
+      //	retorna algo similar a "WHERE ID=345234534" é o id do
+      //	objeto sendo manipulado.
+      METHOD getParteWhereID
+    // Additional Protected Declarations
+      //## begin IModifyStatement.protected preserve=yes
+      //## end IModifyStatement.protected
+HIDDEN:
+    // Data Members for Has Relationships
+
+      //## begin IModifyStatement::ID.has preserve=no  public: IPersistID { -> 1VO}
+      VAR m_ID//IPersistID
+      //## end IModifyStatement::ID.has
+    // Additional Implementation Declarations
+      //## begin IModifyStatement.implementation preserve=yes
+      //## end IModifyStatement.implementation
+END CLASS
+// Class IModifyStatement
+
+
+
+METHOD init(),()
+   ::m_ID := IPersistID():new()
+RETURN self
+
+//IModifyStatement& IModifyStatement::addColunaValor(IString& coluna, IString& valor)
+METHOD addColunaValor(coluna,valor)
+  ::addColuna( coluna )
+  ::theValues():adiciona( valor )
+RETURN self
+
+//IString IModifyStatement::getParteWhereID()
+METHOD getParteWhereID()
+   local PWID
+   //## begin IModifyStatement::getParteWhereID%908596357.body preserve=yes
+   PWID:= " WHERE "
+   PWID+= IBroker():nomeColunaID()
+   PWID+= "="
+   PWID+= ::ID():asString()
+   //## end IModifyStatement::getParteWhereID%908596357.body
+RETURN PWID
+
+//## Get and Set Operations for Has Relationships (implementation)
+
+//IPersistID IModifyStatement::ID()
+METHOD ID()
+RETURN ::m_ID
+
+//void IModifyStatement::setID(const IPersistID value)
+METHOD setID(value)
+   ::m_ID := value
+RETURN self

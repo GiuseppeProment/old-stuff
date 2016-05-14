@@ -1,0 +1,27 @@
+Tipo        bytes
+----------- -----
+Pointer    =4
+Integer    =4
+Cardinal   =4
+Shortint   =1
+Smallint   =2
+Longint    =4
+Int64      =8
+Byte       =1
+Word       =2
+Longword   =4
+AnsiChar   =1
+WideChar   =2
+Char       =1
+Boolean    =1
+Real48     =6
+Single     =4
+Double     =8
+Extended   =10
+Comp       =8
+Currency   =8
+Real       =8
+ShortString=256
+AnsiString =4
+WideString =4
+string     =4

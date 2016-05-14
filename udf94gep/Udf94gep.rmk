@@ -1,0 +1,537 @@
+//***************** N E W C L A S S ******************************************
+
+D=NEWCLASS\\
+
+.prg.obj:
+   clipper $(D)$* /l/n/a/v/dNAOMOUSE/o$(D)
+$(D)NEWCLASS.OBJ  : $(D)NEWCLASS.PRG
+
+udf94gep.lib :  $(D)NEWCLASS.OBJ
+   Tlib udf94gep -+$(D)NEWCLASS.OBJ
+
+//***************** A P P O I N T ********************************************
+
+D=APPOINT\\
+
+.prg.obj:
+   clipper $(D)$* /l/n/a/v/dNAOMOUSE/o$(D)
+$(D)APPOINT.OBJ  : $(D)APPOINT.PRG
+
+udf94gep.lib :  $(D)APPOINT.OBJ
+   Tlib udf94gep -+$(D)APPOINT.OBJ
+
+
+//***************** U S J T **************************************************
+
+D=USJT\\
+
+.prg.obj:
+   clipper $(D)$* /l/n/a/v/dNAOMOUSE/o$(D)
+$(D)BESTOPEN.OBJ  : $(D)BESTOPEN.PRG
+$(D)RANOVO.OBJ    : $(D)RANOVO.PRG
+$(D)RAVELHO.OBJ    : $(D)RAVELHO.PRG
+
+udf94gep.lib :  $(D)BESTOPEN.OBJ
+   Tlib udf94gep -+$(D)BESTOPEN.OBJ
+udf94gep.lib :  $(D)RANOVO.OBJ
+   Tlib udf94gep -+$(D)RANOVO.OBJ
+udf94gep.lib :  $(D)RAVELHO.OBJ
+   Tlib udf94gep -+$(D)RAVELHO.OBJ
+
+//***************** S E A R C H **********************************************
+/*
+
+D=SEARCH\\
+
+.prg.obj:
+   clipper $(D)$* /l/n/a/v/dNAOMOUSE/o$(D)
+$(D)SAYCLIEN.OBJ     : $(D)SAYCLIEN.PRG
+$(D)SAYEMPRE.OBJ     : $(D)SAYEMPRE.PRG
+$(D)SAYESTAC.OBJ     : $(D)SAYESTAC.PRG
+$(D)SAYESTEM.OBJ     : $(D)SAYESTEM.PRG
+$(D)SAYFORNE.OBJ     : $(D)SAYFORNE.PRG
+$(D)SAYGRCON.OBJ     : $(D)SAYGRCON.PRG
+$(D)SAYINDEC.OBJ     : $(D)SAYINDEC.PRG
+$(D)SAYCOMIS.OBJ     : $(D)SAYCOMIS.PRG
+$(D)SCIDADE.OBJ      : $(D)SCIDADE.PRG
+$(D)SCLIENTE.OBJ     : $(D)SCLIENTE.PRG
+$(D)SCLIXCON.OBJ     : $(D)SCLIXCON.PRG
+$(D)SCONXCLI.OBJ     : $(D)SCONXCLI.PRG
+$(D)SCOMISS.OBJ      : $(D)SCOMISS.PRG
+$(D)SEMPRESA.OBJ     : $(D)SEMPRESA.PRG
+$(D)SESTACLI.OBJ     : $(D)SESTACLI.PRG
+$(D)SESTEMP.OBJ      : $(D)SESTEMP.PRG
+$(D)SFORNECE.OBJ     : $(D)SFORNECE.PRG
+$(D)SFUNC.OBJ     : $(D)SFUNC.PRG
+$(D)SGRCONPG.OBJ     : $(D)SGRCONPG.PRG
+$(D)SINDECON.OBJ     : $(D)SINDECON.PRG
+$(D)SMAT.OBJ      : $(D)SMAT.PRG
+$(D)SMEDMADE.OBJ     : $(D)SMEDMADE.PRG
+$(D)SNFVENDA.OBJ     : $(D)SNFVENDA.PRG
+$(D)SPEDSERV.OBJ     : $(D)SPEDSERV.PRG
+$(D)SPEDVEND.OBJ     : $(D)SPEDVEND.PRG
+$(D)SSERC.OBJ     : $(D)SSERC.PRG
+$(D)SSERV.OBJ     : $(D)SSERV.PRG
+$(D)STIPOMAD.OBJ     : $(D)STIPOMAD.PRG
+$(D)SUF.OBJ    : $(D)SUF.PRG
+
+udf94gep.lib :  $(D)SAYCLIEN.OBJ
+   Tlib udf94gep -+$(D)SAYCLIEN.OBJ
+udf94gep.lib : $(D)SAYCLIEN.OBJ
+   Tlib udf94gep -+$(D)SAYCLIEN.OBJ
+udf94gep.lib : $(D)SAYEMPRE.OBJ
+   Tlib udf94gep -+$(D)SAYEMPRE.OBJ
+udf94gep.lib : $(D)SAYESTAC.OBJ
+   Tlib udf94gep -+$(D)SAYESTAC.OBJ
+udf94gep.lib : $(D)SAYESTEM.OBJ
+   Tlib udf94gep -+$(D)SAYESTEM.OBJ
+udf94gep.lib : $(D)SAYFORNE.OBJ
+   Tlib udf94gep -+$(D)SAYFORNE.OBJ
+udf94gep.lib : $(D)SAYGRCON.OBJ
+   Tlib udf94gep -+$(D)SAYGRCON.OBJ
+udf94gep.lib : $(D)SAYINDEC.OBJ
+   Tlib udf94gep -+$(D)SAYINDEC.OBJ
+udf94gep.lib : $(D)SAYCOMIS.OBJ
+   Tlib udf94gep -+$(D)SAYCOMIS.OBJ
+udf94gep.lib : $(D)SCIDADE.OBJ
+   Tlib udf94gep -+$(D)SCIDADE.OBJ
+udf94gep.lib : $(D)SCLIENTE.OBJ
+   Tlib udf94gep -+$(D)SCLIENTE.OBJ
+udf94gep.lib : $(D)SCLIXCON.OBJ
+   Tlib udf94gep -+$(D)SCLIXCON.OBJ
+udf94gep.lib : $(D)SCONXCLI.OBJ
+   Tlib udf94gep -+$(D)SCONXCLI.OBJ
+udf94gep.lib : $(D)SCOMISS.OBJ
+   Tlib udf94gep -+$(D)SCOMISS.OBJ
+udf94gep.lib : $(D)SEMPRESA.OBJ
+   Tlib udf94gep -+$(D)SEMPRESA.OBJ
+udf94gep.lib : $(D)SESTACLI.OBJ
+   Tlib udf94gep -+$(D)SESTACLI.OBJ
+udf94gep.lib : $(D)SESTEMP.OBJ
+   Tlib udf94gep -+$(D)SESTEMP.OBJ
+udf94gep.lib : $(D)SFORNECE.OBJ
+   Tlib udf94gep -+$(D)SFORNECE.OBJ
+udf94gep.lib : $(D)SFUNC.OBJ
+   Tlib udf94gep -+$(D)SFUNC.OBJ
+udf94gep.lib : $(D)SGRCONPG.OBJ
+   Tlib udf94gep -+$(D)SGRCONPG.OBJ
+udf94gep.lib : $(D)SINDECON.OBJ
+   Tlib udf94gep -+$(D)SINDECON.OBJ
+udf94gep.lib : $(D)SMAT.OBJ
+   Tlib udf94gep -+$(D)SMAT.OBJ
+udf94gep.lib : $(D)SMEDMADE.OBJ
+   Tlib udf94gep -+$(D)SMEDMADE.OBJ
+udf94gep.lib : $(D)SNFVENDA.OBJ
+   Tlib udf94gep -+$(D)SNFVENDA.OBJ
+udf94gep.lib : $(D)SPEDSERV.OBJ
+   Tlib udf94gep -+$(D)SPEDSERV.OBJ
+udf94gep.lib : $(D)SPEDVEND.OBJ
+   Tlib udf94gep -+$(D)SPEDVEND.OBJ
+udf94gep.lib : $(D)SSERC.OBJ
+   Tlib udf94gep -+$(D)SSERC.OBJ
+udf94gep.lib : $(D)SSERV.OBJ
+   Tlib udf94gep -+$(D)SSERV.OBJ
+udf94gep.lib : $(D)STIPOMAD.OBJ
+   Tlib udf94gep -+$(D)STIPOMAD.OBJ
+udf94gep.lib : $(D)SUF.OBJ
+   Tlib udf94gep -+$(D)SUF.OBJ
+
+*/
+
+
+//***************** O U T R O S **********************************************
+
+/*
+
+D=OUTROS\\
+
+.prg.obj:
+   clipper $(D)$* /l/n/a/v/dNAOMOUSE/o$(D)
+$(D)BAIXAEST.OBJ  : $(D)BAIXAEST.PRG
+$(D)CORRIGE.OBJ   : $(D)CORRIGE.PRG
+$(D)DESCMADE.OBJ  : $(D)DESCMADE.PRG
+$(D)DESCMEDI.OBJ  : $(D)DESCMEDI.PRG
+$(D)DESEMPEN.OBJ  : $(D)DESEMPEN.PRG
+$(D)EMPENHAE.OBJ  : $(D)EMPENHAE.PRG
+$(D)EXTBXEST.OBJ  : $(D)EXTBXEST.PRG
+$(D)GDEBCRED.OBJ  : $(D)GDEBCRED.PRG
+$(D)GERACOD.OBJ   : $(D)GERACOD.PRG
+$(D)GETCONDP.OBJ  : $(D)GETCONDP.PRG
+$(D)GEVENPGT.OBJ  : $(D)GEVENPGT.PRG
+$(D)GFRETPGT.OBJ  : $(D)GFRETPGT.PRG
+$(D)GLOCALIZ.OBJ  : $(D)GLOCALIZ.PRG
+$(D)GMEDICAO.OBJ  : $(D)GMEDICAO.PRG
+$(D)GMODOFAT.OBJ  : $(D)GMODOFAT.PRG
+$(D)GNATOPE.OBJ   : $(D)GNATOPE.PRG
+$(D)GORIGEM.OBJ   : $(D)GORIGEM.PRG
+$(D)GSIMNAO.OBJ   : $(D)GSIMNAO.PRG
+$(D)GSTATCOM.OBJ  : $(D)GSTATCOM.PRG
+$(D)GSTATUS.OBJ   : $(D)GSTATUS.PRG
+$(D)GTIPCONT.OBJ  : $(D)GTIPCONT.PRG
+$(D)GVIATRAN.OBJ  : $(D)GVIATRAN.PRG
+$(D)MESANTER.OBJ  : $(D)MESANTER.PRG
+$(D)MONTAMED.OBJ  : $(D)MONTAMED.PRG
+$(D)NOMEMAT.OBJ   : $(D)NOMEMAT.PRG
+$(D)PROXIMOM.OBJ  : $(D)PROXIMOM.PRG
+$(D)SCONDPGT.OBJ  : $(D)SCONDPGT.PRG
+$(D)SDEBCRED.OBJ  : $(D)SDEBCRED.PRG
+$(D)SEVENPGT.OBJ  : $(D)SEVENPGT.PRG
+$(D)SFRETPGT.OBJ  : $(D)SFRETPGT.PRG
+$(D)SLOCALIZ.OBJ  : $(D)SLOCALIZ.PRG
+$(D)SMEDICAO.OBJ  : $(D)SMEDICAO.PRG
+$(D)SMODOFAT.OBJ  : $(D)SMODOFAT.PRG
+$(D)SNATOPE.OBJ   : $(D)SNATOPE.PRG
+$(D)SORIGEM.OBJ   : $(D)SORIGEM.PRG
+$(D)SSIMNAO.OBJ   : $(D)SSIMNAO.PRG
+$(D)STDUPARE.OBJ  : $(D)STDUPARE.PRG
+$(D)STIPCONT.OBJ  : $(D)STIPCONT.PRG
+$(D)SVIATRAN.OBJ  : $(D)SVIATRAN.PRG
+
+
+udf94gep.lib :   $(D)BAIXAEST.OBJ
+    Tlib udf94gep -+$(D)BAIXAEST.OBJ
+udf94gep.lib :   $(D)CORRIGE.OBJ
+    Tlib udf94gep -+$(D)CORRIGE.OBJ
+udf94gep.lib :   $(D)DESCMADE.OBJ
+    Tlib udf94gep -+$(D)DESCMADE.OBJ
+udf94gep.lib :   $(D)DESCMEDI.OBJ
+    Tlib udf94gep -+$(D)DESCMEDI.OBJ
+udf94gep.lib :   $(D)DESEMPEN.OBJ
+    Tlib udf94gep -+$(D)DESEMPEN.OBJ
+udf94gep.lib :   $(D)EMPENHAE.OBJ
+    Tlib udf94gep -+$(D)EMPENHAE.OBJ
+udf94gep.lib :   $(D)EXTBXEST.OBJ
+    Tlib udf94gep -+$(D)EXTBXEST.OBJ
+udf94gep.lib :   $(D)GDEBCRED.OBJ
+    Tlib udf94gep -+$(D)GDEBCRED.OBJ
+udf94gep.lib :   $(D)GERACOD.OBJ
+    Tlib udf94gep -+$(D)GERACOD.OBJ
+udf94gep.lib :   $(D)GETCONDP.OBJ
+    Tlib udf94gep -+$(D)GETCONDP.OBJ
+udf94gep.lib :   $(D)GEVENPGT.OBJ
+    Tlib udf94gep -+$(D)GEVENPGT.OBJ
+udf94gep.lib :   $(D)GFRETPGT.OBJ
+    Tlib udf94gep -+$(D)GFRETPGT.OBJ
+udf94gep.lib :   $(D)GLOCALIZ.OBJ
+    Tlib udf94gep -+$(D)GLOCALIZ.OBJ
+udf94gep.lib :   $(D)GMEDICAO.OBJ
+    Tlib udf94gep -+$(D)GMEDICAO.OBJ
+udf94gep.lib :   $(D)GMODOFAT.OBJ
+    Tlib udf94gep -+$(D)GMODOFAT.OBJ
+udf94gep.lib :   $(D)GNATOPE.OBJ
+    Tlib udf94gep -+$(D)GNATOPE.OBJ
+udf94gep.lib :   $(D)GORIGEM.OBJ
+    Tlib udf94gep -+$(D)GORIGEM.OBJ
+udf94gep.lib :   $(D)GSIMNAO.OBJ
+    Tlib udf94gep -+$(D)GSIMNAO.OBJ
+udf94gep.lib :   $(D)GSTATCOM.OBJ
+    Tlib udf94gep -+$(D)GSTATCOM.OBJ
+udf94gep.lib :   $(D)GSTATUS.OBJ
+    Tlib udf94gep -+$(D)GSTATUS.OBJ
+udf94gep.lib :   $(D)GTIPCONT.OBJ
+    Tlib udf94gep -+$(D)GTIPCONT.OBJ
+udf94gep.lib :   $(D)GVIATRAN.OBJ
+    Tlib udf94gep -+$(D)GVIATRAN.OBJ
+udf94gep.lib :   $(D)MESANTER.OBJ
+    Tlib udf94gep -+$(D)MESANTER.OBJ
+udf94gep.lib :   $(D)MONTAMED.OBJ
+    Tlib udf94gep -+$(D)MONTAMED.OBJ
+udf94gep.lib :   $(D)NOMEMAT.OBJ
+    Tlib udf94gep -+$(D)NOMEMAT.OBJ
+udf94gep.lib :   $(D)PROXIMOM.OBJ
+    Tlib udf94gep -+$(D)PROXIMOM.OBJ
+udf94gep.lib :   $(D)SCONDPGT.OBJ
+    Tlib udf94gep -+$(D)SCONDPGT.OBJ
+udf94gep.lib :   $(D)SDEBCRED.OBJ
+    Tlib udf94gep -+$(D)SDEBCRED.OBJ
+udf94gep.lib :   $(D)SEVENPGT.OBJ
+    Tlib udf94gep -+$(D)SEVENPGT.OBJ
+udf94gep.lib :   $(D)SFRETPGT.OBJ
+    Tlib udf94gep -+$(D)SFRETPGT.OBJ
+udf94gep.lib :   $(D)SLOCALIZ.OBJ
+    Tlib udf94gep -+$(D)SLOCALIZ.OBJ
+udf94gep.lib :   $(D)SMEDICAO.OBJ
+    Tlib udf94gep -+$(D)SMEDICAO.OBJ
+udf94gep.lib :   $(D)SMODOFAT.OBJ
+    Tlib udf94gep -+$(D)SMODOFAT.OBJ
+udf94gep.lib :   $(D)SNATOPE.OBJ
+    Tlib udf94gep -+$(D)SNATOPE.OBJ
+udf94gep.lib :   $(D)SORIGEM.OBJ
+    Tlib udf94gep -+$(D)SORIGEM.OBJ
+udf94gep.lib :   $(D)SSIMNAO.OBJ
+    Tlib udf94gep -+$(D)SSIMNAO.OBJ
+udf94gep.lib :   $(D)STDUPARE.OBJ
+    Tlib udf94gep -+$(D)STDUPARE.OBJ
+udf94gep.lib :   $(D)STIPCONT.OBJ
+    Tlib udf94gep -+$(D)STIPCONT.OBJ
+udf94gep.lib :   $(D)SVIATRAN.OBJ
+    Tlib udf94gep -+$(D)SVIATRAN.OBJ
+
+*/
+
+//***************** U D F  93 ************************************************
+
+D=UDF93\\
+
+.prg.obj:
+   clipper $(D)$* /l/n/a/v/dNAOMOUSE/o$(D)
+$(D)ALIST.OBJ         : $(D)ALIST.PRG
+$(D)BANKUSE.OBJ       : $(D)BANKUSE.PRG
+$(D)BORDAMOU.OBJ      : $(D)BORDAMOU.PRG
+$(D)BOXFRAME.OBJ      : $(D)BOXFRAME.PRG
+$(D)CENTRA.OBJ        : $(D)CENTRA.PRG
+$(D)CGCCPFCH.OBJ      : $(D)CGCCPFCH.PRG
+$(D)CLSTELA.OBJ       : $(D)CLSTELA.PRG
+$(D)CODUNID.OBJ       : $(D)CODUNID.PRG
+$(D)CONFIRMA.OBJ      : $(D)CONFIRMA.PRG
+$(D)CONFNEWS.OBJ      : $(D)CONFNEWS.PRG
+$(D)CORESCTR.OBJ      : $(D)CORESCTR.PRG
+$(D)CORGET.OBJ        : $(D)CORGET.PRG
+$(D)DBPOSITI.OBJ      : $(D)DBPOSITI.PRG
+$(D)DEFDIREI.OBJ      : $(D)DEFDIREI.PRG
+$(D)DESCUNID.OBJ      : $(D)DESCUNID.PRG
+$(D)DESCUNIR.OBJ      : $(D)DESCUNIR.PRG
+$(D)DEXTENSO.OBJ      : $(D)DEXTENSO.PRG
+$(D)ENTRYWIN.OBJ      : $(D)ENTRYWIN.PRG
+$(D)EQUALIZA.OBJ      : $(D)EQUALIZA.PRG
+$(D)EVENBEEP.OBJ      : $(D)EVENBEEP.PRG
+$(D)EXTENSOV.OBJ      : $(D)EXTENSOV.PRG
+$(D)GIRO.OBJ          : $(D)GIRO.PRG
+$(D)LOCKS.OBJ         : $(D)LOCKS.PRG
+$(D)LOGRAD.OBJ        : $(D)LOGRAD.PRG
+$(D)MASTERHE.OBJ      : $(D)MASTERHE.PRG
+$(D)MATAITEM.OBJ      : $(D)MATAITEM.PRG
+$(D)MEMOPLUS.OBJ      : $(D)MEMOPLUS.PRG
+$(D)MENSINFO.OBJ      : $(D)MENSINFO.PRG
+$(D)MENUMODA.OBJ      : $(D)MENUMODA.PRG
+$(D)MENUMOUB.OBJ      : $(D)MENUMOUB.PRG
+$(D)MENUMOUS.OBJ      : $(D)MENUMOUS.PRG
+$(D)MENUNEW.OBJ       : $(D)MENUNEW.PRG
+$(D)MENU_VER.OBJ      : $(D)MENU_VER.PRG
+$(D)MOUSEWIN.OBJ      : $(D)MOUSEWIN.PRG
+$(D)MOUWINBO.OBJ      : $(D)MOUWINBO.PRG
+$(D)MSG.OBJ           : $(D)MSG.PRG
+$(D)MSGWAIT.OBJ       : $(D)MSGWAIT.PRG
+$(D)MSG_LOW.OBJ       : $(D)MSG_LOW.PRG
+$(D)NFILTER.OBJ       : $(D)NFILTER.PRG
+$(D)NOMETEMP.OBJ      : $(D)NOMETEMP.PRG
+$(D)NOT_EMPT.OBJ      : $(D)NOT_EMPT.PRG
+$(D)PODE_RIG.OBJ      : $(D)PODE_RIG.PRG
+$(D)POSI_DIR.OBJ      : $(D)POSI_DIR.PRG
+$(D)P_AVANCE.OBJ      : $(D)P_AVANCE.PRG
+$(D)P_CONDEN.OBJ      : $(D)P_CONDEN.PRG
+$(D)P_CONF.OBJ        : $(D)P_CONF.PRG
+$(D)P_DOUBHI.OBJ      : $(D)P_DOUBHI.PRG
+$(D)P_DOUBWI.OBJ      : $(D)P_DOUBWI.PRG
+$(D)P_DRAFT.OBJ       : $(D)P_DRAFT.PRG
+$(D)P_ENFA.OBJ        : $(D)P_ENFA.PRG
+$(D)P_EXPCON.OBJ      : $(D)P_EXPCON.PRG
+$(D)P_EXPLIN.OBJ      : $(D)P_EXPLIN.PRG
+$(D)P_FFEED.OBJ       : $(D)P_FFEED.PRG
+$(D)P_INIPRI.OBJ      : $(D)P_INIPRI.PRG
+$(D)P_ITALIC.OBJ      : $(D)P_ITALIC.PRG
+$(D)P_LFEED.OBJ       : $(D)P_LFEED.PRG
+$(D)P_NEARLE.OBJ      : $(D)P_NEARLE.PRG
+$(D)P_ROMAN.OBJ       : $(D)P_ROMAN.PRG
+$(D)P_SANSER.OBJ      : $(D)P_SANSER.PRG
+$(D)P_SEL10C.OBJ      : $(D)P_SEL10C.PRG
+$(D)P_SEL12C.OBJ      : $(D)P_SEL12C.PRG
+$(D)P_SEL1_6.OBJ      : $(D)P_SEL1_6.PRG
+$(D)P_SEL1_8.OBJ      : $(D)P_SEL1_8.PRG
+$(D)P_SEL7_7.OBJ      : $(D)P_SEL7_7.PRG
+$(D)P_SELN_2.OBJ      : $(D)P_SELN_2.PRG
+$(D)P_SELN_7.OBJ      : $(D)P_SELN_7.PRG
+$(D)P_SUBLIN.OBJ      : $(D)P_SUBLIN.PRG
+$(D)P_SUBSCR.OBJ      : $(D)P_SUBSCR.PRG
+$(D)P_SUPERS.OBJ      : $(D)P_SUPERS.PRG
+$(D)P_UNIDIR.OBJ      : $(D)P_UNIDIR.PRG
+$(D)RELPADRA.OBJ      : $(D)RELPADRA.PRG
+$(D)SAVERS.OBJ        : $(D)SAVERS.PRG
+$(D)SOMADIAU.OBJ      : $(D)SOMADIAU.PRG
+$(D)STDKEY.OBJ        : $(D)STDKEY.PRG
+$(D)TABDISPL.OBJ      : $(D)TABDISPL.PRG
+$(D)TABMODAL.OBJ      : $(D)TABMODAL.PRG
+$(D)TABNEW.OBJ        : $(D)TABNEW.PRG
+$(D)TBSUP1.OBJ        : $(D)TBSUP1.PRG
+$(D)TBSUP2.OBJ        : $(D)TBSUP2.PRG
+$(D)TBSUP3.OBJ        : $(D)TBSUP3.PRG
+$(D)TELA_PAD.OBJ      : $(D)TELA_PAD.PRG
+$(D)TITULO.OBJ        : $(D)TITULO.PRG
+$(D)UD_FUNA.OBJ       : $(D)UD_FUNA.PRG
+$(D)WHATCOLO.OBJ      : $(D)WHATCOLO.PRG
+$(D)WINBROWS.OBJ      : $(D)WINBROWS.PRG
+$(D)WINDOWFR.OBJ      : $(D)WINDOWFR.PRG
+
+udf94gep.lib :   $(D)ALIST.OBJ
+    Tlib udf94gep -+$(D)ALIST.OBJ
+udf94gep.lib :   $(D)BANKUSE.OBJ
+    Tlib udf94gep -+$(D)BANKUSE.OBJ
+udf94gep.lib :   $(D)BORDAMOU.OBJ
+    Tlib udf94gep -+$(D)BORDAMOU.OBJ
+udf94gep.lib :   $(D)BOXFRAME.OBJ
+    Tlib udf94gep -+$(D)BOXFRAME.OBJ
+udf94gep.lib :   $(D)CENTRA.OBJ
+    Tlib udf94gep -+$(D)CENTRA.OBJ
+udf94gep.lib :   $(D)CGCCPFCH.OBJ
+    Tlib udf94gep -+$(D)CGCCPFCH.OBJ
+udf94gep.lib :   $(D)CLSTELA.OBJ
+    Tlib udf94gep -+$(D)CLSTELA.OBJ
+udf94gep.lib :   $(D)CODUNID.OBJ
+    Tlib udf94gep -+$(D)CODUNID.OBJ
+udf94gep.lib :   $(D)CONFIRMA.OBJ
+    Tlib udf94gep -+$(D)CONFIRMA.OBJ
+udf94gep.lib :   $(D)CONFNEWS.OBJ
+    Tlib udf94gep -+$(D)CONFNEWS.OBJ
+udf94gep.lib :   $(D)CORESCTR.OBJ
+    Tlib udf94gep -+$(D)CORESCTR.OBJ
+udf94gep.lib :   $(D)CORGET.OBJ
+    Tlib udf94gep -+$(D)CORGET.OBJ
+udf94gep.lib :   $(D)DBPOSITI.OBJ
+    Tlib udf94gep -+$(D)DBPOSITI.OBJ
+udf94gep.lib :   $(D)DEFDIREI.OBJ
+    Tlib udf94gep -+$(D)DEFDIREI.OBJ
+udf94gep.lib :   $(D)DESCUNID.OBJ
+    Tlib udf94gep -+$(D)DESCUNID.OBJ
+udf94gep.lib :   $(D)DESCUNIR.OBJ
+    Tlib udf94gep -+$(D)DESCUNIR.OBJ
+udf94gep.lib :   $(D)DEXTENSO.OBJ
+    Tlib udf94gep -+$(D)DEXTENSO.OBJ
+udf94gep.lib :   $(D)ENTRYWIN.OBJ
+    Tlib udf94gep -+$(D)ENTRYWIN.OBJ
+udf94gep.lib :   $(D)EQUALIZA.OBJ
+    Tlib udf94gep -+$(D)EQUALIZA.OBJ
+udf94gep.lib :   $(D)EVENBEEP.OBJ
+    Tlib udf94gep -+$(D)EVENBEEP.OBJ
+udf94gep.lib :   $(D)EXTENSOV.OBJ
+    Tlib udf94gep -+$(D)EXTENSOV.OBJ
+udf94gep.lib :   $(D)GIRO.OBJ
+    Tlib udf94gep -+$(D)GIRO.OBJ
+udf94gep.lib :   $(D)LOCKS.OBJ
+    Tlib udf94gep -+$(D)LOCKS.OBJ
+udf94gep.lib :   $(D)LOGRAD.OBJ
+    Tlib udf94gep -+$(D)LOGRAD.OBJ
+udf94gep.lib :   $(D)MASTERHE.OBJ
+    Tlib udf94gep -+$(D)MASTERHE.OBJ
+udf94gep.lib :   $(D)MATAITEM.OBJ
+    Tlib udf94gep -+$(D)MATAITEM.OBJ
+udf94gep.lib :   $(D)MEMOPLUS.OBJ
+    Tlib udf94gep -+$(D)MEMOPLUS.OBJ
+udf94gep.lib :   $(D)MENSINFO.OBJ
+    Tlib udf94gep -+$(D)MENSINFO.OBJ
+udf94gep.lib :   $(D)MENUMODA.OBJ
+    Tlib udf94gep -+$(D)MENUMODA.OBJ
+udf94gep.lib :   $(D)MENUMOUB.OBJ
+    Tlib udf94gep -+$(D)MENUMOUB.OBJ
+udf94gep.lib :   $(D)MENUMOUS.OBJ
+    Tlib udf94gep -+$(D)MENUMOUS.OBJ
+udf94gep.lib :   $(D)MENUNEW.OBJ
+    Tlib udf94gep -+$(D)MENUNEW.OBJ
+udf94gep.lib :   $(D)MENU_VER.OBJ
+    Tlib udf94gep -+$(D)MENU_VER.OBJ
+udf94gep.lib :   $(D)MOUSEWIN.OBJ
+    Tlib udf94gep -+$(D)MOUSEWIN.OBJ
+udf94gep.lib :   $(D)MOUWINBO.OBJ
+    Tlib udf94gep -+$(D)MOUWINBO.OBJ
+udf94gep.lib :   $(D)MSG.OBJ
+    Tlib udf94gep -+$(D)MSG.OBJ
+udf94gep.lib :   $(D)MSGWAIT.OBJ
+    Tlib udf94gep -+$(D)MSGWAIT.OBJ
+udf94gep.lib :   $(D)MSG_LOW.OBJ
+    Tlib udf94gep -+$(D)MSG_LOW.OBJ
+udf94gep.lib :   $(D)NFILTER.OBJ
+    Tlib udf94gep -+$(D)NFILTER.OBJ
+udf94gep.lib :   $(D)NOMETEMP.OBJ
+    Tlib udf94gep -+$(D)NOMETEMP.OBJ
+udf94gep.lib :   $(D)NOT_EMPT.OBJ
+    Tlib udf94gep -+$(D)NOT_EMPT.OBJ
+udf94gep.lib :   $(D)PODE_RIG.OBJ
+    Tlib udf94gep -+$(D)PODE_RIG.OBJ
+udf94gep.lib :   $(D)POSI_DIR.OBJ
+    Tlib udf94gep -+$(D)POSI_DIR.OBJ
+udf94gep.lib :   $(D)P_AVANCE.OBJ
+    Tlib udf94gep -+$(D)P_AVANCE.OBJ
+udf94gep.lib :   $(D)P_CONDEN.OBJ
+    Tlib udf94gep -+$(D)P_CONDEN.OBJ
+udf94gep.lib :   $(D)P_CONF.OBJ
+    Tlib udf94gep -+$(D)P_CONF.OBJ
+udf94gep.lib :   $(D)P_DOUBHI.OBJ
+    Tlib udf94gep -+$(D)P_DOUBHI.OBJ
+udf94gep.lib :   $(D)P_DOUBWI.OBJ
+    Tlib udf94gep -+$(D)P_DOUBWI.OBJ
+udf94gep.lib :   $(D)P_DRAFT.OBJ
+    Tlib udf94gep -+$(D)P_DRAFT.OBJ
+udf94gep.lib :   $(D)P_ENFA.OBJ
+    Tlib udf94gep -+$(D)P_ENFA.OBJ
+udf94gep.lib :   $(D)P_EXPCON.OBJ
+    Tlib udf94gep -+$(D)P_EXPCON.OBJ
+udf94gep.lib :   $(D)P_EXPLIN.OBJ
+    Tlib udf94gep -+$(D)P_EXPLIN.OBJ
+udf94gep.lib :   $(D)P_FFEED.OBJ
+    Tlib udf94gep -+$(D)P_FFEED.OBJ
+udf94gep.lib :   $(D)P_INIPRI.OBJ
+    Tlib udf94gep -+$(D)P_INIPRI.OBJ
+udf94gep.lib :   $(D)P_ITALIC.OBJ
+    Tlib udf94gep -+$(D)P_ITALIC.OBJ
+udf94gep.lib :   $(D)P_LFEED.OBJ
+    Tlib udf94gep -+$(D)P_LFEED.OBJ
+udf94gep.lib :   $(D)P_NEARLE.OBJ
+    Tlib udf94gep -+$(D)P_NEARLE.OBJ
+udf94gep.lib :   $(D)P_ROMAN.OBJ
+    Tlib udf94gep -+$(D)P_ROMAN.OBJ
+udf94gep.lib :   $(D)P_SANSER.OBJ
+    Tlib udf94gep -+$(D)P_SANSER.OBJ
+udf94gep.lib :   $(D)P_SEL10C.OBJ
+    Tlib udf94gep -+$(D)P_SEL10C.OBJ
+udf94gep.lib :   $(D)P_SEL12C.OBJ
+    Tlib udf94gep -+$(D)P_SEL12C.OBJ
+udf94gep.lib :   $(D)P_SEL1_6.OBJ
+    Tlib udf94gep -+$(D)P_SEL1_6.OBJ
+udf94gep.lib :   $(D)P_SEL1_8.OBJ
+    Tlib udf94gep -+$(D)P_SEL1_8.OBJ
+udf94gep.lib :   $(D)P_SEL7_7.OBJ
+    Tlib udf94gep -+$(D)P_SEL7_7.OBJ
+udf94gep.lib :   $(D)P_SELN_2.OBJ
+    Tlib udf94gep -+$(D)P_SELN_2.OBJ
+udf94gep.lib :   $(D)P_SELN_7.OBJ
+    Tlib udf94gep -+$(D)P_SELN_7.OBJ
+udf94gep.lib :   $(D)P_SUBLIN.OBJ
+    Tlib udf94gep -+$(D)P_SUBLIN.OBJ
+udf94gep.lib :   $(D)P_SUBSCR.OBJ
+    Tlib udf94gep -+$(D)P_SUBSCR.OBJ
+udf94gep.lib :   $(D)P_SUPERS.OBJ
+    Tlib udf94gep -+$(D)P_SUPERS.OBJ
+udf94gep.lib :   $(D)P_UNIDIR.OBJ
+    Tlib udf94gep -+$(D)P_UNIDIR.OBJ
+udf94gep.lib :   $(D)RELPADRA.OBJ
+    Tlib udf94gep -+$(D)RELPADRA.OBJ
+udf94gep.lib :   $(D)SAVERS.OBJ
+    Tlib udf94gep -+$(D)SAVERS.OBJ
+udf94gep.lib :   $(D)SOMADIAU.OBJ
+    Tlib udf94gep -+$(D)SOMADIAU.OBJ
+udf94gep.lib :   $(D)STDKEY.OBJ
+    Tlib udf94gep -+$(D)STDKEY.OBJ
+udf94gep.lib :   $(D)TABDISPL.OBJ
+    Tlib udf94gep -+$(D)TABDISPL.OBJ
+udf94gep.lib :   $(D)TABMODAL.OBJ
+    Tlib udf94gep -+$(D)TABMODAL.OBJ
+udf94gep.lib :   $(D)TABNEW.OBJ
+    Tlib udf94gep -+$(D)TABNEW.OBJ
+udf94gep.lib :   $(D)TBSUP1.OBJ
+    Tlib udf94gep -+$(D)TBSUP1.OBJ
+udf94gep.lib :   $(D)TBSUP2.OBJ
+    Tlib udf94gep -+$(D)TBSUP2.OBJ
+udf94gep.lib :   $(D)TBSUP3.OBJ
+    Tlib udf94gep -+$(D)TBSUP3.OBJ
+udf94gep.lib :   $(D)TELA_PAD.OBJ
+    Tlib udf94gep -+$(D)TELA_PAD.OBJ
+udf94gep.lib :   $(D)TITULO.OBJ
+    Tlib udf94gep -+$(D)TITULO.OBJ
+udf94gep.lib :   $(D)UD_FUNA.OBJ
+    Tlib udf94gep -+$(D)UD_FUNA.OBJ
+udf94gep.lib :   $(D)WHATCOLO.OBJ
+    Tlib udf94gep -+$(D)WHATCOLO.OBJ
+udf94gep.lib :   $(D)WINBROWS.OBJ
+    Tlib udf94gep -+$(D)WINBROWS.OBJ
+udf94gep.lib :   $(D)WINDOWFR.OBJ
+    Tlib udf94gep -+$(D)WINDOWFR.OBJ
+

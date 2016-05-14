@@ -1,0 +1,15 @@
+[Linker Error] Unresolved external -'IErro::textError()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBDataStoreODBC.cpp.
+[Linker Error] Unresolved external -'IDataStore::setsenha(const IString)' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBDataStoreODBC.cpp.
+[Linker Error] Unresolved external -'IDataStoreODBC::~IDataStoreODBC()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBDataStoreODBC.cpp.
+[Linker Error] Unresolved external -'IBroker::removeDataStore(IDataStore&)' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBDataStoreODBC.cpp.
+[Linker Error] Unresolved external -'IColecaoPersistenteBase::~IColecaoPersistenteBase()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBColecao.CPP.
+[Linker Error] Unresolved external -'IObservador::~IObservador()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBColecao.CPP.
+[Linker Error] Unresolved external -'IQueryStatement::~IQueryStatement()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBColecao.CPP.
+[Linker Error] Unresolved external -'IStatement::~IStatement()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBColecao.CPP.
+[Linker Error] Unresolved external -'IColecao<Cadastro>::~IColecao<Cadastro>()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBColecao.CPP.
+[Linker Error] Unresolved external -'IColecao<Pessoa>::~IColecao<Pessoa>()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBColecao.CPP.
+[Linker Error] Unresolved external -'IColecao<Titulo>::~IColecao<Titulo>()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBColecao.CPP.
+[Linker Error] Unresolved external -'IDataStoreOracleActivex::nomeDb()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\IBDataStoreOracleActivex.cpp.
+[Linker Error] Unresolved external -'IClassMap::getMapaFor(IPersistente&)' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\TelaEditorLista.cpp.
+[Linker Error] Unresolved external -'IMapAtrColuna::nomeMembro()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\TelaEditorLista.cpp.
+[Linker Error] Unresolved external 'IMapClassTable::ListaAtributos()' referenced from F:\FERRAMENTAS\CBUILDER4\PROJECTS\LIB\ICOMPONENTES.LIB|G:\DevRico\Codigo\Persist\Comp_C\TelaEditorLista.cpp.

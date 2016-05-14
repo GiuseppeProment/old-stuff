@@ -1,0 +1,61 @@
+//## begin module.cm preserve=no
+//   %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IDeleteStatement; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\idltsttm.h
+
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+
+// IModifyStatement
+
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IDeleteStatement
+// DELETE <tabela>
+// WHERE [ CURRENT OF <cursorName> | where_clausula ]
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+
+CREATE CLASS IDeleteStatement INHERIT IModifyStatement //## Inherits: <unnamed>
+PROTECTED:
+   METHOD init
+EXPORT:
+   //## Other Operations (specified)
+   //## Operation: asSentencaSQL%908596362
+   METHOD asSentencaSQL
+   // Additional Public Declarations
+   //## begin IDeleteStatement.public preserve=yes
+   //## end IDeleteStatement.public
+END CLASS
+// Class IDeleteStatement
+
+METHOD init(),()
+RETURN self
+
+//## Other Operations (implementation)
+//IString IDeleteStatement::asSentencaSQL()
+METHOD asSentencaSQL()
+   local Sentenca,i
+   //## begin IDeleteStatement::asSentencaSQL%908596362.body preserve=yes
+   Sentenca:="DELETE FROM "
+   Sentenca+= ::tabelaAlvo()
+   // parte where
+   Sentenca += ::getParteWhereID()
+   //## end IDeleteStatement::asSentencaSQL%908596362.body
+RETURN Sentenca

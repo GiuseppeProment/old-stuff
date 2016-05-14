@@ -1,0 +1,6 @@
+FUNCTION SayCliente(nCliente)
+	Local nOrder1 := Cliente->(IndexOrd())
+	Cliente->(DbSetOrder(1))
+	Cliente->(DbSeek(nCliente))
+	Cliente->(DbSetOrder(nOrder1))
+	Return If(Cliente->(Found()),Cliente->ClDescr," NAO EXISTE ")

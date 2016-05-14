@@ -1,0 +1,179 @@
+//## begin module.cm preserve=no
+//   %X% %Q% %Z% %W%
+//## end module.cm
+
+//## begin module.cp preserve=no
+//## end module.cp
+
+//## Module: IStatement; Pseudo Package specification
+//## Subsystem: <Top Level>
+//## Source file: c:\meusdo~1\projetos\persist\codigo\casecode\isttment.h
+
+
+//## begin module.additionalIncludes preserve=no
+//## end module.additionalIncludes
+
+//## begin module.includes preserve=yes
+#include "IPersist.ch"
+//## end module.includes
+
+// ListaString
+// IEstadoStatement
+// IBroker
+
+//## begin module.additionalDeclarations preserve=yes
+//## end module.additionalDeclarations
+
+
+//## Class: IStatement; Abstract
+// Responsavel pela montagem de sentenças SQL
+// tabela, [ coluna = valor ], [insert|update|delete], id
+//## Category: <Top Level>
+//## Subsystem: <Top Level>
+//## Persistence: Transient
+//## Cardinality/Multiplicity: n
+
+//## Uses: <unnamed>; IBroker { -> }
+
+CREATE CLASS IStatement
+PROTECTED:
+   METHOD init
+EXPORT:
+   //## Attribute: lowLayerSlot
+   // slot para ser usado pela camada de mais baixo nível
+   // representada pelo IDataStore para guardar informações
+   // sobre o cursor/canal. poder ser desde um handle de OBCD
+   // até uma estrutura que registra tabela,registro,indice no
+   // caso de Xbase puro.
+   //## begin IQueryStatement::lowLayerSlot.attr preserve=no  public: void* {UA} NULL
+   VAR m_lowLayerSlot                            //void*
+   //## end IQueryStatement::lowLayerSlot.attr
+EXPORT:
+   METHOD addColuna
+   METHOD theColunas
+   METHOD settheColunas
+   //## Documentation IStatement::theValues.has
+   // usado tanto para escrita quando para leitura.
+   // exemplo Insert / select  o acesso será feito pelo [] da
+   // classe IString.
+   METHOD theValues
+   METHOD settheValues
+   //## Documentation IStatement::estado.has
+   METHOD estado
+   METHOD setestado
+   //## Get and Set Operations for Class Attributes (generated)
+   //## Attribute: linhasCount
+   // total de linhas afetadas/contadas pelo statement.
+   // no caso do select é totalLinhas e no caso de outros
+   // linhasAfetadas.
+   METHOD linhasCount
+   METHOD setlinhasCount
+
+   //## Attribute: tabelaAlvo
+   METHOD tabelaAlvo
+   METHOD settabelaAlvo
+
+   // Additional Public Declarations
+   //## begin IStatement.public preserve=yes
+   //## end IStatement.public
+
+
+HIDDEN:                                          //## implementation
+   // Data Members for Has Relationships
+
+   //## begin IStatement::theColunas.has preserve=no  public: ListaString { -> 1VO}
+   VAR m_theColunas                              // ListaString
+   //## end IStatement::theColunas.has
+
+   //## begin IStatement::theValues.has preserve=no  public: ListaString { -> 1VO}
+   VAR m_theValues                               //ListaString
+   //## end IStatement::theValues.has
+
+   //## begin IStatement::estado.has preserve=no  public: IEstadoStatement { -> 1VO}
+   VAR m_estado                                  //IEstadoStatement
+   //## end IStatement::estado.has
+
+   // Data Members for Class Attributes
+
+   //## begin IStatement::tabelaAlvo.attr preserve=no  protected: IString {U}
+   VAR m_tabelaAlvo                              //IString
+   //## end IStatement::tabelaAlvo.attr
+
+   //## begin IStatement::linhasCount.attr preserve=no  public: int {U} 0
+   VAR m_linhasCount                             //INT
+   //## end IStatement::linhasCount.attr
+
+   // Additional Implementation Declarations
+   //## begin IStatement.implementation preserve=yes
+   //## end IStatement.implementation
+
+   //## begin IStatement.friends preserve=no
+   //friend class IDataStore;
+   //friend class IBroker;
+   //friend class IDataStoreODBC;
+   //## end IStatement.friends
+   // Class IStatement
+END CLASS
+
+
+METHOD init(),()
+   ::m_theColunas :=  Lista():new()              // ListaString
+   ::m_theValues  :=  Lista():new()              //ListaString
+   ::m_estado     :=  novo                       //IEstadoStatement
+   ::m_tabelaAlvo :=  nil                        //IString
+   ::m_linhasCount  := 0                         //INT
+RETURN self
+
+//IStatement& IStatement::addColuna(IString& nome)
+METHOD addColuna(nome)
+   ::m_theColunas:adiciona( nome )
+RETURN self
+//## Get and Set Operations for Has Relationships (implementation)
+
+//ListaString & IStatement::theColunas()
+METHOD theColunas()
+RETURN ::m_theColunas
+
+//void IStatement::settheColunas(const ListaString &value)
+METHOD settheColunas(value)
+   ::m_theColunas := value
+RETURN self
+
+//ListaString & IStatement::theValues()
+METHOD theValues()
+RETURN ::m_theValues
+
+//void IStatement::settheValues(const ListaString &value)
+METHOD settheValues(value)
+   ::m_theValues := value
+RETURN self
+
+//IEstadoStatement IStatement::estado()
+METHOD estado()
+RETURN ::m_estado
+
+//void IStatement::setestado(const IEstadoStatement value)
+METHOD setestado(value)
+   ::m_estado := value
+RETURN self
+
+//## Get and Set Operations for Class Attributes (implementation)
+
+//IString IStatement::tabelaAlvo()
+METHOD tabelaAlvo()
+RETURN ::m_tabelaAlvo
+
+//void IStatement::settabelaAlvo(const IString value)
+METHOD settabelaAlvo(value)
+   ::m_tabelaAlvo := value
+RETURN self
+
+
+//int IStatement::linhasCount()
+METHOD linhasCount()
+RETURN ::m_linhasCount
+
+//void IStatement::setlinhasCount(const int value)
+METHOD setlinhasCount(value)
+   ::m_linhasCount := value
+RETURN self

@@ -1,0 +1,25 @@
+--------------------Configuration: TesteVisual - Win32 Debug--------------------
+Begining build with project "G:\Developer\Testes Persistencia em VC\TesteVisual\TesteVisual.dsp", at root.
+Active configuration is Win32 (x86) Application (based on Win32 (x86) Application)
+
+Project's tools are:
+			"32-bit C/C++ Compiler for 80x86" with flags "/nologo /MDd /W3 /Gm /GX /Zi /Od /I "e:\meus documentos\IFrameWork\Hpp" /I "e:\meus documentos\Projetos\PERSIST\codigo\CASECODE" /D "WIN32" /D "_DEBUG" /D "_WINDOWS" /D "_AFXDLL" /Fp"Debug/TesteVisual.pch" /Yu"stdafx.h" /Fo"Debug/" /Fd"Debug/" /FD /c "
+			"OLE Type Library Maker" with flags "/nologo /D "_DEBUG" /mktyplib203 /o NUL /win32 "
+			"Win32 Resource Compiler" with flags "/l 0x416 /fo"Debug/TesteVisual.res" /d "_DEBUG" /d "_AFXDLL" "
+			"Browser Database Maker" with flags "/nologo /o"Debug/TesteVisual.bsc" "
+			"COFF Linker for 80x86" with flags "/nologo /subsystem:windows /incremental:yes /pdb:"Debug/TesteVisual.pdb" /debug /machine:I386 /out:"Debug/TesteVisual.exe" /pdbtype:sept /libpath:"e:\meus documentos\IFrameWork\Import" "
+			"Custom Build" with flags ""
+			"<Component 0xa>" with flags ""
+
+Creating temp file "d:\TMP\RSP9070.TMP" with contents </nologo /subsystem:windows /incremental:yes /pdb:"Debug/TesteVisual.pdb" /debug /machine:I386 /out:"Debug/TesteVisual.exe" /pdbtype:sept /libpath:"e:\meus documentos\IFrameWork\Import" 
+".\Debug\cadastro.obj"
+".\Debug\Dialogo.obj"
+".\Debug\StdAfx.obj"
+".\Debug\TesteVisual.obj"
+".\Debug\TesteVisual.res">
+Creating command line "link.exe @d:\TMP\RSP9070.TMP" 
+Linking...
+
+
+
+TesteVisual.exe - 0 error(s), 0 warning(s)
